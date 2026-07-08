@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoBot — Algorithmic Crypto Trading</title>
+<meta name="description" content="AutoBot runs your crypto trading strategy automatically, 24/7, directly inside your own Bybit or Hyperliquid account. Your funds never leave your exchange. Real verified client results, no profit-sharing — just one flat annual fee.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AutoBot">
+<meta property="og:title" content="AutoBot — Algorithmic Crypto Trading">
+<meta property="og:description" content="Your strategy, running while you sleep. Fully automated crypto trading that never touches your funds — connects directly to your own exchange account, 24/7.">
+<meta property="og:url" content="https://autobot.trading/">
+<meta property="og:image" content="https://autobot.trading/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AutoBot — Algorithmic Crypto Trading">
+<meta name="twitter:description" content="Your strategy, running while you sleep. Fully automated crypto trading that never touches your funds.">
+<meta name="twitter:image" content="https://autobot.trading/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0e0e0c;
+  --white:#f5f4f0;
+  --white-pure:#ffffff;
+  --cream:#faf9f6;
+  --gray:#8c8c89;
+  --gray-mid:#4e4e4b;
+  --gray-light:#d4d3ce;
+  --border:rgba(14,14,12,0.08);
+  --border-strong:rgba(14,14,12,0.16);
+  --gold:rgba(180,155,100,0.15);
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--white);
+  color:var(--black);
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;line-height:1.6;overflow-x:hidden;
+  /* Subtle warm grain texture */
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+/* ── NAV — refined ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 64px;
+  background:rgba(245,244,240,0.88);
+  backdrop-filter:blur(20px) saturate(1.8);
+  -webkit-backdrop-filter:blur(20px) saturate(1.8);
+  border-bottom:1px solid rgba(14,14,12,0.06);
+}
+.nav-logo{
+  font-family:'DM Sans',sans-serif;font-weight:500;font-size:16px;
+  letter-spacing:-0.01em;color:var(--black);text-decoration:none;
+  display:flex;align-items:center;gap:8px;
+}
+.nav-logo::before{
+  content:'';display:block;width:6px;height:6px;
+  border-radius:50%;background:var(--black);flex-shrink:0;
+}
+.nav-right{display:flex;align-items:center;gap:36px}
+.nav-link{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.07em;
+  text-transform:uppercase;color:var(--gray);text-decoration:none;
+  transition:color 0.2s;
+}
+.nav-link:hover{color:var(--black)}
+.nav-cta{
+  background:var(--black);color:var(--white);border:none;
+  padding:11px 26px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  letter-spacing:0.01em;
+  position:relative;overflow:hidden;
+  transition:background 0.3s;
+}
+.nav-cta::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.nav-cta:hover{background:#1a1a18;}
+.hero{
+  min-height:100vh;padding:0 64px;
+  display:flex;flex-direction:column;justify-content:center;
+  padding-top:100px;position:relative;overflow:hidden;
+  background:var(--white);
+}
+/* large decorative element — orbital ring canvas */
+.hero-content{max-width:1100px;position:relative;z-index:2}
+.hero-eyebrow{
+  display:flex;align-items:center;gap:12px;
+  font-family:'DM Mono',monospace;font-size:11px;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--gray);
+  margin-bottom:40px;
+}
+.eyebrow-dot{width:5px;height:5px;border-radius:50%;background:var(--black)}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(60px,8.5vw,120px);font-weight:400;
+  line-height:0.95;letter-spacing:-0.025em;
+  color:var(--black);margin-bottom:52px;
+}
+.hero h1 em{font-style:italic;color:var(--gray-mid)}
+.hero-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  align-items:end;padding-top:20px;
+  border-top:1px solid var(--border);
+}
+.hero-sub{font-size:18px;color:var(--gray-mid);line-height:1.7;font-weight:300}
+.hero-sub strong{color:var(--black);font-weight:500}
+.hero-right{display:flex;flex-direction:column;gap:24px;align-items:flex-start}
+.btn-primary{
+  background:var(--black);color:var(--white);border:none;
+  padding:18px 48px;
+  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;
+  cursor:pointer;text-decoration:none;display:inline-block;
+  letter-spacing:0.02em;
+  position:relative;overflow:hidden;
+  transition:background 0.3s;
+}
+.btn-primary::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.07) 0%,transparent 55%);
+  pointer-events:none;
+}
+.btn-primary:hover{background:#1a1a18;}
+.hero-reassure{font-family:'DM Mono',monospace;font-size:11px;color:var(--gray);letter-spacing:0.05em;line-height:1.8}
+.ticker-tape{
+  background:var(--black);overflow:hidden;padding:14px 0;white-space:nowrap;
+  position:relative;
+}
+.ticker-tape::before,.ticker-tape::after{
+  content:'';position:absolute;top:0;width:120px;height:100%;z-index:2;pointer-events:none;
+}
+.ticker-tape::before{left:0;background:linear-gradient(to right,var(--black),transparent)}
+.ticker-tape::after{right:0;background:linear-gradient(to left,var(--black),transparent)}
+.ticker-inner{display:inline-flex;gap:56px;animation:tape 38s linear infinite}
+.ticker-inner span{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.22)}
+.ticker-inner .hi{color:rgba(255,255,255,0.65)}
+@keyframes tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mono-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.mono-label::before{content:'';display:block;width:24px;height:1px;background:rgba(255,255,255,0.3);opacity:0.6}
+.section-h2{font-family:'Playfair Display',serif;font-size:clamp(21px,2.2vw,27px);font-weight:400;letter-spacing:-0.015em;line-height:1.3;color:#fff}
+.how{
+  border-top:1px solid rgba(255,255,255,0.07);
+  display:grid;grid-template-columns:5fr 7fr;
+  background:#0a0a08;
+  background-image:
+    radial-gradient(ellipse at 10% 30%, rgba(180,155,100,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 70%, rgba(180,155,100,0.04) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  position:relative;z-index:2;
+}
+.how-left{padding:96px 64px;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;justify-content:center}
+.how-left h2{margin-top:14px}
+.exchange-badges{display:flex;flex-direction:column;gap:0;margin-top:48px}
+.badge{padding:16px 0;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between}
+.badge:last-child{border-bottom:1px solid rgba(255,255,255,0.07)}
+.badge-name{font-size:15px;font-weight:500;color:#fff}
+.badge-meta{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.08em;text-transform:uppercase}
+.badge-status{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.06em;color:#4ade80}
+.badge-dot-live{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.25}}
+.how-right{padding:96px 64px}
+.steps{display:flex;flex-direction:column;margin-top:40px}
+.step{display:grid;grid-template-columns:36px 1fr;gap:20px;align-items:start;padding:28px 0;border-bottom:1px solid rgba(255,255,255,0.07)}
+.step:first-child{border-top:1px solid rgba(255,255,255,0.07)}
+.step-num{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3);padding-top:3px}
+.step h3{font-size:17px;font-weight:500;margin-bottom:6px;letter-spacing:-0.01em;color:#fff}
+.step p{font-size:14px;color:rgba(255,255,255,0.4);line-height:1.6;font-weight:300}
+.trust{
+  border-top:none;
+  background:#0a0a08;
+  background-image:
+    radial-gradient(ellipse at 20% 50%,rgba(180,155,100,0.04) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 50%,rgba(180,155,100,0.03) 0%,transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  padding:64px 64px 100px;
+  display:grid;grid-template-columns:1fr 1fr;
+}
+.trust-block{
+  padding:0 64px 0 0;
+  border-right:1px solid rgba(255,255,255,0.06);
+  margin-right:64px;
+}
+.trust-block:last-child{border-right:none;margin-right:0;padding-right:0}
+.trust-block .trust-label{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.18em;
+  text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.trust-block .trust-label::before{
+  content:'';display:block;width:16px;height:1px;background:rgba(255,255,255,0.2);
+}
+.trust-block .trust-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,2.5vw,32px);font-weight:400;
+  color:rgba(255,255,255,0.9);line-height:1.2;letter-spacing:-0.02em;
+}
+.trust-block .trust-sub{
+  font-size:14px;color:rgba(255,255,255,0.35);
+  margin-top:16px;line-height:1.65;font-weight:300;max-width:360px;
+}
+.faq{
+  border-top:1px solid rgba(255,255,255,0.07);
+  padding:96px 64px;
+  display:grid;grid-template-columns:5fr 7fr;
+  background:#0a0a08;
+  background-image:
+    radial-gradient(ellipse at 90% 20%, rgba(180,155,100,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 80%, rgba(180,155,100,0.04) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  position:relative;z-index:2;
+}
+.faq-left{padding-right:64px;border-right:1px solid rgba(255,255,255,0.07)}
+.faq-left h2{margin-top:14px}
+.faq-left p{font-size:16px;color:rgba(255,255,255,0.4);line-height:1.65;margin-top:20px;font-weight:300;max-width:320px}
+.faq-right{padding-left:64px}
+.faq-item{border-bottom:1px solid rgba(255,255,255,0.07);overflow:hidden}
+.faq-item:first-child{border-top:1px solid rgba(255,255,255,0.07)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:22px 0;cursor:pointer;gap:20px;font-size:15px;font-weight:500;letter-spacing:-0.01em;color:#fff;transition:color 0.2s;user-select:none}
+.faq-q:hover{color:rgba(255,255,255,0.6)}
+.faq-icon{width:20px;height:20px;flex-shrink:0;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:14px;color:rgba(255,255,255,0.5);transition:transform 0.3s cubic-bezier(0.22,1,0.36,1)}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{font-size:14px;color:rgba(255,255,255,0.45);line-height:1.7;font-weight:300;max-height:0;overflow:hidden;transition:max-height 0.4s cubic-bezier(0.22,1,0.36,1),padding 0.3s}
+.faq-item.open .faq-a{max-height:220px;padding-bottom:22px}
+.contact{
+  border-top:none;
+  background:#0a0a08;
+  background-image:
+    radial-gradient(ellipse at 0% 100%,rgba(180,155,100,0.05) 0%,transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  padding:120px 64px;
+  display:grid;grid-template-columns:1fr 1fr;gap:96px;align-items:start;
+}
+.contact-left{display:flex;flex-direction:column}
+.contact-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.contact-label::before{content:'';display:block;width:20px;height:1px;background:rgba(255,255,255,0.3)}
+.contact h2{font-family:'Playfair Display',serif;font-size:clamp(40px,5vw,72px);font-weight:400;letter-spacing:-0.025em;line-height:1.0;color:var(--white);margin-bottom:28px}
+.contact h2 em{font-style:italic;color:rgba(255,255,255,0.45)}
+.contact-sub{font-size:17px;color:rgba(255,255,255,0.45);line-height:1.65;max-width:400px;margin-bottom:48px;font-weight:300}
+.contact-guarantees{display:flex;flex-direction:column}
+.guarantee-item{padding:14px 0;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:flex-start;gap:14px}
+.guarantee-item:last-child{border-bottom:1px solid rgba(255,255,255,0.07)}
+.g-check{width:18px;height:18px;border:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:10px;color:rgba(255,255,255,0.5)}
+.guarantee-item span{font-size:14px;color:rgba(255,255,255,0.5);line-height:1.5;font-weight:300}
+.contact-form{display:flex;flex-direction:column;gap:14px}
+.field-group{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:7px}
+.form-field label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.form-field input,.form-field select,.form-field textarea{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:var(--white);padding:15px 18px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:300;outline:none;transition:border-color 0.2s;-webkit-appearance:none;appearance:none;border-radius:0}
+.form-field input::placeholder,.form-field textarea::placeholder{color:rgba(255,255,255,0.18)}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:rgba(255,255,255,0.35)}
+.form-field select{cursor:pointer;color:rgba(255,255,255,0.4)}
+.form-field select option{background:#181816;color:rgba(255,255,255,0.85)}
+.form-field textarea{resize:none;height:110px}
+.form-submit{background:var(--white);color:var(--black);border:none;padding:18px 40px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:opacity 0.2s;width:100%;margin-top:6px}
+.form-submit:hover{opacity:0.82}
+.contact-or{display:flex;align-items:center;gap:16px;margin:20px 0}
+.contact-or-line{flex:1;height:1px;background:rgba(255,255,255,0.08)}
+.contact-or-text{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.btn-calendar{width:100%;padding:17px 40px;background:transparent;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.55);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:400;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-calendar:hover{border-color:rgba(255,255,255,0.4);color:rgba(255,255,255,0.85)}
+.form-note{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.2);letter-spacing:0.05em;text-align:center}
+footer{background:#0a0a08;border-top:1px solid rgba(255,255,255,0.05);padding:28px 64px;display:flex;align-items:center;justify-content:space-between}
+.footer-logo{font-family:'DM Sans',sans-serif;font-weight:500;font-size:15px;color:rgba(255,255,255,0.4)}
+.footer-copy{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.07em;color:rgba(255,255,255,0.18)}
+.footer-link{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.07em;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s}
+.footer-link:hover{color:rgba(255,255,255,0.7)}
+.ticker-tape,.how,.engine,.trust,.faq,.contact,footer,nav{position:relative;z-index:3}
+/* ── ENGINE SCHEMATIC (circuit-style, dark) ── */
+.engine{
+  border-top:1px solid var(--border);
+  background:#0a0a08;
+  background-image:
+    radial-gradient(ellipse at 15% 20%, rgba(180,155,100,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 80%, rgba(180,155,100,0.04) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  padding:100px 64px 90px;
+  position:relative;z-index:2;
+}
+.engine-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.engine-eyebrow::before{content:'';display:block;width:20px;height:1px;background:rgba(255,255,255,.3);}
+.engine-title{font-family:'DM Mono',monospace;font-size:clamp(19px,2.5vw,29px);font-weight:500;letter-spacing:-.005em;line-height:1.35;color:#fff;max-width:600px;margin-bottom:26px;}
+.engine-title::before{content:'> ';color:#4ade80;}
+.engine-title em{font-style:normal;color:rgba(74,222,128,.85);}
+.engine-cursor{display:inline-block;width:8px;height:0.9em;background:#4ade80;margin-left:5px;vertical-align:text-bottom;box-shadow:0 0 6px rgba(74,222,128,.6);animation:blink 1s step-end infinite;}
+
+/* Top trace bar — system status readout */
+.engine-tracebar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:16px;margin-bottom:24px;border-bottom:1px solid rgba(255,255,255,.07);}
+.engine-tracebar-ticks{flex:1;height:6px;background-image:repeating-linear-gradient(to right,rgba(255,255,255,.16) 0,rgba(255,255,255,.16) 1px,transparent 1px,transparent 6px);}
+.engine-tracebar-status{display:flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(74,222,128,.75);white-space:nowrap;}
+
+.engine-row{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr auto 1fr;align-items:stretch;}
+.engine-panel{
+  background:#0d0d0a;border:1px solid rgba(255,255,255,.08);border-radius:10px;
+  padding:16px 16px 30px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;gap:8px;min-height:230px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  transition:border-color 0.3s;
+  animation:enginePulse 8s ease-in-out infinite;
+  animation-delay:var(--pd,0s);
+}
+.engine-panel:hover{border-color:rgba(180,155,100,.3);}
+/* Sequential "system alive" light-up sweep across panels */
+@keyframes enginePulse{
+  0%,82%,100%{border-color:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+  4%{border-color:rgba(180,155,100,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 22px rgba(180,155,100,.2);}
+  14%{border-color:rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+}
+.engine-panel:hover{animation-play-state:paused;}
+/* HUD corner brackets */
+.engine-panel::before,.engine-panel::after{content:'';position:absolute;width:9px;height:9px;z-index:2;pointer-events:none;}
+.engine-panel::before{top:7px;left:7px;border-top:1px solid rgba(180,155,100,.45);border-left:1px solid rgba(180,155,100,.45);}
+.engine-panel::after{top:7px;right:7px;border-top:1px solid rgba(180,155,100,.45);border-right:1px solid rgba(180,155,100,.45);}
+.engine-node-id{position:absolute;bottom:10px;right:14px;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.1em;color:rgba(255,255,255,.14);z-index:1;}
+.engine-panel-dots{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size:9px 9px;
+  pointer-events:none;
+  overflow:hidden;
+}
+/* Scanline sweep */
+.engine-panel-dots::after{
+  content:'';position:absolute;left:0;right:0;height:50%;top:-50%;
+  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.05),transparent);
+  animation:engineScan 6s linear infinite;
+}
+@keyframes engineScan{0%{top:-50%;}100%{top:100%;}}
+.engine-panel-label{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.32);position:relative;z-index:1;margin-bottom:2px;display:flex;align-items:center;justify-content:space-between;padding-right:14px;}
+.engine-status{display:flex;align-items:center;gap:5px;font-size:7px;letter-spacing:.1em;color:rgba(74,222,128,.6);}
+.engine-status-dot{width:4px;height:4px;border-radius:50%;background:#4ade80;box-shadow:0 0 5px rgba(74,222,128,.6);animation:blink 2s ease-in-out infinite;flex-shrink:0;}
+.engine-panel-cap{position:absolute;bottom:10px;left:14px;right:40px;font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.16);z-index:1;}
+.engine-binary{position:absolute;bottom:26px;right:10px;left:10px;font-family:'DM Mono',monospace;font-size:7px;letter-spacing:.08em;color:rgba(255,255,255,.05);line-height:1.5;text-align:right;z-index:0;pointer-events:none;white-space:pre-wrap;word-break:break-all;}
+
+.engine-connector{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;padding:0 7px;position:relative;}
+.engine-tick{width:1px;height:6px;background:rgba(255,255,255,.14);}
+.engine-connector-dot{position:absolute;left:50%;top:0;width:3px;height:3px;margin-left:-1.5px;border-radius:50%;background:#c9a978;box-shadow:0 0 6px rgba(201,169,120,.9);animation:engineFlow 2.4s ease-in-out infinite;}
+@keyframes engineFlow{0%{top:0%;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:100%;opacity:0;}}
+
+.ef-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:10.5px;padding:7px 9px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:4px;position:relative;z-index:1;}
+.ef-pair{color:rgba(255,255,255,.5);}
+.ef-price{color:rgba(255,255,255,.8);transition:color 0.3s;}
+.ef-price.up{color:#4ade80;}
+.ef-price.down{color:#e0605a;}
+
+.eo-row{font-family:'DM Mono',monospace;font-size:9.5px;padding:7px 9px;border-radius:4px;position:relative;z-index:1;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);letter-spacing:0.01em;}
+.eo-row.buy{color:#4ade80;}
+.eo-row.sell{color:#e0605a;}
+
+.er-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;position:relative;z-index:1;}
+.er-chip{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:5px;padding:9px 10px;display:flex;flex-direction:column;gap:5px;}
+.er-chip-label{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.28);}
+.er-chip-val{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);display:flex;align-items:center;gap:5px;}
+.er-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;box-shadow:0 0 5px rgba(74,222,128,.5);flex-shrink:0;animation:blink 2.4s ease-in-out infinite;}
+
+.ex-bar-row{display:flex;align-items:center;gap:9px;position:relative;z-index:1;}
+.ex-bar{flex:1;height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;}
+.ex-bar-fill{height:100%;background:linear-gradient(90deg,rgba(180,155,100,.7),rgba(74,222,128,.7));border-radius:3px;}
+.ex-ms{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.32);min-width:32px;text-align:right;}
+
+.engine-mark-wrap{flex:1;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;padding:6px 0;}
+.engine-mark{
+  width:80px;height:80px;
+  background-image:radial-gradient(rgba(255,255,255,.9) 1.4px, transparent 1.4px);
+  background-size:6px 6px;
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  opacity:.85;
+}
+.engine-exch-list{font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:rgba(255,255,255,.4);text-align:center;position:relative;z-index:1;}
+
+.engine-caption{display:flex;justify-content:space-between;margin-top:20px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.16);}
+
+/* Signal intelligence — secondary panel row feeding the Strategy Engine */
+.engine-subrow-label{display:flex;align-items:center;gap:14px;margin:52px 0 20px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);white-space:nowrap;}
+.engine-subrow-label::before,.engine-subrow-label::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08);}
+.engine-row2{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.engine-panel.compact{min-height:188px;padding-bottom:26px;}
+.engine-panel-sub{font-family:'DM Mono',monospace;font-size:7.5px;letter-spacing:.05em;color:rgba(255,255,255,.22);margin-top:-4px;margin-bottom:4px;position:relative;z-index:1;}
+.sig-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:'DM Mono',monospace;font-size:9.5px;padding:7px 8px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:4px;position:relative;z-index:1;}
+.sig-label{color:rgba(255,255,255,.5);}
+.sig-val{color:rgba(255,255,255,.55);font-weight:500;transition:color 0.3s;}
+.sig-val.hot{color:#f2c14e;}
+.sig-val.up{color:#4ade80;}
+.sig-val.down{color:#e0605a;}
+.ns-row{display:flex;align-items:center;gap:9px;font-family:'DM Mono',monospace;font-size:9px;position:relative;z-index:1;}
+.ns-label{min-width:48px;color:rgba(255,255,255,.4);letter-spacing:.04em;}
+.matrix-canvas{width:100%;height:112px;display:block;border-radius:4px;background:#080807;border:1px solid rgba(255,255,255,.05);position:relative;z-index:1;}
+
+/* ── CALCULATOR TEASER (slim trigger band, no title needed) ── */
+.calc-teaser{
+  background:#0a0a08;position:relative;z-index:2;
+  padding:34px 64px;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+.calc-teaser-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+}
+.calc-teaser-text{font-size:14px;color:rgba(255,255,255,0.45);font-weight:300;line-height:1.5;}
+.calc-teaser-text b{color:#fff;font-weight:500;}
+.calc-teaser-btn{
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;
+  background:transparent;border:1px solid rgba(180,155,100,0.35);color:#d8c9a3;
+  padding:11px 20px;cursor:pointer;white-space:nowrap;transition:all 0.2s;flex-shrink:0;
+}
+.calc-teaser-btn:hover{background:rgba(180,155,100,0.1);border-color:rgba(180,155,100,0.6);}
+
+/* ── CALCULATOR MODAL ── */
+.calc-overlay{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(6,6,5,0.78);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:24px;
+}
+.calc-overlay.open{display:flex;}
+.calc-modal{
+  width:100%;max-width:460px;max-height:88vh;overflow-y:auto;
+  background:#0d0d0a;border:1px solid rgba(255,255,255,0.1);border-radius:12px;
+  padding:32px 30px 28px;position:relative;
+  box-shadow:0 24px 60px rgba(0,0,0,0.5);
+}
+.calc-modal-close{
+  position:absolute;top:16px;right:16px;width:28px;height:28px;
+  background:transparent;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);
+  cursor:pointer;font-size:13px;line-height:1;border-radius:50%;
+}
+.calc-modal-close:hover{color:#fff;border-color:rgba(255,255,255,0.3);}
+.calc-modal-eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(180,155,100,0.7);margin-bottom:6px;}
+.calc-modal-title{font-family:'Playfair Display',serif;font-size:22px;color:#fff;margin-bottom:4px;}
+.calc-modal-sub{font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:22px;}
+.calc-field{margin-bottom:16px;}
+.calc-field label{display:block;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:7px;}
+.calc-field input{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);
+  color:#fff;padding:11px 13px;font-family:'DM Sans',sans-serif;font-size:14px;border-radius:4px;
+}
+.calc-field input:focus{outline:none;border-color:rgba(180,155,100,0.5);}
+.calc-plan-toggle{display:flex;gap:8px;margin-bottom:20px;}
+.calc-plan-btn{
+  flex:1;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.04em;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);
+  padding:10px 8px;cursor:pointer;border-radius:4px;transition:all 0.2s;
+}
+.calc-plan-btn.active{background:rgba(180,155,100,0.12);border-color:rgba(180,155,100,0.5);color:#d8c9a3;}
+.calc-output{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:18px 18px 14px;margin-bottom:14px;}
+.calc-output-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;}
+.calc-output-row span:first-child{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);}
+.calc-output-big{font-family:'Playfair Display',serif;font-size:26px;color:#fff;}
+#calc-return-pct{font-family:'DM Mono',monospace;font-size:13px;color:#4ade80;}
+#calc-canvas{width:100%;height:70px;display:block;margin-top:10px;}
+.calc-disclaimer{font-size:10.5px;line-height:1.6;color:rgba(255,255,255,0.28);}
+.calc-disclaimer a{color:rgba(180,155,100,0.8);text-decoration:none;}
+.calc-disclaimer a:hover{text-decoration:underline;}
+
+/* ── WHAT HAPPENS NEXT ── */
+.what-next{margin-top:24px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.07)}
+.what-next-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:16px}
+.what-next-steps{display:flex;flex-direction:column;gap:12px}
+.what-next-step{display:flex;align-items:flex-start;gap:14px}
+.wn-num{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:0.06em;padding-top:1px;flex-shrink:0}
+.wn-text{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.55;font-weight:300}
+
+/* ── LUXURY MICRO-DETAILS ── */
+
+/* Warm gradient on hero */
+.hero{
+  background:
+    radial-gradient(ellipse at 15% 60%, rgba(180,155,100,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(14,14,12,0.02) 0%, transparent 45%),
+    var(--white) !important;
+}
+
+/* Nav logo accent line */
+.nav-logo{position:relative;}
+.nav-logo::after{
+  content:'';position:absolute;bottom:-2px;left:0;width:100%;height:1px;
+  background:linear-gradient(90deg,rgba(14,14,12,0.15),transparent);
+}
+
+/* Step numbers — large ghost serif behind text */
+.step{position:relative;overflow:visible;}
+.step-num{
+  font-family:'Playfair Display',serif !important;
+  font-size:13px !important;
+  color:rgba(255,255,255,0.3) !important;
+  letter-spacing:0.04em !important;
+  padding-top:4px !important;
+  position:relative;
+  z-index:2;
+}
+.step::before{
+  content:attr(data-n);
+  position:absolute;
+  left:-12px;top:50%;transform:translateY(-50%);
+  font-family:'Playfair Display',serif;
+  font-size:100px;font-weight:400;font-style:italic;
+  color:rgba(255,255,255,0.03);
+  line-height:1;pointer-events:none;
+  z-index:0;letter-spacing:-0.04em;
+}
+.step > *{position:relative;z-index:1;}
+
+.how,.faq{
+  border-top:none !important;
+  position:relative;
+}
+
+/* Trust section — refined label with line */
+.trust-block .trust-label{
+  display:flex;align-items:center;gap:8px;
+}
+
+/* FAQ hover — more refined */
+.faq-q{transition:color 0.25s,letter-spacing 0.25s !important;}
+.faq-q:hover{letter-spacing:0.005em !important;}
+
+/* Form inputs — refined focus */
+.form-field input:focus,.form-field select:focus{
+  border-color:rgba(255,255,255,0.45) !important;
+  background:rgba(255,255,255,0.07) !important;
+}
+
+/* CTA button — offset border on hover */
+.btn-primary{transition:background 0.3s,outline-offset 0.2s !important;}
+.btn-primary:hover{
+  outline:1px solid rgba(14,14,12,0.2);
+  outline-offset:3px;
+}
+.nav-cta:hover{
+  outline:1px solid rgba(255,255,255,0.15);
+  outline-offset:3px;
+}
+
+/* Exchange badges — hover glow */
+.badge{transition:padding-left 0.2s;}
+.badge:hover{padding-left:6px;}
+.badge-dot-live{box-shadow:0 0 6px rgba(74,222,128,0.4);}
+
+/* Mono label — refined */
+.mono-label::before{
+  background:linear-gradient(90deg,rgba(255,255,255,0.3),transparent) !important;
+  width:28px !important;
+}
+
+/* Footer — thin gold accent line on top */
+footer::before{
+  content:'';display:block;position:absolute;top:0;left:10%;width:80%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(180,155,100,0.2),transparent);
+}
+footer{position:relative;}
+
+/* Guarantee items — hover */
+.guarantee-item{transition:padding-left 0.2s;}
+.guarantee-item:hover{padding-left:4px;}
+
+/* Contact label line */
+.contact-label::before{
+  background:linear-gradient(90deg,rgba(255,255,255,0.3),transparent) !important;
+}
+
+
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity 0.75s cubic-bezier(0.22,1,0.36,1),transform 0.75s cubic-bezier(0.22,1,0.36,1)}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+
+/* ── HAMBURGER + MOBILE MENU ── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 8px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--black);
+  transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 58px;
+  left: 0; right: 0;
+  background: rgba(245,244,240,0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  flex-direction: column;
+  z-index: 99;
+  padding: 8px 0 16px;
+  transform: translateY(-8px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s;
+  pointer-events: none;
+}
+.mobile-menu.open {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+.mobile-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  text-decoration: none;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  display: block;
+  transition: color 0.15s;
+}
+.mobile-link:last-child { border-bottom: none; }
+.mobile-link:hover { color: var(--black); }
+.mobile-link.cta {
+  color: var(--black);
+  font-weight: 500;
+  margin: 8px 24px 0;
+  border: 1px solid var(--black);
+  border-bottom: 1px solid var(--black);
+  text-align: center;
+  padding: 12px 24px;
+}
+
+/* ═══════════════════════════════════════
+   MOBILE — everything below 768px
+═══════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── NAV ── */
+  nav { padding: 0 20px; height: 58px; }
+  .nav-right { display: none; }
+  .nav-hamburger { display: flex; }
+  .mobile-menu { display: flex; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 100px 24px 56px;
+    min-height: auto;
+  }
+  .hero h1 {
+    font-size: clamp(44px, 12vw, 72px);
+    margin-bottom: 36px;
+  }
+  .hero-eyebrow { margin-bottom: 28px; font-size: 10px; }
+  .hero-row {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 24px;
+  }
+  .hero-sub { font-size: 15px; }
+  .hero-right { align-items: flex-start; }
+  .btn-primary { padding: 16px 36px; font-size: 14px; width: 100%; text-align: center; }
+  .hero-reassure { font-size: 10px; }
+
+  /* Hide 3D canvas on mobile — too heavy */
+  #hero-3d { display: none; }
+  #trading-canvas { opacity: 0.4; }
+
+  /* ── TICKER ── */
+  .ticker-inner { animation-duration: 22s; }
+
+  /* ── HOW IT WORKS ── */
+  .how { grid-template-columns: 1fr; }
+  .how-left {
+    padding: 56px 24px 40px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .how-right { padding: 40px 24px 56px; }
+  .how-left h2 { font-size: clamp(19px, 5.5vw, 24px); }
+  .section-h2 { font-size: clamp(19px, 5.5vw, 24px); }
+  .step { padding: 20px 0; }
+  .step h3 { font-size: 15px; }
+  .step p { font-size: 13px; }
+  .exchange-badges { margin-top: 32px; }
+
+  /* ── ENGINE SCHEMATIC ── */
+  .engine { padding: 56px 20px 48px; }
+  .engine-title { font-size: clamp(17px, 6vw, 22px); margin-bottom: 22px; line-height: 1.4; }
+  .engine-row { grid-template-columns: 1fr; gap: 14px; }
+  .engine-connector { display: none; }
+  .engine-panel { min-height: auto; padding-bottom: 34px; }
+  .engine-row2 { grid-template-columns: 1fr; gap: 14px; }
+  .engine-panel.compact { min-height: auto; padding-bottom: 34px; }
+  .engine-subrow-label { margin: 40px 0 16px; }
+
+  /* ── TRUST ── */
+  .trust {
+    grid-template-columns: 1fr;
+    padding: 56px 24px;
+    gap: 40px;
+  }
+  .trust-block {
+    padding-right: 0 !important;
+    border-right: none !important;
+    margin-right: 0 !important;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .trust-block:last-child { border-bottom: none; padding-bottom: 0; }
+  .trust-block .trust-text { font-size: clamp(20px, 5vw, 28px); }
+
+  /* ── FAQ ── */
+  .faq {
+    grid-template-columns: 1fr;
+    padding: 56px 24px;
+  }
+  .faq-left {
+    padding-right: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 40px;
+    margin-bottom: 0;
+  }
+  .faq-right { padding-left: 0; padding-top: 32px; }
+  .faq-left h2 { font-size: clamp(32px, 8vw, 52px); }
+
+  /* ── CONTACT ── */
+  .contact {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 64px 24px;
+  }
+  .contact h2 { font-size: clamp(36px, 10vw, 56px); }
+  .contact-sub { font-size: 15px; }
+  .field-group { grid-template-columns: 1fr; gap: 10px; }
+  .form-submit { padding: 16px; font-size: 14px; }
+  .btn-calendar { padding: 14px; font-size: 14px; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .footer-copy { font-size: 9px; }
+
+  /* ── MONO LABELS ── */
+  .mono-label { font-size: 8px; }
+
+  /* ── WHAT NEXT ── */
+  .what-next-steps { gap: 10px; }
+}
+
+/* ── TABLET — 769px to 1024px ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  nav { padding: 18px 32px; }
+  .hero { padding: 110px 40px 64px; }
+  .hero h1 { font-size: clamp(52px, 8vw, 88px); }
+  .how-left { padding: 64px 40px; }
+  .how-right { padding: 64px 40px; }
+  .engine-row2 { grid-template-columns: 1fr 1fr; }
+  .trust { padding: 72px 40px; }
+  .faq { padding: 72px 40px; }
+  .contact { padding: 80px 40px; gap: 48px; }
+  footer { padding: 24px 40px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">AutoBot</a>
+  <div class="nav-right" id="nav-right">
+    <a href="results.html" class="nav-link">Client results</a>
+    <a href="compare.html" class="nav-link">Compare</a>
+    <a href="#" class="nav-link" onclick="openCalculator();return false;">Calculator</a>
+    <a href="#contact" class="nav-cta">Start Earning</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="results.html" class="mobile-link">Client results</a>
+  <a href="compare.html" class="mobile-link">Compare</a>
+  <a href="#" class="mobile-link" onclick="closeMobileMenu();openCalculator();return false;">Calculator</a>
+  <a href="#contact" class="mobile-link cta" onclick="closeMobileMenu()">Start Earning →</a>
+</div>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow fade-up"><span class="eyebrow-dot"></span>Algorithmic crypto trading · Select clients only</div>
+    <h1 class="fade-up">Your strategy,<br>running <em>while<br>you sleep.</em></h1>
+    <div class="hero-row fade-up">
+      <p class="hero-sub">AutoBot connects to <strong>Bybit</strong> and <strong>Hyperliquid</strong> through a secure API and executes your trading strategy automatically — every minute of every day, without you having to touch a thing.</p>
+      <div class="hero-right">
+        <a href="#contact" class="btn-primary">Start Earning →</a>
+        <p class="hero-reassure">No pricing on this page.<br>Our team walks you through everything.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<canvas id="hero-3d" style="position:fixed;top:0;right:0;width:52%;height:100vh;pointer-events:none;z-index:1;transition:opacity 0.5s;"></canvas>
+
+<div class="ticker-tape">
+  <div class="ticker-inner">
+    <span class="hi">Bybit</span><span>·</span><span class="hi">Hyperliquid</span><span>·</span><span>24/7 Execution</span><span>·</span><span>Fully Automated</span><span>·</span><span>Algo-Driven</span><span>·</span><span>No Emotion</span><span>·</span><span>No Delay</span><span>·</span><span>Crypto Only</span><span>·</span><span class="hi">Bybit</span><span>·</span><span class="hi">Hyperliquid</span><span>·</span><span>24/7 Execution</span><span>·</span><span>Fully Automated</span><span>·</span><span>Algo-Driven</span><span>·</span><span>No Emotion</span><span>·</span><span>No Delay</span><span>·</span><span>Crypto Only</span><span>·</span>
+  </div>
+</div>
+
+<!-- ENGINE SCHEMATIC — circuit-style pipeline, inspired by dark trading-infra diagrams -->
+<section class="engine">
+  <div class="engine-eyebrow fade-up">Under the hood</div>
+  <div class="engine-title fade-up">Signal to trade. <em>Automatically, every time.</em><span class="engine-cursor"></span></div>
+
+  <div class="engine-tracebar fade-up">
+    <div class="engine-tracebar-ticks"></div>
+    <div class="engine-tracebar-status"><span class="engine-status-dot"></span>AutoBot Engine — Online</div>
+    <div class="engine-tracebar-ticks"></div>
+  </div>
+
+  <div class="engine-row fade-up">
+
+    <div class="engine-panel" style="--pd:0s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Market Feed</span><span class="engine-status"><span class="engine-status-dot"></span>Live</span></div>
+      <div class="ef-row"><span class="ef-pair">BTC/USDT</span><span class="ef-price up" id="ef-btc">$67,412</span></div>
+      <div class="ef-row"><span class="ef-pair">ETH/USDT</span><span class="ef-price down" id="ef-eth">$3,281</span></div>
+      <div class="ef-row"><span class="ef-pair">SOL/USDT</span><span class="ef-price up" id="ef-sol">$164.20</span></div>
+      <div class="engine-panel-cap">24/7 · ALL PAIRS</div>
+      <div class="engine-node-id">SYS.01</div>
+    </div>
+
+    <div class="engine-connector"><span class="engine-connector-dot"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span></div>
+
+    <div class="engine-panel" style="--pd:1.6s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Strategy Engine</span><span class="engine-status"><span class="engine-status-dot"></span>Active</span></div>
+      <div id="engine-orders" style="display:flex;flex-direction:column;gap:6px;position:relative;z-index:1;">
+        <div class="eo-row buy">LONG 0.42 BTC LIMIT $67,410</div>
+        <div class="eo-row sell">SHORT 1.10 ETH LIMIT $3,283</div>
+        <div class="eo-row buy">LONG 12.4 SOL LIMIT $164.05</div>
+      </div>
+      <div class="engine-binary">01001101 10110100&#10;00101110 11010010&#10;01011011 10100101</div>
+      <div class="engine-panel-cap">RULES-BASED · NO OVERRIDES</div>
+      <div class="engine-node-id">SYS.02</div>
+    </div>
+
+    <div class="engine-connector"><span class="engine-connector-dot" style="animation-delay:0.4s;"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span></div>
+
+    <div class="engine-panel" style="--pd:3.2s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Risk Engine</span><span class="engine-status"><span class="engine-status-dot"></span>Enforced</span></div>
+      <div class="er-grid">
+        <div class="er-chip"><span class="er-chip-label">Stop-loss</span><span class="er-chip-val"><span class="er-dot"></span>Active</span></div>
+        <div class="er-chip"><span class="er-chip-label">Max size</span><span class="er-chip-val"><span class="er-dot"></span>Capped</span></div>
+        <div class="er-chip"><span class="er-chip-label">Drawdown</span><span class="er-chip-val"><span class="er-dot"></span>8% limit</span></div>
+        <div class="er-chip"><span class="er-chip-label">Trailing</span><span class="er-chip-val"><span class="er-dot"></span>Enabled</span></div>
+      </div>
+      <div class="engine-panel-cap">SET ONCE · ENFORCED ALWAYS</div>
+      <div class="engine-node-id">SYS.03</div>
+    </div>
+
+    <div class="engine-connector"><span class="engine-connector-dot" style="animation-delay:0.8s;"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span></div>
+
+    <div class="engine-panel" style="--pd:4.8s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Executor</span><span class="engine-status"><span class="engine-status-dot"></span>Dispatching</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;">
+        <div class="ex-bar-row"><div class="ex-bar"><div class="ex-bar-fill" style="width:82%"></div></div><span class="ex-ms" id="ex-ms-1">38ms</span></div>
+        <div class="ex-bar-row"><div class="ex-bar"><div class="ex-bar-fill" style="width:64%"></div></div><span class="ex-ms" id="ex-ms-2">41ms</span></div>
+        <div class="ex-bar-row"><div class="ex-bar"><div class="ex-bar-fill" style="width:91%"></div></div><span class="ex-ms" id="ex-ms-3">29ms</span></div>
+      </div>
+      <div class="engine-binary">11100010 00110101&#10;01001011 10010001&#10;00101101 11001010</div>
+      <div class="engine-panel-cap">SUB-50MS DISPATCH</div>
+      <div class="engine-node-id">SYS.04</div>
+    </div>
+
+    <div class="engine-connector"><span class="engine-connector-dot" style="animation-delay:1.2s;"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span><span class="engine-tick"></span></div>
+
+    <div class="engine-panel" style="--pd:6.4s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Your Exchange</span><span class="engine-status"><span class="engine-status-dot"></span>Connected</span></div>
+      <div class="engine-mark-wrap"><div class="engine-mark"></div></div>
+      <div class="engine-exch-list">BYBIT · HYPERLIQUID · BINANCE</div>
+      <div class="engine-panel-cap">FUNDS NEVER LEAVE YOUR ACCOUNT</div>
+      <div class="engine-node-id">SYS.05</div>
+    </div>
+
+  </div>
+
+  <div class="engine-subrow-label fade-up">Signal intelligence feeding the Strategy Engine</div>
+
+  <div class="engine-row2 fade-up">
+
+    <div class="engine-panel compact" style="--pd:0.6s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Market Scanner</span><span class="engine-status"><span class="engine-status-dot"></span>Scanning</span></div>
+      <div class="engine-panel-sub">Technical setups · all pairs</div>
+      <div class="sig-row"><span class="sig-label">BTC/USDT</span><span class="sig-val up" id="ms-1">Breakout ▲</span></div>
+      <div class="sig-row"><span class="sig-label">SOL/USDT</span><span class="sig-val hot" id="ms-2">Vol +340%</span></div>
+      <div class="sig-row"><span class="sig-label">ETH/USDT</span><span class="sig-val" id="ms-3">RSI 28</span></div>
+      <div class="engine-panel-cap">1,400+ PAIRS / MIN</div>
+      <div class="engine-node-id">SYS.06</div>
+    </div>
+
+    <div class="engine-panel compact" style="--pd:2.6s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Social Scanner</span><span class="engine-status"><span class="engine-status-dot"></span>Live</span></div>
+      <div class="engine-panel-sub">X / Twitter · influencer mentions</div>
+      <div class="sig-row"><span class="sig-label">$PEPE</span><span class="sig-val hot" id="soc-1">▲ 2,340/hr</span></div>
+      <div class="sig-row"><span class="sig-label">$SOL</span><span class="sig-val hot" id="soc-2">▲ 1,180/hr</span></div>
+      <div class="sig-row"><span class="sig-label">$WIF</span><span class="sig-val" id="soc-3">▲ 890/hr</span></div>
+      <div class="engine-panel-cap">TOP MENTIONS BY KOLS</div>
+      <div class="engine-node-id">SYS.07</div>
+    </div>
+
+    <div class="engine-panel compact" style="--pd:4.6s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>Executor</span><span class="engine-status"><span class="engine-status-dot"></span>Live</span></div>
+      <div class="engine-panel-sub">Order execution stream</div>
+      <canvas id="matrix-canvas" class="matrix-canvas"></canvas>
+      <div class="engine-panel-cap">EXECUTION LAYER · LIVE</div>
+      <div class="engine-node-id">SYS.08</div>
+    </div>
+
+    <div class="engine-panel compact" style="--pd:6.6s;">
+      <div class="engine-panel-dots"></div>
+      <div class="engine-panel-label"><span>News Sentiment</span><span class="engine-status"><span class="engine-status-dot"></span>Live</span></div>
+      <div class="engine-panel-sub">Aggregated · 40+ news sources</div>
+      <div class="ns-row"><span class="ns-label">Bullish</span><div class="ex-bar"><div class="ex-bar-fill" id="ns-bull-fill" style="width:62%"></div></div><span class="ex-ms" id="ns-bull-val">62%</span></div>
+      <div class="ns-row"><span class="ns-label">Neutral</span><div class="ex-bar"><div class="ex-bar-fill" id="ns-neu-fill" style="width:28%"></div></div><span class="ex-ms" id="ns-neu-val">28%</span></div>
+      <div class="ns-row"><span class="ns-label">Bearish</span><div class="ex-bar"><div class="ex-bar-fill" id="ns-bear-fill" style="width:10%"></div></div><span class="ex-ms" id="ns-bear-val">10%</span></div>
+      <div class="engine-panel-cap">REAL-TIME SENTIMENT SCORE</div>
+      <div class="engine-node-id">SYS.09</div>
+    </div>
+
+  </div>
+
+  <div class="engine-caption"><span>AutoBot Execution Engine</span><span>Live schematic — illustrative</span></div>
+</section>
+
+<div class="how" id="how">
+  <div class="how-left">
+    <div>
+      <div class="mono-label fade-up">How it works</div>
+      <h2 class="section-h2 fade-up">Simple to set up. <em style="font-style:italic;color:rgba(255,255,255,0.4)">Powerful in practice.</em></h2>
+    </div>
+    <div class="exchange-badges fade-up">
+      <div class="badge"><div><div class="badge-name">Bybit</div><div class="badge-meta">Spot · Perpetuals · Futures</div></div><div class="badge-status"><span class="badge-dot-live"></span> Connected</div></div>
+      <div class="badge"><div><div class="badge-name">Hyperliquid</div><div class="badge-meta">Perpetuals · On-chain DEX</div></div><div class="badge-status"><span class="badge-dot-live"></span> Connected</div></div>
+    </div>
+  </div>
+  <div class="how-right">
+    <div class="mono-label fade-up">Four steps</div>
+    <div class="steps">
+      <div class="step fade-up" data-n="1"><span class="step-num">01</span><div><h3>Connect your exchange</h3><p>Link your Bybit or Hyperliquid account with API keys in minutes. Our team walks you through it on your onboarding call.</p></div></div>
+      <div class="step fade-up" data-n="2"><span class="step-num">02</span><div><h3>Define your strategy</h3><p>Choose your pairs and risk parameters. Our team helps you configure everything on the onboarding call.</p></div></div>
+      <div class="step fade-up" data-n="3"><span class="step-num">03</span><div><h3>AutoBot executes</h3><p>The moment your criteria are met, an order fires — at any hour, any day, with no manual input from you.</p></div></div>
+      
+    </div>
+  </div>
+</div>
+
+<div class="trust" style="grid-template-columns:1fr 1fr;">
+  <div class="trust-block fade-up"><div class="trust-label">Simplicity</div><p class="trust-text">No coding. No complexity.</p><p class="trust-sub">You don't need to be a developer. Our team sets everything up with you and makes sure it runs exactly as you expect.</p></div>
+  <div class="trust-block fade-up" style="border-right:none;margin-right:0;padding-right:0;"><div class="trust-label">Support</div><p class="trust-text">A real team behind you.</p><p class="trust-sub">You're not figuring this out alone. Our team walks you through onboarding and is there whenever you need them.</p></div>
+</div>
+
+<div class="calc-teaser">
+  <div class="calc-teaser-inner fade-up">
+    <div class="calc-teaser-text"><b>Curious what's possible?</b> See how compounding could grow your capital over time.</div>
+    <button class="calc-teaser-btn" onclick="openCalculator()">Open compound calculator →</button>
+  </div>
+</div>
+
+<div class="calc-overlay" id="calc-overlay" onclick="if(event.target===this) closeCalculator()">
+  <div class="calc-modal">
+    <button class="calc-modal-close" onclick="closeCalculator()" aria-label="Close">✕</button>
+    <div class="calc-modal-eyebrow">Illustrative tool</div>
+    <div class="calc-modal-title">Compound return calculator</div>
+    <div class="calc-modal-sub">Not a projection or promise — just the math of compounding at a hypothetical fixed rate.</div>
+
+    <div class="calc-field">
+      <label>Starting capital ($)</label>
+      <input type="number" id="calc-capital" value="10000" min="100" step="100" oninput="calcRender()">
+    </div>
+    <div class="calc-field">
+      <label>Duration (months)</label>
+      <input type="number" id="calc-months" value="24" min="1" max="60" step="1" oninput="calcRender()">
+    </div>
+    <div class="calc-plan-toggle">
+      <button class="calc-plan-btn active" id="calc-btn-std" onclick="calcSetPlan('std')">AutoBot</button>
+      <button class="calc-plan-btn" id="calc-btn-pro" onclick="calcSetPlan('pro')">AutoBot Pro</button>
+    </div>
+
+    <div class="calc-output">
+      <div class="calc-output-row"><span>Projected value</span><span class="calc-output-big" id="calc-result">$0</span></div>
+      <div class="calc-output-row"><span>Total return</span><span id="calc-return-pct">+0.0%</span></div>
+      <canvas id="calc-canvas"></canvas>
+    </div>
+
+    <div class="calc-disclaimer">Based on an illustrative fixed monthly rate, not a real trading result. Actual returns vary, compound irregularly, and are never guaranteed. See <a href="results.html">real verified client results →</a></div>
+  </div>
+</div>
+
+<section class="contact" id="contact">
+  <div class="contact-left">
+    <div class="contact-label">Get started</div>
+    <h2>Ready to<br><em>start earning?</em></h2>
+    <p class="contact-sub">We work with a select group of traders. Fill in the form and our team will reach out within 24 hours.</p>
+    <div class="contact-guarantees">
+      <div class="guarantee-item"><span class="g-check">✓</span><span>No pricing on this page — our team explains everything on the call</span></div>
+      <div class="guarantee-item"><span class="g-check">✓</span><span>Your funds stay on your exchange at all times</span></div>
+      <div class="guarantee-item"><span class="g-check">✓</span><span>We respond within one business day</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="contact-form">
+      <div class="field-group">
+        <div class="form-field"><label>First name *</label><input type="text" placeholder="John" required></div>
+        <div class="form-field"><label>Last name *</label><input type="text" placeholder="Smith" required></div>
+      </div>
+      <div class="form-field"><label>Email address *</label><input type="email" placeholder="john@example.com" required></div>
+      <div class="form-field"><label>Phone number *</label><input type="tel" placeholder="+1 (555) 000-0000" required></div>
+      <div class="form-field"><label>Which exchange do you use?</label><select><option value="" disabled selected>Select one</option><option>Bybit</option><option>Hyperliquid</option><option>Both</option><option>Neither — just getting started</option></select></div>
+      <button class="form-submit" onclick="handleSubmit(this)">Start Earning →</button>
+      <div class="contact-or"><div class="contact-or-line"></div><span class="contact-or-text">or</span><div class="contact-or-line"></div></div>
+      <button class="btn-calendar" onclick="alert('Calendar booking coming soon — use the form above or email us directly.')">📅 &nbsp;Book a 20-min call directly</button>
+      <div class="what-next">
+        <div class="what-next-label">What happens next</div>
+        <div class="what-next-steps">
+          <div class="what-next-step">
+            <span class="wn-num">01</span>
+            <span class="wn-text">We receive your details and review your fit</span>
+          </div>
+          <div class="what-next-step">
+            <span class="wn-num">02</span>
+            <span class="wn-text">Our team calls you within 24 hours to walk you through everything</span>
+          </div>
+          <div class="what-next-step">
+            <span class="wn-num">03</span>
+            <span class="wn-text">You're connected, configured, and live</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="faq-left fade-up">
+    <div class="mono-label">Before you ask</div>
+    <h2 class="section-h2">Common <em style="font-style:italic;color:rgba(255,255,255,0.4)">questions.</em></h2>
+    <p>Everything you need to know before talking to our team. If something isn't here, ask us directly.</p>
+  </div>
+  <div class="faq-right">
+    <div class="faq-item fade-up"><div class="faq-q" onclick="toggleFaq(this)">Is my capital safe? What if the bot makes a bad trade?<span class="faq-icon">+</span></div><div class="faq-a">AutoBot executes the strategy you define — it doesn't invent its own decisions. Your risk parameters (stop-loss, position size limits, max drawdown) are set by you and enforced automatically. The bot cannot access or withdraw your funds — it only places orders. Your capital stays on Bybit or Hyperliquid at all times.</div></div>
+    <div class="faq-item fade-up"><div class="faq-q" onclick="toggleFaq(this)">What is the minimum capital required?<span class="faq-icon">+</span></div><div class="faq-a">There's no hard minimum set by AutoBot. In practice, most clients start with $5,000–$10,000 to allow meaningful position sizing. Our team will help you understand what makes sense for your specific strategy on the onboarding call.</div></div>
+    <div class="faq-item fade-up"><div class="faq-q" onclick="toggleFaq(this)">Can I pause or stop it at any time?<span class="faq-icon">+</span></div><div class="faq-a">Yes. You can pause, adjust, or stop at any time from your dashboard. You can also revoke API keys directly from Bybit or Hyperliquid — which instantly disconnects AutoBot from your account.</div></div>
+    <div class="faq-item fade-up"><div class="faq-q" onclick="toggleFaq(this)">Do I need any technical knowledge?<span class="faq-icon">+</span></div><div class="faq-a">None. Our team handles the full setup on your onboarding call. No code, no configuration files, no technical background needed.</div></div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">AutoBot</span>
+  <div style="display:flex;gap:28px;">
+    <a href="results.html" class="footer-link">Client Results →</a>
+    <a href="#" class="footer-link" onclick="openCalculator();return false;">Calculator →</a>
+  </div>
+  <span class="footer-copy">© 2026 AutoBot · Algorithmic Crypto Trading · autobot.trading</span>
+</footer>
+
+<canvas id="trading-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;transition:opacity 0.4s ease;"></canvas>
+
+
+
+<script>
+
+window.addEventListener('load',function(){
+
+  // ── Scroll fade for both canvases ──
+  function fadeOnScroll(){
+    const fade = Math.max(0, 1 - window.scrollY / (window.innerHeight * 0.6));
+    const c3d = document.getElementById('hero-3d');
+    const cp  = document.getElementById('trading-canvas');
+    if(c3d) c3d.style.opacity = fade;
+    if(cp)  cp.style.opacity  = fade * 0.6;
+  }
+  window.addEventListener('scroll', fadeOnScroll, {passive:true});
+
+  // ── Particle field (subtle bg) ──
+  (function(){
+    const canvas = document.getElementById('trading-canvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+    resize();
+    window.addEventListener('resize', resize, {passive:true});
+    const COUNT=120, COLOR='14,14,12';
+    const pts = Array.from({length:COUNT}, ()=>({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight,
+      vx:(Math.random()-.5)*.2, vy:(Math.random()-.5)*.2,
+      r:Math.random()*.8+.3, a:Math.random()*.18+.04
+    }));
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pts.forEach(p=>{
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+        if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(${COLOR},${p.a})`; ctx.fill();
+      });
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  // ── 3D Luxury Figure ──
+  // A slowly rotating wireframe torus — minimal, geometric, elegant
+  (function(){
+    const canvas = document.getElementById('hero-3d');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    function resize(){
+      canvas.width  = canvas.offsetWidth  * devicePixelRatio;
+      canvas.height = canvas.offsetHeight * devicePixelRatio;
+      ctx.scale(devicePixelRatio, devicePixelRatio);
+    }
+    resize();
+    window.addEventListener('resize', ()=>{ ctx.setTransform(1,0,0,1,0,0); resize(); }, {passive:true});
+
+    // Mouse subtle interaction
+    const mouse = {x:0.5, y:0.5};
+    window.addEventListener('mousemove', e=>{
+      mouse.x = e.clientX / window.innerWidth;
+      mouse.y = e.clientY / window.innerHeight;
+    }, {passive:true});
+
+    let t = 0;
+
+    // Build torus geometry
+    const R = 1.0;   // major radius
+    const r = 0.38;  // tube radius
+    const SEG_U = 48; // segments around tube
+    const SEG_V = 72; // segments around torus
+
+    function torusPoint(u, v) {
+      const x = (R + r * Math.cos(v)) * Math.cos(u);
+      const y = (R + r * Math.cos(v)) * Math.sin(u);
+      const z = r * Math.sin(v);
+      return [x, y, z];
+    }
+
+    // Rotation matrices
+    function rotX(p, a) {
+      const [x,y,z] = p;
+      return [x, y*Math.cos(a)-z*Math.sin(a), y*Math.sin(a)+z*Math.cos(a)];
+    }
+    function rotY(p, a) {
+      const [x,y,z] = p;
+      return [x*Math.cos(a)+z*Math.sin(a), y, -x*Math.sin(a)+z*Math.cos(a)];
+    }
+    function rotZ(p, a) {
+      const [x,y,z] = p;
+      return [x*Math.cos(a)-y*Math.sin(a), x*Math.sin(a)+y*Math.cos(a), z];
+    }
+
+    // Project 3D -> 2D
+    function project(p, W, H) {
+      const FOV = 3.2;
+      const z = p[2] + FOV;
+      const scale = FOV / z;
+      const cx = W * 0.5;
+      const cy = H * 0.5;
+      const size = Math.min(W, H) * 0.32;
+      return [cx + p[0]*scale*size, cy - p[1]*scale*size, z];
+    }
+
+    function frame() {
+      const W = canvas.offsetWidth;
+      const H = canvas.offsetHeight;
+      ctx.clearRect(0, 0, W, H);
+
+      t += 0.004;
+      const rx = 0.35 + (mouse.y - 0.5) * 0.3;
+      const ry = t   + (mouse.x - 0.5) * 0.4;
+      const rz = t * 0.3;
+
+      // Draw U-lines (longitude)
+      for (let ui = 0; ui < SEG_U; ui++) {
+        const u = (ui / SEG_U) * Math.PI * 2;
+        ctx.beginPath();
+        let first = true;
+        for (let vi = 0; vi <= SEG_V; vi++) {
+          const v = (vi / SEG_V) * Math.PI * 2;
+          let p = torusPoint(u, v);
+          p = rotX(p, rx);
+          p = rotY(p, ry);
+          p = rotZ(p, rz);
+          const [px, py, pz] = project(p, W, H);
+          const depth = (pz - 2.5) / 1.5;
+          if (first) { ctx.moveTo(px, py); first=false; }
+          else ctx.lineTo(px, py);
+        }
+        // Depth-based alpha — lines facing camera are more visible
+        const baseA = 0.06 + Math.max(0, Math.cos(u + ry)) * 0.08;
+        ctx.strokeStyle = `rgba(14,14,12,${baseA.toFixed(3)})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+
+      // Draw V-lines (latitude)
+      for (let vi = 0; vi < SEG_V; vi += 3) {
+        const v = (vi / SEG_V) * Math.PI * 2;
+        ctx.beginPath();
+        let first = true;
+        for (let ui = 0; ui <= SEG_U; ui++) {
+          const u = (ui / SEG_U) * Math.PI * 2;
+          let p = torusPoint(u, v);
+          p = rotX(p, rx);
+          p = rotY(p, ry);
+          p = rotZ(p, rz);
+          const [px, py, pz] = project(p, W, H);
+          if (first) { ctx.moveTo(px, py); first=false; }
+          else ctx.lineTo(px, py);
+        }
+        const baseA = 0.04 + Math.max(0, Math.cos(v)) * 0.06;
+        ctx.strokeStyle = `rgba(14,14,12,${baseA.toFixed(3)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+});
+const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}}),{threshold:0.08,rootMargin:'0px 0px -32px 0px'});
+document.querySelectorAll('.fade-up').forEach((el,i)=>{el.style.transitionDelay=((i%3)*0.1)+'s';observer.observe(el);});
+
+function toggleMenu() {
+  const btn  = document.getElementById('nav-hamburger');
+  const menu = document.getElementById('mobile-menu');
+  const open = menu.classList.toggle('open');
+  btn.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+function closeMobileMenu() {
+  document.getElementById('nav-hamburger').classList.remove('open');
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.body.style.overflow = '';
+}
+// Close menu when clicking a section link
+document.querySelectorAll('.mobile-link:not(.cta)').forEach(l => {
+  l.addEventListener('click', closeMobileMenu);
+});
+
+function toggleFaq(el){const item=el.parentElement;const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));if(!isOpen)item.classList.add('open');}
+function handleSubmit(btn){btn.textContent='✓  Sent — we\'ll be in touch soon';btn.style.opacity='0.6';btn.style.cursor='default';btn.onclick=null;}
+
+/* ── Compound return calculator (illustrative only) ── */
+let calcPlan = 'std';
+const CALC_RATES = { std: 0.025, pro: 0.035 };
+
+function openCalculator(){
+  document.getElementById('calc-overlay').classList.add('open');
+  calcRender();
+}
+function closeCalculator(){
+  document.getElementById('calc-overlay').classList.remove('open');
+}
+if (location.hash === '#calculator') { openCalculator(); }
+function calcSetPlan(plan){
+  calcPlan = plan;
+  document.getElementById('calc-btn-std').classList.toggle('active', plan === 'std');
+  document.getElementById('calc-btn-pro').classList.toggle('active', plan === 'pro');
+  calcRender();
+}
+function calcRender(){
+  const capitalEl = document.getElementById('calc-capital');
+  const monthsEl = document.getElementById('calc-months');
+  let capital = parseFloat(capitalEl.value);
+  let months = parseInt(monthsEl.value, 10);
+  if (!isFinite(capital) || capital < 0) capital = 0;
+  if (!isFinite(months) || months < 1) months = 1;
+  months = Math.min(months, 60);
+
+  const rate = CALC_RATES[calcPlan];
+  const values = [capital];
+  for (let i = 1; i <= months; i++){ values.push(values[i-1] * (1 + rate)); }
+  const final = values[values.length-1];
+  const pct = capital > 0 ? (final/capital - 1) * 100 : 0;
+
+  document.getElementById('calc-result').textContent = '$' + Math.round(final).toLocaleString();
+  document.getElementById('calc-return-pct').textContent = (pct>=0?'+':'') + pct.toFixed(1) + '%';
+  calcDrawChart(values);
+}
+function calcDrawChart(values){
+  const canvas = document.getElementById('calc-canvas');
+  if (!canvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight || 70;
+  canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+
+  const lo = Math.min(...values), hi = Math.max(...values);
+  const range = (hi - lo) || 1;
+  const toX = i => (i/(values.length-1)) * w;
+  const toY = v => h - 6 - ((v-lo)/range) * (h-12);
+
+  const grad = ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,'rgba(180,155,100,0.35)');
+  grad.addColorStop(1,'rgba(180,155,100,0)');
+  ctx.beginPath();
+  ctx.moveTo(toX(0), h);
+  values.forEach((v,i) => ctx.lineTo(toX(i), toY(v)));
+  ctx.lineTo(toX(values.length-1), h);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  values.forEach((v,i) => { i===0 ? ctx.moveTo(toX(i),toY(v)) : ctx.lineTo(toX(i),toY(v)); });
+  ctx.strokeStyle = '#d8c9a3';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCalculator(); });
+
+/* ── ENGINE SCHEMATIC — live-looking ticking rows ── */
+(function(){
+  const btcEl = document.getElementById('ef-btc');
+  const ethEl = document.getElementById('ef-eth');
+  const solEl = document.getElementById('ef-sol');
+  if (!btcEl) return;
+
+  let btc = 67412, eth = 3281, sol = 164.20;
+  function setPrice(el, val, decimals){
+    const up = Math.random() > 0.45;
+    el.textContent = '$' + val.toLocaleString(undefined,{minimumFractionDigits:decimals, maximumFractionDigits:decimals});
+    el.classList.remove('up','down');
+    el.classList.add(up ? 'up' : 'down');
+  }
+  setInterval(() => {
+    btc += (Math.random()-0.5) * 45;
+    eth += (Math.random()-0.5) * 7;
+    sol += (Math.random()-0.5) * 0.7;
+    setPrice(btcEl, btc, 0);
+    setPrice(ethEl, eth, 0);
+    setPrice(solEl, sol, 2);
+  }, 2200);
+
+  const orderPairs = [
+    { side: 'buy',  text: 'LONG 0.42 BTC LIMIT $67,410' },
+    { side: 'sell', text: 'SHORT 1.10 ETH LIMIT $3,283' },
+    { side: 'buy',  text: 'LONG 12.4 SOL LIMIT $164.05' },
+    { side: 'sell', text: 'SHORT 0.18 BTC LIMIT $67,455' },
+    { side: 'buy',  text: 'LONG 3.2 ETH LIMIT $3,270' },
+    { side: 'sell', text: 'SHORT 40.0 SOL LIMIT $164.80' },
+  ];
+  const ordersWrap = document.getElementById('engine-orders');
+  let oi = 0;
+  if (ordersWrap) {
+    setInterval(() => {
+      const rows = ordersWrap.querySelectorAll('.eo-row');
+      rows.forEach((row, idx) => {
+        const d = orderPairs[(oi + idx) % orderPairs.length];
+        row.textContent = d.text;
+        row.className = 'eo-row ' + d.side;
+      });
+      oi++;
+    }, 2600);
+  }
+
+  const msEls = ['ex-ms-1','ex-ms-2','ex-ms-3'].map(id => document.getElementById(id));
+  setInterval(() => {
+    msEls.forEach(el => { if (el) el.textContent = (18 + Math.floor(Math.random()*35)) + 'ms'; });
+  }, 1800);
+
+  /* ── Market Scanner ── */
+  const scanFindings = [
+    ['Breakout ▲','up'], ['Vol +340%','hot'], ['RSI 28','plain'],
+    ['Squeeze forming','hot'], ['New high','up'], ['RSI 74','plain'],
+    ['Vol +180%','hot'], ['Trend flip','up'],
+  ];
+  const msEls2 = ['ms-1','ms-2','ms-3'].map(id => document.getElementById(id));
+  let msi = 0;
+  if (msEls2[0]) {
+    setInterval(() => {
+      msEls2.forEach((el, idx) => {
+        if (!el) return;
+        const [text, cls] = scanFindings[(msi + idx * 3) % scanFindings.length];
+        el.textContent = text;
+        el.className = 'sig-val' + (cls !== 'plain' ? ' ' + cls : '');
+      });
+      msi++;
+    }, 2400);
+  }
+
+  /* ── Social Scanner (X mentions) ── */
+  const socTickers = ['$PEPE','$SOL','$WIF','$BONK','$DOGE','$JUP'];
+  const socEls = ['soc-1','soc-2','soc-3'].map(id => document.getElementById(id));
+  const socLabelEls = document.querySelectorAll('#soc-1,#soc-2,#soc-3');
+  let socBase = [2340, 1180, 890];
+  if (socEls[0]) {
+    setInterval(() => {
+      socEls.forEach((el, idx) => {
+        if (!el) return;
+        socBase[idx] = Math.max(120, socBase[idx] + Math.round((Math.random()-0.35) * 220));
+        el.textContent = '▲ ' + socBase[idx].toLocaleString() + '/hr';
+      });
+    }, 2000);
+    // occasionally rotate which coins are trending
+    let sti = 0;
+    setInterval(() => {
+      const labels = document.querySelectorAll('.engine-row2 .engine-panel:nth-child(2) .sig-label');
+      labels.forEach((el, idx) => { el.textContent = socTickers[(sti + idx) % socTickers.length]; });
+      sti++;
+    }, 5200);
+  }
+
+  /* ── Executor — Matrix code-rain ── */
+  (function initMatrixRain(){
+    const canvas = document.getElementById('matrix-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const chars = '01アイウエオカキクケコサシスセソ0123456789ABCDEF$€'.split('');
+    const fontSize = 11;
+    let columns, drops;
+
+    function resize(){
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      columns = Math.max(1, Math.floor(canvas.width / fontSize));
+      drops = new Array(columns).fill(0).map(() => Math.floor(Math.random() * -20));
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function draw(){
+      ctx.fillStyle = 'rgba(8,8,7,0.16)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < columns; i++){
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        const y = drops[i] * fontSize;
+        ctx.fillStyle = Math.random() > 0.94 ? 'rgba(220,255,230,0.9)' : 'rgba(74,222,128,0.7)';
+        ctx.fillText(text, i * fontSize, y);
+        if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 65);
+  })();
+
+  /* ── News Sentiment ── */
+  const bullFill = document.getElementById('ns-bull-fill'), bullVal = document.getElementById('ns-bull-val');
+  const neuFill  = document.getElementById('ns-neu-fill'),  neuVal  = document.getElementById('ns-neu-val');
+  const bearFill = document.getElementById('ns-bear-fill'), bearVal = document.getElementById('ns-bear-val');
+  if (bullFill) {
+    setInterval(() => {
+      let bull = 62 + Math.round((Math.random()-0.5) * 14);
+      let bear = 10 + Math.round((Math.random()-0.5) * 6);
+      bull = Math.max(35, Math.min(80, bull));
+      bear = Math.max(4, Math.min(25, bear));
+      let neu = Math.max(5, 100 - bull - bear);
+      bullFill.style.width = bull + '%'; bullVal.textContent = bull + '%';
+      neuFill.style.width  = neu  + '%'; neuVal.textContent  = neu  + '%';
+      bearFill.style.width = bear + '%'; bearVal.textContent = bear + '%';
+    }, 3400);
+  }
+})();
+</script>
+</body>
+</html>
