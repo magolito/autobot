@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
 <title>Compare — AutoBot vs AutoBot Pro</title>
 <meta name="description" content="One engine, two ways to run it. See how AutoBot's rules-based trend following compares to AutoBot Pro's AI layer — which reads social sentiment, news and on-chain data to catch asymmetric setups.">
 <meta property="og:type" content="website">
@@ -84,89 +85,95 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
   transition:box-shadow 0.5s ease,border-color 0.5s ease;
 }
 .cv-term.pulsing{border-color:rgba(201,169,120,0.55);box-shadow:inset 0 1px 0 rgba(255,255,255,0.04), 0 0 0 1px rgba(201,169,120,0.22),0 0 60px rgba(201,169,120,0.2), 0 30px 60px -20px rgba(0,0,0,0.6);}
-/* HUD corner brackets — top two anchored to the terminal, bottom two to the conviction strip so all four sit at the true edges of the square */
-.cv-term::before,.cv-term::after,.cv-conviction-area::before,.cv-conviction-area::after{content:'';position:absolute;width:16px;height:16px;z-index:5;pointer-events:none;}
+/* HUD corner brackets — top two anchored to the terminal, bottom two to the chart area */
+.cv-term::before,.cv-term::after,.cv-chart-area::before,.cv-chart-area::after{content:'';position:absolute;width:16px;height:16px;z-index:5;pointer-events:none;}
 .cv-term::before{top:10px;left:10px;border-top:1px solid rgba(201,169,120,0.4);border-left:1px solid rgba(201,169,120,0.4);}
 .cv-term::after{top:10px;right:10px;border-top:1px solid rgba(201,169,120,0.4);border-right:1px solid rgba(201,169,120,0.4);}
-.cv-conviction-area::before{bottom:8px;left:10px;border-bottom:1px solid rgba(255,255,255,0.14);border-left:1px solid rgba(255,255,255,0.14);}
-.cv-conviction-area::after{bottom:8px;right:10px;border-bottom:1px solid rgba(255,255,255,0.14);border-right:1px solid rgba(255,255,255,0.14);}
+.cv-chart-area::before{bottom:10px;left:10px;border-bottom:1px solid rgba(255,255,255,0.14);border-left:1px solid rgba(255,255,255,0.14);}
+.cv-chart-area::after{bottom:10px;right:10px;border-bottom:1px solid rgba(255,255,255,0.14);border-right:1px solid rgba(255,255,255,0.14);}
 .cv-chart-area{position:relative;flex:1;min-height:0;}
 .cv-chart-area canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
-.cv-conviction-area{position:relative;height:60px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;}
-.cv-conviction-area canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
-.cv-conviction-label{position:absolute;top:8px;left:16px;z-index:3;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.25);}
-.cv-conviction-fixed{position:absolute;top:8px;right:16px;z-index:3;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.22);}
 
-.cv-live-badge{position:absolute;top:14px;right:16px;z-index:4;display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.35);}
-.cv-live-badge-dot{width:6px;height:6px;border-radius:50%;background:#e0605a;box-shadow:0 0 0 0 rgba(224,96,90,0.6);animation:cvRec 1.6s infinite;}
-@keyframes cvRec{0%{box-shadow:0 0 0 0 rgba(224,96,90,0.55);}70%{box-shadow:0 0 0 6px rgba(224,96,90,0);}100%{box-shadow:0 0 0 0 rgba(224,96,90,0);}}
-
-.cv-tag{position:absolute;right:0;z-index:4;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:10.5px;padding:3px 9px 3px 8px;border-radius:4px 0 0 4px;white-space:nowrap;pointer-events:none;}
-.cv-tag.std{background:rgba(255,255,255,0.88);color:#0a0a08;}
-.cv-tag.pro{background:var(--gold);color:#0a0a08;}
-
-.cv-annotation{
-  position:absolute;left:16px;bottom:14px;z-index:4;max-width:70%;
-  font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:0.03em;
-  color:#0a0a08;background:var(--gold);padding:7px 12px;border-radius:20px;
-  opacity:0;transform:translateY(6px);
-  transition:opacity 0.4s ease,transform 0.4s ease;
-  pointer-events:none;
-}
-.cv-annotation.show{opacity:0.94;transform:translateY(0);}
+.cv-end-badge{position:absolute;right:14px;z-index:4;transform:translateY(-50%);font-family:'DM Mono',monospace;font-size:12px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap;pointer-events:none;box-shadow:0 8px 18px rgba(0,0,0,0.4);transition:top 0.25s ease;}
+.cv-end-badge.std{background:rgba(255,255,255,0.92);color:#0a0a08;}
+.cv-end-badge.pro{background:var(--gold);color:#0a0a08;}
 
 .cv-caption{display:flex;justify-content:space-between;margin-top:10px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.16);}
 .cv-foot{display:flex;justify-content:space-between;margin-top:22px;gap:24px;}
 .cv-foot-item{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:0.03em;color:rgba(255,255,255,0.3);line-height:1.7;max-width:340px;}
 .cv-foot-item b{color:rgba(255,255,255,0.6);font-weight:500;}
 
-/* ═══ FEATURE COMPARISON ═══ */
-.feat-wrap{padding:96px 64px 0;}
+/* ═══ FEATURE COMPARISON — premium panel with highlighted Pro column ═══ */
+.feat-wrap{padding:110px 64px 0;}
 .feat-eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);margin-bottom:14px;}
 .feat-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,3.2vw,40px);font-weight:400;letter-spacing:-0.02em;margin-bottom:44px;max-width:640px;line-height:1.15;}
 .feat-h2 em{font-style:italic;color:var(--gray-mid);}
-.feat-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;border-top:1px solid var(--border);}
+.feat-panel{border-radius:20px;border:1px solid var(--border);overflow:hidden;box-shadow:0 40px 80px -48px rgba(14,14,12,0.3);background:var(--white-pure,#fff);}
+.feat-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;}
 .feat-row{display:contents;}
-.feat-row > div{padding:22px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.feat-row.head > div{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);padding-top:0;padding-bottom:16px;border-bottom:1px solid var(--border-strong,var(--border));}
-.feat-row.head .col-pro{color:var(--black);}
+.feat-row > div{padding:19px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.feat-row:last-child > div{border-bottom:none;}
+.feat-row.head > div{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);padding-top:24px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.feat-row.head .col-std{font-weight:500;color:var(--black);}
+.feat-row.head .col-pro{color:var(--black);flex-direction:column;align-items:flex-start;gap:7px;}
+.feat-pro-badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.09em;text-transform:uppercase;background:var(--gold);color:#3d3018;padding:4px 10px;border-radius:20px;font-weight:500;}
 .feat-label{font-size:14px;color:var(--gray-mid);}
 .col-std,.col-pro{font-size:13.5px;color:var(--black);}
 .col-pro{position:relative;}
-.feat-grid .col-pro{background:linear-gradient(rgba(201,169,120,0.05),rgba(201,169,120,0.05));}
-.fi{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
-.fi.on{background:rgba(14,14,12,0.08);color:var(--black);}
-.fi.on.gold{background:rgba(201,169,120,0.22);color:#8a6d3f;}
-.fi.off{background:transparent;color:var(--gray);border:1px solid var(--border);}
-.col-pro-strong{font-weight:500;color:#7a5c30;}
+.feat-grid .col-pro{background:rgba(201,169,120,0.055);border-left:1px solid rgba(201,169,120,0.16);border-right:1px solid rgba(201,169,120,0.16);}
+.fi{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.fi.on{background:rgba(14,14,12,0.07);color:var(--black);}
+.fi.on.gold{background:var(--gold);color:#fff;box-shadow:0 3px 10px rgba(201,169,120,0.45);}
+.fi.off{background:transparent;color:var(--gray-light,var(--gray));border:1px solid var(--border);}
+.col-pro-strong{font-weight:500;color:#8a6d3f;position:relative;padding-left:13px;}
+.col-pro-strong::before{content:'';position:absolute;left:0;top:3px;bottom:3px;width:2px;background:var(--gold);border-radius:2px;}
+.feat-row.final > div{background:#0e0e0c;padding:28px 24px;}
+.feat-row.final .feat-label{color:rgba(255,255,255,0.5);font-size:14px;}
+.feat-row.final .col-std{color:rgba(255,255,255,0.55);font-size:14px;}
+.feat-row.final .col-pro{background:transparent;border:none;color:#fff;font-family:'Playfair Display',serif;font-style:italic;font-size:15.5px;line-height:1.4;}
 
-/* ═══ SIGNAL SOURCES ═══ */
-.signals-wrap{padding:96px 64px 0;}
-.signals-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,3.2vw,40px);font-weight:400;letter-spacing:-0.02em;max-width:680px;line-height:1.15;margin-bottom:40px;}
+/* ═══ SIGNAL SOURCES — full-bleed cream band ═══ */
+.signals-band{background:var(--cream,#faf9f6);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:120px;padding:100px 64px 104px;}
+.signals-h2{font-family:'Playfair Display',serif;font-size:clamp(28px,3.2vw,40px);font-weight:400;letter-spacing:-0.02em;max-width:680px;line-height:1.15;margin-bottom:48px;}
 .signals-h2 em{font-style:italic;color:var(--gray-mid);}
-.signals-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.signal-chip{border:1px solid var(--border);border-radius:12px;padding:20px 18px;display:flex;flex-direction:column;gap:10px;}
-.signal-chip-dot{width:7px;height:7px;border-radius:50%;background:var(--gray-light,var(--gray));}
-.signal-chip.pro .signal-chip-dot{background:var(--gold);}
-.signal-chip-name{font-size:14px;font-weight:500;color:var(--black);letter-spacing:-0.005em;}
-.signal-chip-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);}
-.signal-chip.pro .signal-chip-tag{color:#8a6d3f;}
-.signals-flow{display:flex;justify-content:center;padding:22px 0 4px;}
-.signals-flow-line{width:1px;height:34px;background:linear-gradient(to bottom,var(--border),var(--gold));}
-.signals-engine{
-  margin:0 auto; max-width:720px; text-align:center;
-  background:var(--black); color:var(--white); border-radius:14px;
-  padding:28px 36px; font-family:'DM Sans',sans-serif; font-size:14.5px; line-height:1.7;
+.signals-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.signal-chip{
+  background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 20px 20px;
+  display:flex;flex-direction:column;gap:12px;
+  box-shadow:0 20px 40px -30px rgba(14,14,12,0.2);
+  transition:transform 0.25s ease,box-shadow 0.25s ease;
 }
+.signal-chip:hover{transform:translateY(-3px);box-shadow:0 24px 46px -26px rgba(14,14,12,0.24);}
+.signal-chip.pro{border-color:rgba(201,169,120,0.4);background:linear-gradient(180deg,rgba(201,169,120,0.07),rgba(201,169,120,0.015) 60%);}
+.signal-chip-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(14,14,12,0.055);color:var(--black);}
+.signal-chip.pro .signal-chip-icon{background:rgba(201,169,120,0.2);color:#8a6d3f;}
+.signal-chip-icon svg{width:18px;height:18px;}
+.signal-chip-name{font-size:14.5px;font-weight:500;color:var(--black);letter-spacing:-0.005em;}
+.signal-chip-desc{font-size:12.5px;color:var(--gray-mid);line-height:1.55;font-weight:300;}
+.signal-chip-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);margin-top:auto;padding-top:8px;}
+.signal-chip.pro .signal-chip-tag{color:#8a6d3f;}
+.signals-flow{display:flex;justify-content:center;padding:28px 0 6px;}
+.signals-flow-line{width:1px;height:36px;background:linear-gradient(to bottom,var(--border),var(--gold));}
+.signals-engine{
+  margin:0 auto; max-width:760px; text-align:left;
+  background:#0e0e0c; color:var(--white); border-radius:16px;
+  padding:32px 38px; font-family:'DM Sans',sans-serif; font-size:14.5px; line-height:1.75;
+  box-shadow:0 34px 64px -34px rgba(14,14,12,0.4);
+}
+.signals-engine-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(201,169,120,0.8);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.signals-engine-label::before{content:'';width:16px;height:1px;background:rgba(201,169,120,0.5);}
+.signals-engine p{color:rgba(255,255,255,0.65);margin:0;}
 .signals-engine b{color:var(--gold); font-weight:500;}
 
 /* ═══ AI LOOP DIAGRAM ═══ */
-.loop-wrap{padding:110px 64px 0;display:grid;grid-template-columns:0.9fr 1.1fr;gap:64px;align-items:center;}
+.loop-wrap{padding:120px 64px 0;display:grid;grid-template-columns:0.9fr 1.1fr;gap:64px;align-items:center;}
+.loop-visual{position:relative;}
+.loop-visual::before{content:'';position:absolute;inset:-50px;background:radial-gradient(circle at 50% 50%, rgba(201,169,120,0.12), transparent 62%);pointer-events:none;}
 .loop-copy .feat-eyebrow{margin-bottom:14px;}
 .loop-copy h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3vw,38px);font-weight:400;letter-spacing:-0.02em;line-height:1.15;margin-bottom:18px;}
 .loop-copy h2 em{font-style:italic;color:var(--gray-mid);}
 .loop-copy p{color:var(--gray-mid);font-size:15px;line-height:1.75;max-width:420px;}
-.loop-diagram{position:relative;width:100%;max-width:420px;aspect-ratio:1;margin:0 auto;}
+.loop-diagram{position:relative;width:100%;max-width:440px;aspect-ratio:1;margin:0 auto;z-index:1;}
 .loop-diagram svg{width:100%;height:100%;}
 .loop-node{position:absolute;width:128px;transform:translate(-50%,-50%);text-align:center;}
 .loop-node-dot{width:11px;height:11px;border-radius:50%;background:var(--border-strong,rgba(14,14,12,0.14));margin:0 auto 10px;transition:background 0.4s,box-shadow 0.4s,transform 0.4s;position:relative;z-index:2;}
@@ -184,7 +191,19 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
 /* ═══ DISCLAIMER / CTA / FOOTER ═══ */
 .disclaimer { padding: 96px 64px 0; }
 .disclaimer p { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 0.04em; line-height: 1.85; max-width: 860px; }
-.cta-band { margin: 40px 64px 80px; background: var(--black); border-radius: 14px; padding: 60px 64px; display: flex; align-items: center; justify-content: space-between; gap: 48px; }
+.cta-band {
+  margin: 64px 64px 96px; border-radius: 20px; padding: 66px 64px;
+  display: flex; align-items: center; justify-content: space-between; gap: 48px;
+  position: relative; overflow: hidden;
+  background: #0a0a08;
+  background-image:
+    radial-gradient(ellipse at 15% 20%, rgba(180,155,100,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(180,155,100,0.05) 0%, transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  box-shadow: 0 50px 100px -55px rgba(0,0,0,0.55);
+}
+.cta-band::before{content:'';position:absolute;top:0;left:10%;width:80%;height:1px;background:linear-gradient(90deg,transparent,rgba(180,155,100,0.35),transparent);z-index:1;}
+.cta-text,.cta-actions{position:relative;z-index:2;}
 .cta-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.5vw, 46px); font-weight: 400; letter-spacing: -0.025em; line-height: 1.1; color: #fff; }
 .cta-text h2 em { font-style: italic; color: rgba(255,255,255,0.42); }
 .cta-text p { font-size: 15px; color: rgba(255,255,255,0.38); margin-top: 12px; font-weight: 300; max-width: 380px; line-height: 1.6; }
@@ -215,15 +234,19 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   .cv-legend{gap:10px;}
   .cv-legend-item{padding:6px 10px;font-size:10px;}
   .cv-term{height:360px;}
-  .cv-conviction-area{height:52px;}
   .cv-foot{flex-direction:column;gap:14px;}
-  .signals-wrap{padding:64px 16px 0;}
+  .signals-band{margin-top:64px;padding:56px 16px 60px;}
   .signals-row{grid-template-columns:1fr 1fr;}
+  .signal-chip{padding:18px 16px 16px;}
   .signals-engine{padding:22px 20px;font-size:13.5px;}
   .feat-wrap{padding:64px 16px 0;}
+  .feat-panel{border-radius:14px;}
   .feat-grid{grid-template-columns:1.1fr 1fr 1fr;font-size:12px;}
   .feat-row > div{padding:16px 10px;}
+  .feat-row.head .col-pro{gap:5px;}
+  .feat-pro-badge{font-size:8px;padding:3px 7px;}
   .loop-wrap{padding:72px 20px 0;}
+  .loop-visual::before{inset:-24px;}
   .loop-node{width:96px;}
   .disclaimer{padding:64px 20px 0;}
   .cta-band { margin: 40px 16px 56px; padding: 40px 26px; flex-direction: column; gap: 28px; }
@@ -241,7 +264,6 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
     <a href="index.html#how" class="nav-link">How it works</a>
     <a href="results.html" class="nav-link">Client results</a>
     <a href="compare.html" class="nav-link active">Compare</a>
-    <a href="index.html#calculator" class="nav-link">Calculator</a>
     <a href="index.html#contact" class="nav-cta">Get a demo</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -250,21 +272,20 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   <a href="index.html#how" class="mobile-link">How it works</a>
   <a href="results.html" class="mobile-link">Client results</a>
   <a href="compare.html" class="mobile-link">Compare</a>
-  <a href="index.html#calculator" class="mobile-link">Calculator</a>
   <a href="index.html#contact" class="mobile-link cta" onclick="closeMobileMenu()">Get a demo →</a>
 </div>
 
 <div class="page-header fade-up">
   <div class="page-eyebrow"><span class="page-eyebrow-dot"></span>Product comparison</div>
-  <h1>One engine.<br><em>Two ways to run it.</em></h1>
-  <p class="sub">Both versions execute your strategy 24/7 with the same secure infrastructure. The difference is what happens to the strategy itself once it's live — watch it below.</p>
+  <h1>AutoBot vs AutoBot Pro.<br><em>Same engine, different strategy.</em></h1>
+  <p class="sub">Both plans trade for you 24/7 through the same secure connection to your exchange. The only real difference is how the strategy adapts over time — see it live below.</p>
 </div>
 
 <div class="cv-section fade-up">
   <div class="cv-head">
     <div>
       <div class="cv-eyebrow">Live simulation</div>
-      <div class="cv-title">Same market. One chart. Watch the gap grow.</div>
+      <div class="cv-title">Same start. Watch the paths split.</div>
     </div>
     <div class="cv-legend">
       <div class="cv-legend-item"><span class="cv-legend-dot"></span>AutoBot<span class="cv-legend-num" id="stat-std">+0.0%</span></div>
@@ -276,62 +297,82 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   <div class="cv-term" id="cv-term">
     <div class="cv-chart-area">
       <canvas id="cv-main-canvas"></canvas>
-      <div class="cv-live-badge"><span class="cv-live-badge-dot"></span>Live</div>
-      <div class="cv-tag std" id="tag-std">+0.0%</div>
-      <div class="cv-tag pro" id="tag-pro">+0.0%</div>
-      <div class="cv-annotation" id="cv-anno">Scanning social sentiment…</div>
-    </div>
-    <div class="cv-conviction-area">
-      <div class="cv-conviction-label">AI conviction / sizing — Pro</div>
-      <div class="cv-conviction-fixed">AutoBot: fixed size</div>
-      <canvas id="cv-conviction-canvas"></canvas>
+      <div class="cv-end-badge std" id="badge-std">+0.0%</div>
+      <div class="cv-end-badge pro" id="badge-pro">+0.0%</div>
     </div>
   </div>
   <div class="cv-caption"><span>AutoBot Strategy Engine — Live Simulation</span><span>Not real account data</span></div>
 
   <div class="cv-foot">
-    <div class="cv-foot-item"><b>AutoBot</b> runs the exact rules set on your onboarding call, following price trend. Reliable and consistent — reviewed by our team on a periodic cadence.</div>
-    <div class="cv-foot-item"><b>AutoBot Pro</b> also reads social sentiment, news flow and on-chain data to catch asymmetric setups trend-following alone would miss — then sizes into them harder.</div>
+    <div class="cv-foot-item"><b>AutoBot</b> follows price trends using the exact rules you set with our team. Steady and predictable — we check in on it every so often.</div>
+    <div class="cv-foot-item"><b>AutoBot Pro</b> does that too, but also reads social media, news and on-chain data to catch bigger opportunities early — then bets more when it's confident.</div>
   </div>
 </div>
 
 <div class="feat-wrap fade-up">
   <div class="feat-eyebrow">Side by side</div>
   <h2 class="feat-h2">Same foundation.<br><em>Different strategy engine.</em></h2>
+  <div class="feat-panel">
   <div class="feat-grid">
-    <div class="feat-row head"><div>&nbsp;</div><div class="col-std">AutoBot</div><div class="col-pro">AutoBot Pro</div></div>
+    <div class="feat-row head"><div>&nbsp;</div><div class="col-std">AutoBot</div><div class="col-pro"><span class="feat-pro-badge">Most popular</span>AutoBot Pro</div></div>
     <div class="feat-row"><div class="feat-label">Automated execution, 24/7</div><div class="col-std"><span class="fi on">✓</span></div><div class="col-pro"><span class="fi on gold">✓</span></div></div>
-    <div class="feat-row"><div class="feat-label">Bybit, Hyperliquid &amp; Binance connectivity</div><div class="col-std"><span class="fi on">✓</span></div><div class="col-pro"><span class="fi on gold">✓</span></div></div>
-    <div class="feat-row"><div class="feat-label">Sub-50ms order execution</div><div class="col-std"><span class="fi on">✓</span></div><div class="col-pro"><span class="fi on gold">✓</span></div></div>
+    <div class="feat-row"><div class="feat-label">Works with Bybit, Hyperliquid &amp; Binance</div><div class="col-std"><span class="fi on">✓</span></div><div class="col-pro"><span class="fi on gold">✓</span></div></div>
+    <div class="feat-row"><div class="feat-label">Orders placed in under 50ms</div><div class="col-std"><span class="fi on">✓</span></div><div class="col-pro"><span class="fi on gold">✓</span></div></div>
     <div class="feat-row"><div class="feat-label">Built-in risk controls</div><div class="col-std"><span class="fi on">✓</span></div><div class="col-pro"><span class="fi on gold">✓</span></div></div>
     <div class="feat-row"><div class="feat-label">Full live trade log</div><div class="col-std"><span class="fi on">✓</span></div><div class="col-pro"><span class="fi on gold">✓</span></div></div>
-    <div class="feat-row"><div class="feat-label">Guided onboarding &amp; support</div><div class="col-std">Standard</div><div class="col-pro col-pro-strong">Priority</div></div>
-    <div class="feat-row"><div class="feat-label">Strategy updates</div><div class="col-std">Manual, periodic review</div><div class="col-pro col-pro-strong">Continuous, AI-driven</div></div>
-    <div class="feat-row"><div class="feat-label">Adaptation speed</div><div class="col-std">On our team's review cycle</div><div class="col-pro col-pro-strong">Near real-time</div></div>
-    <div class="feat-row"><div class="feat-label">Signal sources</div><div class="col-std">Price &amp; technical trend only</div><div class="col-pro col-pro-strong">Price, trend + social sentiment, news &amp; on-chain data</div></div>
-    <div class="feat-row"><div class="feat-label">Position sizing</div><div class="col-std">Fixed sizing rules</div><div class="col-pro col-pro-strong">Sizes up automatically on high-conviction, asymmetric setups</div></div>
-    <div class="feat-row"><div class="feat-label">Designed for</div><div class="col-std">Consistent, disciplined execution</div><div class="col-pro col-pro-strong">That, plus faster-tuned performance as conditions shift</div></div>
+    <div class="feat-row"><div class="feat-label">Support</div><div class="col-std">Standard</div><div class="col-pro col-pro-strong">Priority</div></div>
+    <div class="feat-row"><div class="feat-label">How the strategy improves</div><div class="col-std">Reviewed by our team occasionally</div><div class="col-pro col-pro-strong">Improved by AI, continuously</div></div>
+    <div class="feat-row"><div class="feat-label">How fast it reacts to the market</div><div class="col-std">On our team's review cycle</div><div class="col-pro col-pro-strong">Instantly, as conditions change</div></div>
+    <div class="feat-row"><div class="feat-label">What it pays attention to</div><div class="col-std">Price movement only</div><div class="col-pro col-pro-strong">Price, plus social media, news &amp; on-chain data</div></div>
+    <div class="feat-row"><div class="feat-label">How much it risks per trade</div><div class="col-std">The same amount, every time</div><div class="col-pro col-pro-strong">More, only when it's most confident</div></div>
+    <div class="feat-row"><div class="feat-label">Price</div><div class="col-std">$5,000/year</div><div class="col-pro col-pro-strong">$10,000/year</div></div>
+    <div class="feat-row final"><div class="feat-label">Bottom line</div><div class="col-std">Steady, disciplined execution</div><div class="col-pro">That — plus an AI edge that adapts as the market moves</div></div>
+  </div>
   </div>
 </div>
 
-<div class="signals-wrap fade-up">
+<div class="signals-band fade-up">
   <h2 class="signals-h2">AutoBot Pro doesn't just watch price.<br><em>It reads the whole market.</em></h2>
   <div class="signals-row">
-    <div class="signal-chip"><span class="signal-chip-dot"></span><span class="signal-chip-name">Price &amp; technical trend</span><span class="signal-chip-tag">Both plans</span></div>
-    <div class="signal-chip pro"><span class="signal-chip-dot"></span><span class="signal-chip-name">Social &amp; sentiment signals</span><span class="signal-chip-tag">Pro only</span></div>
-    <div class="signal-chip pro"><span class="signal-chip-dot"></span><span class="signal-chip-name">News &amp; macro events</span><span class="signal-chip-tag">Pro only</span></div>
-    <div class="signal-chip pro"><span class="signal-chip-dot"></span><span class="signal-chip-name">On-chain flow data</span><span class="signal-chip-tag">Pro only</span></div>
+    <div class="signal-chip">
+      <div class="signal-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg></div>
+      <div class="signal-chip-name">Price &amp; trend</div>
+      <div class="signal-chip-desc">Classic chart patterns and momentum — what every trading bot uses.</div>
+      <div class="signal-chip-tag">Both plans</div>
+    </div>
+    <div class="signal-chip pro">
+      <div class="signal-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4V5z"/></svg></div>
+      <div class="signal-chip-name">Social sentiment</div>
+      <div class="signal-chip-desc">What crypto influencers and traders are saying, as it happens.</div>
+      <div class="signal-chip-tag">Pro only</div>
+    </div>
+    <div class="signal-chip pro">
+      <div class="signal-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h13v14H4z"/><path d="M17 8h3v11H7"/><path d="M7 9h7M7 12h7M7 15h4"/></svg></div>
+      <div class="signal-chip-name">News &amp; macro</div>
+      <div class="signal-chip-desc">Breaking headlines and events that can move the market fast.</div>
+      <div class="signal-chip-tag">Pro only</div>
+    </div>
+    <div class="signal-chip pro">
+      <div class="signal-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M8 13l-2 2a3 3 0 004 4l2-2"/><path d="M16 11l2-2a3 3 0 00-4-4l-2 2"/></svg></div>
+      <div class="signal-chip-name">On-chain flow</div>
+      <div class="signal-chip-desc">Where large wallets are actually moving money, on the blockchain itself.</div>
+      <div class="signal-chip-tag">Pro only</div>
+    </div>
   </div>
   <div class="signals-flow"><div class="signals-flow-line"></div></div>
-  <div class="signals-engine"><b>AI Sizing Engine —</b> cross-references every signal to flag asymmetric setups, then increases position size only where conviction is highest. AutoBot alone sizes every trend-following trade the same.</div>
+  <div class="signals-engine">
+    <div class="signals-engine-label">In simple words</div>
+    <p>AutoBot Pro checks all four signals at once. When they agree, its confidence goes up — and it bets a little more on that trade. <b>AutoBot alone only looks at price</b>, and bets the same amount every time, no matter what.</p>
+  </div>
 </div>
 
 <div class="loop-wrap fade-up">
   <div class="loop-copy">
     <div class="feat-eyebrow">How the AI keeps working</div>
     <h2>It doesn't set and forget.<br><em>It loops, all year.</em></h2>
-    <p>AutoBot Pro's AI runs this cycle continuously in the background — pulling in social sentiment, news flow and on-chain data alongside price, then sizing up the setups with the most conviction. No manual review needed, no waiting for a quarterly check-in.</p>
+    <p>Every few seconds, AutoBot Pro checks price, social media and news together. When it spots something worth betting more on, it sizes up automatically — then goes right back to scanning. No quarterly review. No manual work. It just keeps going, all day, every day.</p>
   </div>
+  <div class="loop-visual">
   <div class="loop-diagram">
     <svg viewBox="0 0 200 200">
       <circle cx="100" cy="100" r="82" fill="none" stroke="rgba(14,14,12,0.1)" stroke-width="1" stroke-dasharray="3 5"/>
@@ -345,6 +386,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       <div class="loop-center-label">Continuous</div>
       <div class="loop-center-word">AI loop</div>
     </div>
+  </div>
   </div>
 </div>
 
@@ -386,17 +428,17 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
 });
 
 /* ══════════════════════════════════════════════
-   LIVE COMPARISON — one terminal, two overlaid equity curves.
-   Standard tracks base trend-following returns. Pro earns the same
-   base returns PLUS periodic "asymmetric trade" boosts (sourced from
-   social/news/on-chain signals), so it structurally pulls ahead —
-   shown on a shared scale so the gap is unambiguous, plus live %,
-   trade markers, and a conviction/sizing indicator strip.
+   LIVE COMPARISON — one shared engine that forks into two paths.
+   Both plans run identically until the fork point, then AutoBot Pro
+   peels away — earning the same base trend-following return as
+   AutoBot, plus periodic boosts sourced from social/news/on-chain
+   signals. The fork itself is the visual: same start, different path.
    ══════════════════════════════════════════════ */
 (function(){
   const LEN = 90;
   const TICK_MS = 650;
   const SMOOTH = 0.16; // per-frame interpolation factor — higher = snappier, lower = smoother
+  const FORK_INDEX = Math.floor(LEN * 0.24); // both paths are identical before this point
 
   /* Purely decorative candlestick texture (not tied to the equity math) */
   const bgNoise = [];
@@ -418,41 +460,16 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
   const dispStd   = new Array(LEN).fill(stdEquity);
   const dispPro   = new Array(LEN).fill(proEquity);
 
-  /* Conviction / sizing intensity for Pro (0..1), spikes on a boost then decays */
-  let conviction = 0.15;
-  const targetConv = new Array(LEN).fill(conviction);
-  const dispConv   = new Array(LEN).fill(conviction);
-
   /* Trade markers — recent boost events, aged out over time as the chart scrolls */
   const events = [];
 
-  const tokens = ['SOL','TIA','JUP','ONDO','PYTH','WIF','ARB'];
-  const proMessages = () => {
-    const t = tokens[Math.floor(Math.random()*tokens.length)];
-    const msgs = [
-      'Scanning social sentiment…',
-      'Cross-referencing on-chain flow…',
-      `Asymmetric setup found on ${t} — sizing up…`,
-      'News flow confirms conviction — position increased.',
-      'Correlating order flow with sentiment spike…',
-    ];
-    return msgs[Math.floor(Math.random()*msgs.length)];
-  };
-
-  const anno     = document.getElementById('cv-anno');
-  const term     = document.getElementById('cv-term');
-  const tagStd   = document.getElementById('tag-std');
-  const tagPro   = document.getElementById('tag-pro');
+  const term      = document.getElementById('cv-term');
+  const badgeStd  = document.getElementById('badge-std');
+  const badgePro  = document.getElementById('badge-pro');
   const statStd   = document.getElementById('stat-std');
   const statPro   = document.getElementById('stat-pro');
   const statDelta = document.getElementById('stat-delta');
 
-  function flashAnnotation(text){
-    anno.textContent = text;
-    anno.classList.add('show');
-    clearTimeout(anno._t);
-    anno._t = setTimeout(() => anno.classList.remove('show'), 2400);
-  }
   function pulseTerm(){
     term.classList.add('pulsing');
     setTimeout(() => term.classList.remove('pulsing'), 1000);
@@ -467,28 +484,19 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
     stdEquity *= (1 + rBase/100);
     proEquity *= (1 + rBase/100);
 
-    /* conviction decays toward a low baseline every tick */
-    conviction = Math.max(0.1, conviction * 0.82);
-
     /* Pro-only: occasional asymmetric-trade boost from social/news/on-chain signals */
     if (Math.random() < 0.09) {
       const bonus = 0.08 + Math.random()*0.14;
       proEquity *= (1 + bonus/100);
-      conviction = 1;
       events.push({ age: 0 });
-      flashAnnotation(proMessages());
       pulseTerm();
-    } else if (Math.random() < 0.3) {
-      flashAnnotation(proMessages());
     }
 
     targetStd.push(stdEquity); targetStd.shift();
     targetPro.push(proEquity); targetPro.shift();
-    targetConv.push(conviction); targetConv.shift();
     /* ease the newest point in from the previous display value instead of snapping */
     dispStd.push(dispStd[dispStd.length-1]); dispStd.shift();
     dispPro.push(dispPro[dispPro.length-1]); dispPro.shift();
-    dispConv.push(dispConv[dispConv.length-1]); dispConv.shift();
 
     for (let i = events.length - 1; i >= 0; i--){ events[i].age++; if (events[i].age > LEN-1) events.splice(i,1); }
 
@@ -499,9 +507,8 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
     statStd.textContent = stdTxt;
     statPro.textContent = proTxt;
     statDelta.textContent = '+' + Math.max(0, proPct-stdPct).toFixed(1) + ' pts';
-    /* the floating right-edge tags were only getting a position update, never their text — fix */
-    tagStd.textContent = stdTxt;
-    tagPro.textContent = proTxt;
+    badgeStd.textContent = stdTxt;
+    badgePro.textContent = proTxt;
   }
 
   function sizeCanvas(c){
@@ -514,28 +521,34 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
     return { ctx, w, h };
   }
 
-  /* Smooth curve through the data (quadratic through midpoints) instead of jagged lineTo */
-  function smoothPath(ctx, arr, toX, toY){
+  /* Smooth curve through the data (quadratic through midpoints) instead of jagged lineTo.
+     Accepts an optional [startI, endI] range so the shared trunk and the two
+     forked branches can be drawn as separate path segments. */
+  function smoothPath(ctx, arr, toX, toY, startI, endI){
+    if (startI === undefined) startI = 0;
+    if (endI === undefined) endI = arr.length - 1;
     ctx.beginPath();
-    ctx.moveTo(toX(0), toY(arr[0]));
-    for (let i = 1; i < arr.length - 1; i++){
+    ctx.moveTo(toX(startI), toY(arr[startI]));
+    for (let i = startI + 1; i < endI; i++){
       const xc = (toX(i) + toX(i+1)) / 2;
       const yc = (toY(arr[i]) + toY(arr[i+1])) / 2;
       ctx.quadraticCurveTo(toX(i), toY(arr[i]), xc, yc);
     }
-    ctx.lineTo(toX(arr.length-1), toY(arr[arr.length-1]));
+    ctx.lineTo(toX(endI), toY(arr[endI]));
   }
 
-  function drawLine(ctx, arr, toX, toY, colorBase, width){
-    smoothPath(ctx, arr, toX, toY);
-    ctx.strokeStyle = colorBase.replace('ALPHA','0.16');
+  function drawLine(ctx, arr, toX, toY, colorBase, width, startI, endI){
+    smoothPath(ctx, arr, toX, toY, startI, endI);
+    ctx.strokeStyle = colorBase.replace('ALPHA','0.18');
     ctx.lineWidth = width + 4;
     ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
     ctx.stroke();
-    smoothPath(ctx, arr, toX, toY);
+    smoothPath(ctx, arr, toX, toY, startI, endI);
     ctx.strokeStyle = colorBase.replace('ALPHA','0.92');
     ctx.lineWidth = width;
     ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
     ctx.stroke();
   }
 
@@ -552,7 +565,6 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
   }
 
   const mainCanvas = document.getElementById('cv-main-canvas');
-  const convCanvas = document.getElementById('cv-conviction-canvas');
 
   function drawMain(){
     const { ctx, w, h } = sizeCanvas(mainCanvas);
@@ -561,11 +573,12 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
     const lo = Math.min(Math.min(...dispStd), Math.min(...dispPro));
     const hi = Math.max(Math.max(...dispStd), Math.max(...dispPro));
     const range = (hi-lo) || 1;
-    const padTop = 40, padBottom = 20;
+    const padTop = 48, padBottom = 20;
     const toX = i => (i/(LEN-1)) * w;
     const toY = v => padTop + (h-padTop-padBottom) - ((v-lo)/range) * (h-padTop-padBottom);
 
     /* grid + axis labels, drawn from the shared equity scale */
+    ctx.textAlign = 'left';
     ctx.font = '9px "DM Mono", monospace';
     for (let g = 0; g <= 4; g++){
       const v = lo + (range*g/4);
@@ -589,11 +602,12 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
     /* quiet schematic texture, no more bars */
     drawDotGrid(ctx, w, h);
 
-    /* soft gradient area fill under each line — adds weight/depth to the chart */
-    function areaFill(arr, rgb){
-      smoothPath(ctx, arr, toX, toY);
-      ctx.lineTo(toX(arr.length-1), h);
-      ctx.lineTo(toX(0), h);
+    /* soft gradient area fill — only after the fork, so the shared trunk reads
+       as one clean line and the split itself is the visual story */
+    function areaFill(arr, rgb, startI, endI){
+      smoothPath(ctx, arr, toX, toY, startI, endI);
+      ctx.lineTo(toX(endI), h);
+      ctx.lineTo(toX(startI), h);
       ctx.closePath();
       const grad = ctx.createLinearGradient(0, padTop, 0, h);
       grad.addColorStop(0, `rgba(${rgb},0.16)`);
@@ -601,32 +615,59 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
       ctx.fillStyle = grad;
       ctx.fill();
     }
-    areaFill(dispStd, '255,255,255');
-    areaFill(dispPro, '201,169,120');
+    areaFill(dispStd, '255,255,255', FORK_INDEX, LEN-1);
+    areaFill(dispPro, '201,169,120', FORK_INDEX, LEN-1);
 
-    /* trade markers for recent Pro boosts */
+    /* soft pulse for a recent Pro boost — a fading ring, no flag shape */
     events.forEach(ev => {
       const pos = LEN - 1 - ev.age;
-      if (pos < 0) return;
-      const alpha = Math.max(0, 1 - ev.age/LEN);
+      if (pos < FORK_INDEX) return;
+      const alpha = Math.max(0, 1 - ev.age/26);
+      if (alpha <= 0) return;
       const x = toX(pos), y = toY(dispPro[pos]);
       ctx.beginPath();
-      ctx.arc(x, y, 9 + (1-alpha)*6, 0, Math.PI*2);
-      ctx.strokeStyle = `rgba(201,169,120,${alpha*0.5})`;
+      ctx.arc(x, y, 10 + (1-alpha)*10, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(201,169,120,${alpha*0.4})`;
       ctx.lineWidth = 1.2;
       ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(x, y-13-((1-alpha)*4));
-      ctx.lineTo(x-3, y-8-((1-alpha)*4));
-      ctx.lineTo(x+3, y-8-((1-alpha)*4));
-      ctx.closePath();
-      ctx.fillStyle = `rgba(201,169,120,${alpha*0.85})`;
-      ctx.fill();
     });
 
-    /* the two overlaid strategy lines, on one shared scale */
-    drawLine(ctx, dispStd, toX, toY, 'rgba(255,255,255,ALPHA)', 2);
-    drawLine(ctx, dispPro, toX, toY, 'rgba(201,169,120,ALPHA)', 2.2);
+    /* the shared trunk — one line, identical for both plans up to the fork */
+    drawLine(ctx, dispStd, toX, toY, 'rgba(255,255,255,ALPHA)', 2.4, 0, FORK_INDEX);
+
+    /* the two branches, diverging from the fork point */
+    drawLine(ctx, dispStd, toX, toY, 'rgba(255,255,255,ALPHA)', 2, FORK_INDEX, LEN-1);
+    drawLine(ctx, dispPro, toX, toY, 'rgba(201,169,120,ALPHA)', 2.4, FORK_INDEX, LEN-1);
+
+    /* fork marker — the moment the two paths split */
+    const forkX = toX(FORK_INDEX);
+    const forkY = toY(dispStd[FORK_INDEX]);
+    ctx.save();
+    ctx.setLineDash([2,4]);
+    ctx.beginPath();
+    ctx.moveTo(forkX, padTop - 6);
+    ctx.lineTo(forkX, h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(forkX, forkY, 8, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(forkX, forkY, 3.5, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.fill();
+    ctx.textAlign = 'center';
+    ctx.font = '8.5px "DM Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.42)';
+    ctx.fillText('SAME ENGINE', forkX, padTop - 26);
+    ctx.font = '7.5px "DM Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.24)';
+    ctx.fillText('DIFFERENT RESPONSE →', forkX, padTop - 14);
+    ctx.textAlign = 'left';
 
     /* leading dots — bigger radial glow burst for a sexier "hero point" feel */
     const li = LEN - 1;
@@ -639,81 +680,46 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
       ctx.beginPath(); ctx.arc(x,y,glowR,0,Math.PI*2); ctx.fillStyle = glow; ctx.fill();
       ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fillStyle = `rgba(${rgb},1)`; ctx.fill();
     });
-    tagStd.style.top = stdY + 'px';
-    tagPro.style.top = proY + 'px';
-  }
-
-  function drawConviction(){
-    const { ctx, w, h } = sizeCanvas(convCanvas);
-    ctx.clearRect(0,0,w,h);
-    const toX = i => (i/(LEN-1)) * w;
-    const toY = v => h - 6 - v * (h-12);
-
-    /* Pro conviction — filled area, spikes on boosts */
-    ctx.beginPath();
-    ctx.moveTo(toX(0), h);
-    dispConv.forEach((v,i) => ctx.lineTo(toX(i), toY(v)));
-    ctx.lineTo(toX(LEN-1), h);
-    ctx.closePath();
-    const grad = ctx.createLinearGradient(0,0,0,h);
-    grad.addColorStop(0, 'rgba(201,169,120,0.35)');
-    grad.addColorStop(1, 'rgba(201,169,120,0.02)');
-    ctx.fillStyle = grad;
-    ctx.fill();
-    smoothPath(ctx, dispConv, toX, toY);
-    ctx.strokeStyle = 'rgba(201,169,120,0.7)';
-    ctx.lineWidth = 1.3;
-    ctx.stroke();
-
-    /* AutoBot reference — flat, fixed sizing, no signal-driven variation */
-    const fixedY = toY(0.12);
-    ctx.beginPath();
-    ctx.setLineDash([2,3]);
-    ctx.moveTo(0, fixedY); ctx.lineTo(w, fixedY);
-    ctx.strokeStyle = 'rgba(255,255,255,0.22)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.setLineDash([]);
+    badgeStd.style.top = stdY + 'px';
+    badgePro.style.top = proY + 'px';
   }
 
   function animate(){
     for (let i = 0; i < LEN; i++){
-      dispStd[i]  += (targetStd[i] - dispStd[i]) * SMOOTH;
-      dispPro[i]  += (targetPro[i] - dispPro[i]) * SMOOTH;
-      dispConv[i] += (targetConv[i] - dispConv[i]) * SMOOTH;
+      dispStd[i] += (targetStd[i] - dispStd[i]) * SMOOTH;
+      dispPro[i] += (targetPro[i] - dispPro[i]) * SMOOTH;
     }
     drawMain();
-    drawConviction();
     requestAnimationFrame(animate);
   }
 
   /* Pre-seed the full 90-point history synchronously before the first paint,
-     so the Pro/Standard gap is obvious in frame one — nobody should have to
-     wait through live ticks to see the separation. Boosts are spaced on a
-     deterministic cadence (not pure 9% chance) so the gap is reliably visible
-     on every single page load, not just lucky ones. */
+     so the fork is obvious in frame one — nobody should have to wait through
+     live ticks to see the split. Both paths are forced identical up to
+     FORK_INDEX, then Pro's boosts (deterministic cadence, not pure chance)
+     peel it away from AutoBot. */
   (function seedHistory(){
-    let nextBoostAt = 3 + Math.floor(Math.random()*5); // first boost lands early, near the left edge
+    let nextBoostAt = FORK_INDEX + Math.floor(Math.random()*5);
     for (let i = 0; i < LEN; i++){
       const rBase = 0.015 + (Math.random() - 0.4) * 0.07;
       stdEquity *= (1 + rBase/100);
-      proEquity *= (1 + rBase/100);
-      conviction = Math.max(0.1, conviction * 0.82);
-      if (i >= nextBoostAt) {
-        const bonus = 0.1 + Math.random()*0.16;
-        proEquity *= (1 + bonus/100);
-        conviction = 1;
-        events.push({ age: LEN - 1 - i });
-        nextBoostAt = i + 8 + Math.floor(Math.random()*6);
+      if (i < FORK_INDEX) {
+        proEquity = stdEquity;
+      } else {
+        proEquity *= (1 + rBase/100);
+        if (i >= nextBoostAt) {
+          const bonus = 0.1 + Math.random()*0.16;
+          proEquity *= (1 + bonus/100);
+          events.push({ age: LEN - 1 - i });
+          nextBoostAt = i + 8 + Math.floor(Math.random()*6);
+        }
       }
       targetStd[i] = stdEquity;
       targetPro[i] = proEquity;
-      targetConv[i] = conviction;
     }
     for (let i = 0; i < LEN; i++){
-      dispStd[i]  = targetStd[i];
-      dispPro[i]  = targetPro[i];
-      dispConv[i] = targetConv[i];
+      dispStd[i] = targetStd[i];
+      dispPro[i] = targetPro[i];
     }
     const stdPct = (stdEquity/100 - 1) * 100;
     const proPct = (proEquity/100 - 1) * 100;
@@ -722,12 +728,12 @@ document.querySelectorAll('.fade-up').forEach((el, i) => {
     statStd.textContent = stdTxt;
     statPro.textContent = proTxt;
     statDelta.textContent = '+' + Math.max(0, proPct-stdPct).toFixed(1) + ' pts';
-    tagStd.textContent = stdTxt;
-    tagPro.textContent = proTxt;
+    badgeStd.textContent = stdTxt;
+    badgePro.textContent = proTxt;
   })();
 
   requestAnimationFrame(animate);
-  window.addEventListener('resize', () => { drawMain(); drawConviction(); });
+  window.addEventListener('resize', () => { drawMain(); });
   setInterval(tick, TICK_MS);
 })();
 
