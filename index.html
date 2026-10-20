@@ -1011,14 +1011,19 @@ footer{position:relative;}
   </div>
   <div>
     <div class="contact-form">
+      <form name="lead" method="POST" action="/" data-netlify="true" netlify-honeypot="company" onsubmit="return handleSubmit(event)" style="display:contents">
+      <input type="hidden" name="form-name" value="lead">
+      <p hidden><label>Company <input name="company" tabindex="-1" autocomplete="off"></label></p>
       <div class="field-group">
-        <div class="form-field"><label>First name *</label><input type="text" placeholder="John" required></div>
-        <div class="form-field"><label>Last name *</label><input type="text" placeholder="Smith" required></div>
+        <div class="form-field"><label for="lead-first">First name *</label><input id="lead-first" name="first_name" type="text" placeholder="John" autocomplete="given-name" required></div>
+        <div class="form-field"><label for="lead-last">Last name *</label><input id="lead-last" name="last_name" type="text" placeholder="Smith" autocomplete="family-name" required></div>
       </div>
-      <div class="form-field"><label>Email address *</label><input type="email" placeholder="john@example.com" required></div>
-      <div class="form-field"><label>Phone number *</label><input type="tel" placeholder="+1 (555) 000-0000" required></div>
-      <div class="form-field"><label>Which exchange do you use?</label><select><option value="" disabled selected>Select one</option><option>Bybit</option><option>Hyperliquid</option><option>Both</option><option>Neither — just getting started</option></select></div>
-      <button class="form-submit" onclick="handleSubmit(this)">Start Investing →</button>
+      <div class="form-field"><label for="lead-email">Email address *</label><input id="lead-email" name="email" type="email" placeholder="john@example.com" autocomplete="email" required></div>
+      <div class="form-field"><label for="lead-phone">Phone number *</label><input id="lead-phone" name="phone" type="tel" placeholder="+1 (555) 000-0000" autocomplete="tel" required></div>
+      <div class="form-field"><label for="lead-exchange">Which exchange do you use?</label><select id="lead-exchange" name="exchange"><option value="" disabled selected>Select one</option><option>Bybit</option><option>Hyperliquid</option><option>Both</option><option>Neither — just getting started</option></select></div>
+      <button type="submit" class="form-submit">Start Investing →</button>
+      <p class="form-status" role="status" aria-live="polite" hidden style="font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.04em;line-height:1.6;color:rgba(255,255,255,0.6);margin:0"></p>
+      </form>
       <div class="contact-or"><div class="contact-or-line"></div><span class="contact-or-text">or</span><div class="contact-or-line"></div></div>
       <button class="btn-calendar" onclick="alert('Calendar booking coming soon — use the form above or email us directly.')">📅 &nbsp;Book a 20-min call directly</button>
       <div class="what-next">
@@ -1254,7 +1259,26 @@ document.querySelectorAll('.mobile-link:not(.cta)').forEach(l => {
 });
 
 function toggleFaq(el){const item=el.parentElement;const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));if(!isOpen)item.classList.add('open');}
-function handleSubmit(btn){btn.textContent='✓  Sent — we\'ll be in touch soon';btn.style.opacity='0.6';btn.style.cursor='default';btn.onclick=null;}
+// Lead form → Netlify Forms. Only shows "Sent" once Netlify has actually stored the submission.
+function handleSubmit(e){
+  e.preventDefault();
+  var form=e.target, btn=form.querySelector('.form-submit'), status=form.querySelector('.form-status');
+  if(!form.reportValidity()) return false;
+  var label=btn.textContent;
+  btn.disabled=true; btn.textContent='Sending…'; btn.style.opacity='0.6'; status.hidden=true;
+  fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(form)).toString()})
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      btn.textContent='✓  Sent — we\'ll be in touch soon'; btn.style.cursor='default';
+      form.querySelectorAll('input,select').forEach(function(el){el.disabled=true;});
+    })
+    .catch(function(){
+      btn.disabled=false; btn.textContent=label; btn.style.opacity='';
+      status.textContent='Something went wrong and your details were not sent. Please try again, or email us at autobottradingai@gmail.com.';
+      status.hidden=false;
+    });
+  return false;
+}
 
 /* ── Calculator teaser mini live-preview (cycles a few illustrative scenarios) ── */
 (function(){
