@@ -264,6 +264,8 @@ footer{background:#0a0a08;border-top:1px solid rgba(255,255,255,0.05);padding:28
 .footer-copy{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.07em;color:rgba(255,255,255,0.18)}
 .footer-link{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.07em;color:rgba(255,255,255,0.35);text-decoration:none;transition:color 0.2s}
 .footer-link:hover{color:rgba(255,255,255,0.7)}
+footer{flex-wrap:wrap}
+.footer-risk{flex-basis:100%;margin:18px 0 0;max-width:880px;font-family:'DM Sans',sans-serif;font-size:11px;line-height:1.65;font-weight:300;color:rgba(255,255,255,0.28)}
 .ticker-tape,.how,.engine,.faq,.contact,footer,nav{position:relative;z-index:3}
 /* ── ENGINE SCHEMATIC (circuit-style, dark) ── */
 .engine{
@@ -854,7 +856,7 @@ footer{position:relative;}
       <div class="engine-panel-dots"></div>
       <div class="engine-panel-label"><span>Your Exchange</span><span class="engine-status"><span class="engine-status-dot"></span>Connected</span></div>
       <div class="engine-mark-wrap"><div class="engine-mark"></div></div>
-      <div class="engine-exch-list">BYBIT · HYPERLIQUID · BINANCE</div>
+      <div class="engine-exch-list">BYBIT · HYPERLIQUID</div>
       <div class="engine-panel-cap">FUNDS NEVER LEAVE YOUR ACCOUNT</div>
       <div class="engine-node-id">SYS.05</div>
     </div>
@@ -1004,7 +1006,7 @@ footer{position:relative;}
     <h2>Ready to<br><em>start earning?</em></h2>
     <p class="contact-sub">We work with a select group of traders. Fill in the form and our team will reach out within 24 hours.</p>
     <div class="contact-guarantees">
-      <div class="guarantee-item"><span class="g-check">✓</span><span>No pricing on this page — our team explains everything on the call</span></div>
+      <div class="guarantee-item"><span class="g-check">✓</span><span>Our team walks you through plans and setup on the call</span></div>
       <div class="guarantee-item"><span class="g-check">✓</span><span>Your funds stay on your exchange at all times</span></div>
       <div class="guarantee-item"><span class="g-check">✓</span><span>We respond within one business day</span></div>
     </div>
@@ -1065,9 +1067,10 @@ footer{position:relative;}
   <span class="footer-logo">AutoBot</span>
   <div style="display:flex;gap:28px;">
     <a href="results.html" class="footer-link">Client Results →</a>
-    <a href="#" class="footer-link" onclick="openCalculator();return false;">Calculator →</a>
+    <a href="#calculator" class="footer-link" onclick="openCalculator();return false;">Calculator →</a>
   </div>
   <span class="footer-copy">© 2026 AutoBot · Algorithmic Crypto Trading · autobot.trading</span>
+  <p class="footer-risk">Risk disclosure: Trading crypto derivatives involves substantial risk of loss and is not suitable for everyone. You can lose some or all of the capital in your account. Past performance, including client results shown on this site, does not guarantee future results. AutoBot is software that places orders in your own exchange account; it is not investment, tax or legal advice. Availability of exchanges and products depends on where you live.</p>
 </footer>
 
 <canvas id="trading-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;transition:opacity 0.4s ease;"></canvas>
@@ -1389,7 +1392,22 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCalcula
   const solEl = document.getElementById('ef-sol');
   if (!btcEl) return;
 
-  let btc = 67412, eth = 3281, sol = 164.20;
+  // Real mid prices from Hyperliquid's public API (refreshed every 20s), small jitter in between.
+  let btc = null, eth = null, sol = null;
+  function loadMids(){
+    fetch('https://api.hyperliquid.xyz/info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'allMids'})})
+      .then(r => r.ok ? r.json() : null)
+      .then(m => { if (!m) return;
+        if (m.BTC) btc = parseFloat(m.BTC); if (m.ETH) eth = parseFloat(m.ETH); if (m.SOL) sol = parseFloat(m.SOL);
+        render(); })
+      .catch(() => {});
+  }
+  function render(){
+    if (btc) setPrice(btcEl, btc, 0);
+    if (eth) setPrice(ethEl, eth, 0);
+    if (sol) setPrice(solEl, sol, 2);
+  }
+  loadMids(); setInterval(loadMids, 20000);
   function setPrice(el, val, decimals){
     const up = Math.random() > 0.45;
     el.textContent = '$' + val.toLocaleString(undefined,{minimumFractionDigits:decimals, maximumFractionDigits:decimals});
@@ -1397,29 +1415,35 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCalcula
     el.classList.add(up ? 'up' : 'down');
   }
   setInterval(() => {
-    btc += (Math.random()-0.5) * 45;
-    eth += (Math.random()-0.5) * 7;
-    sol += (Math.random()-0.5) * 0.7;
-    setPrice(btcEl, btc, 0);
-    setPrice(ethEl, eth, 0);
-    setPrice(solEl, sol, 2);
+    if (!btc) return;
+    btc *= 1 + (Math.random()-0.5) * 0.0004;
+    eth *= 1 + (Math.random()-0.5) * 0.0005;
+    sol *= 1 + (Math.random()-0.5) * 0.0006;
+    render();
   }, 2200);
 
-  const orderPairs = [
-    { side: 'buy',  text: 'LONG 0.42 BTC LIMIT $67,410' },
-    { side: 'sell', text: 'SHORT 1.10 ETH LIMIT $3,283' },
-    { side: 'buy',  text: 'LONG 12.4 SOL LIMIT $164.05' },
-    { side: 'sell', text: 'SHORT 0.18 BTC LIMIT $67,455' },
-    { side: 'buy',  text: 'LONG 3.2 ETH LIMIT $3,270' },
-    { side: 'sell', text: 'SHORT 40.0 SOL LIMIT $164.80' },
+  // Example orders, priced a hair off the current market so they never look stale.
+  const fmt = (v, d) => '$' + v.toLocaleString(undefined,{minimumFractionDigits:d, maximumFractionDigits:d});
+  const orderTemplates = [
+    { side: 'buy',  qty: '0.42', sym: 'BTC', px: () => btc, off: -0.0003, d: 0 },
+    { side: 'sell', qty: '1.10', sym: 'ETH', px: () => eth, off:  0.0004, d: 0 },
+    { side: 'buy',  qty: '12.4', sym: 'SOL', px: () => sol, off: -0.0006, d: 2 },
+    { side: 'sell', qty: '0.18', sym: 'BTC', px: () => btc, off:  0.0005, d: 0 },
+    { side: 'buy',  qty: '3.2',  sym: 'ETH', px: () => eth, off: -0.0007, d: 0 },
+    { side: 'sell', qty: '40.0', sym: 'SOL', px: () => sol, off:  0.0004, d: 2 },
   ];
+  const orderPairs = { get length(){ return orderTemplates.length; } };
+  function orderAt(i){
+    const t = orderTemplates[i], p = t.px();
+    return { side: t.side, text: (t.side === 'buy' ? 'LONG ' : 'SHORT ') + t.qty + ' ' + t.sym + (p ? ' LIMIT ' + fmt(p * (1 + t.off), t.d) : ' LIMIT') };
+  }
   const ordersWrap = document.getElementById('engine-orders');
   let oi = 0;
   if (ordersWrap) {
     setInterval(() => {
       const rows = ordersWrap.querySelectorAll('.eo-row');
       rows.forEach((row, idx) => {
-        const d = orderPairs[(oi + idx) % orderPairs.length];
+        const d = orderAt((oi + idx) % orderPairs.length);
         row.textContent = d.text;
         row.className = 'eo-row ' + d.side;
       });
