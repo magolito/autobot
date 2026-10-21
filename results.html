@@ -256,6 +256,56 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
 }
 .founder { display: inline-block; font-size: 12px; color: var(--black); border: 1px solid rgba(14,14,12,0.35); border-radius: 999px; padding: 0 9px; margin-right: 6px; line-height: 20px; }
 
+/* ── Client dashboard card (built from each client's real figures) ── */
+.dash { border: none; padding: 0; background: transparent; width: min(880px, calc(100vw - 32px)); max-height: calc(100vh - 32px); margin: auto; overflow: auto; }
+.dash::backdrop { background: rgba(14,14,12,0.78); }
+.dash-card { --ink: #f2f1ed; --mute: rgba(242,241,237,0.55); --line: rgba(242,241,237,0.12); --up: #4ade80; background: #0e0e0c; color: var(--ink); padding: 0 0 8px; }
+.dash-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--mute); }
+.dash-bar strong { font-weight: 500; color: var(--ink); margin-right: 10px; }
+.dash-close { font: inherit; color: var(--ink); background: none; border: 1px solid var(--line); padding: 6px 14px; cursor: pointer; }
+.dash-close:hover { border-color: rgba(242,241,237,0.45); }
+.dash-close:focus-visible, .dash-full:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.dash-head { padding: 30px 28px 0; }
+.dash-name { font-weight: 400; font-family: 'Playfair Display', serif; font-size: 30px; line-height: 1.15; letter-spacing: -0.015em; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.dash-owner { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--ink); border: 1px solid rgba(242,241,237,0.35); border-radius: 999px; padding: 0 9px; line-height: 20px; letter-spacing: 0; }
+.dash-meta { font-size: 14px; color: var(--mute); margin-top: 6px; }
+.dash-hero { padding: 26px 28px 6px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+.dash-gain { font-family: 'Playfair Display', serif; font-size: clamp(54px, 9vw, 84px); line-height: 1; letter-spacing: -0.03em; color: var(--up); }
+.dash-path { font-family: 'DM Mono', monospace; font-size: 14px; color: var(--mute); }
+.dash-bars { padding: 22px 28px 6px; display: grid; grid-template-columns: 76px minmax(0,1fr) auto; gap: 10px 14px; align-items: center; font-size: 13px; color: var(--mute); }
+.dash-track { height: 10px; background: rgba(242,241,237,0.06); position: relative; }
+.dash-fill { position: absolute; inset: 0 auto 0 0; background: rgba(242,241,237,0.35); }
+.dash-fill.end { background: var(--up); }
+.dash-bars .v { font-family: 'DM Mono', monospace; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+.dash-stats { margin: 24px 28px 0; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); border-top: 1px solid var(--line); }
+.dash-stat { padding: 16px 0 18px; border-right: 1px solid var(--line); padding-left: 16px; }
+.dash-stat:first-child { padding-left: 0; }
+.dash-stat:last-child { border-right: none; }
+.dash-stat span { display: block; font-size: 12px; color: var(--mute); }
+.dash-stat b { display: block; font-family: 'DM Mono', monospace; font-weight: 400; font-size: 18px; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.dash-stat b.up { color: var(--up); }
+.dash-quote { margin: 4px 28px 0; padding: 22px 0 6px; border-top: 1px solid var(--line); font-family: 'Playfair Display', serif; font-style: italic; font-size: 19px; line-height: 1.5; }
+.dash-quote cite { display: block; font-family: 'DM Sans', sans-serif; font-style: normal; font-size: 13px; color: var(--mute); margin-top: 10px; }
+.dash-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin: 18px 28px 14px; font-size: 13px; color: var(--mute); }
+.dash-full { font: 500 14px 'DM Sans', sans-serif; color: var(--ink); background: none; border: 1px solid rgba(242,241,237,0.4); padding: 9px 16px; cursor: pointer; }
+.dash-full:hover { background: var(--ink); color: #0e0e0c; }
+.dash-img { display: block; width: 100%; height: auto; border-top: 1px solid var(--line); }
+@media (prefers-reduced-motion: no-preference) {
+  .dash[open] .dash-fill { animation: dash-grow .8s cubic-bezier(0.22,1,0.36,1) both; transform-origin: left; }
+  .dash[open] .dash-fill.end { animation-delay: .12s; }
+}
+@keyframes dash-grow { from { transform: scaleX(0); } }
+@media (max-width: 640px) {
+  .dash-bar, .dash-head, .dash-hero, .dash-bars { padding-left: 20px; padding-right: 20px; }
+  .dash-stats, .dash-quote, .dash-foot { margin-left: 20px; margin-right: 20px; }
+  .dash-name { font-size: 25px; }
+  .dash-stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .dash-stat:nth-child(2) { border-right: none; }
+  .dash-stat:nth-child(3) { padding-left: 0; }
+  .dash-stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .dash-bars { grid-template-columns: 64px minmax(0,1fr) auto; }
+}
+
 </style>
 </head>
 <body>
@@ -320,7 +370,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>30 months on Bybit and Hyperliquid, running since Nov 2023.</p>
-        <div><blockquote>“I was skeptical at first. Watching it trade while I&#x27;m at work, sleeping, traveling — 291% later I can&#x27;t imagine trading any other way.”</blockquote></div>
+        <div><blockquote>“I was skeptical at first. Watching it trade while I&#x27;m at work, sleeping, traveling — 291% later I can&#x27;t imagine trading any other way.”</blockquote><button type="button" class="shot-btn" data-dash="kevin">View dashboard</button></div>
       </div>
     </details>
     <details class="row" id="client-manuel" data-id="manuel" data-gain="270.0" data-size="185000" data-months="37">
@@ -334,7 +384,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>37 months on Hyperliquid, running since Apr 2023. Our founder runs his own money with AutoBot.</p>
-        <div></div>
+        <div><button type="button" class="shot-btn" data-dash="manuel">View dashboard</button></div>
       </div>
     </details>
     <details class="row" id="client-abhi" data-id="abhi" data-gain="220.0" data-size="320000" data-months="33">
@@ -348,7 +398,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>33 months on Bybit, running since Aug 2023.</p>
-        <div><blockquote>“Bot hitting TON, MORPHO and a few others in the past few days… holy shit. It is so good.”</blockquote><button type="button" class="shot-btn" data-shot="img/results-abhi.jpg" data-name="Abhi Jacknoshi">View dashboard</button></div>
+        <div><blockquote>“Bot hitting TON, MORPHO and a few others in the past few days… holy shit. It is so good.”</blockquote><button type="button" class="shot-btn" data-dash="abhi">View dashboard</button></div>
       </div>
     </details>
     <details class="row" id="client-daniel" data-id="daniel" data-gain="206.7" data-size="92000" data-months="35">
@@ -362,7 +412,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>35 months on Bybit, running since Jun 2023.</p>
-        <div></div>
+        <div><button type="button" class="shot-btn" data-dash="daniel">View dashboard</button></div>
       </div>
     </details>
     <details class="row" id="client-camilo" data-id="camilo" data-gain="144.4" data-size="44000" data-months="28">
@@ -376,7 +426,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>28 months on Binance, running since Jan 2024.</p>
-        <div><blockquote>“I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.”</blockquote><button type="button" class="shot-btn" data-shot="img/results-camilo.jpg" data-name="Camilo Perez">View dashboard</button></div>
+        <div><blockquote>“I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.”</blockquote><button type="button" class="shot-btn" data-dash="camilo">View dashboard</button></div>
       </div>
     </details>
     <details class="row" id="client-aero" data-id="aero" data-gain="143.5" data-size="840000" data-months="30">
@@ -390,7 +440,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>30 months on Bybit, running since Nov 2023. High-capital account.</p>
-        <div></div>
+        <div><button type="button" class="shot-btn" data-dash="aero">View dashboard</button></div>
       </div>
     </details>
     <details class="row" id="client-nick" data-id="nick" data-gain="108.0" data-size="52000" data-months="28">
@@ -404,7 +454,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>28 months on Hyperliquid, running since Jan 2024.</p>
-        <div></div>
+        <div><button type="button" class="shot-btn" data-dash="nick">View dashboard</button></div>
       </div>
     </details>
     <details class="row" id="client-pvffy" data-id="pvffy" data-gain="36.9" data-size="89000" data-months="14">
@@ -418,7 +468,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
       </summary>
       <div class="row-body">
         <p>14 months on Hyperliquid, running since Mar 2025.</p>
-        <div></div>
+        <div><button type="button" class="shot-btn" data-dash="pvffy">View dashboard</button></div>
       </div>
     </details>
   </div>
@@ -452,14 +502,11 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   <span class="footer-copy">© 2026 AutoBot · autobot.trading</span>
 </footer>
 
-<dialog class="shot" id="shot" aria-labelledby="shot-title">
-  <div class="shot-frame">
-    <div class="shot-bar"><span id="shot-title"><b></b> AutoBot dashboard. Figures provided by the client and shown with their consent.</span><button type="button" class="shot-close" id="shot-close">Close</button></div>
-    <img id="shot-img" alt="">
-  </div>
+<dialog class="dash" id="dash" aria-labelledby="dash-name">
+  <div class="dash-card" id="dash-card"></div>
 </dialog>
 <script>
-const CLIENTS = [{"id": "kevin", "name": "Kevin Harsh", "short": "Kevin", "start": 60000, "end": 235000, "gain": 291.7, "founder": false}, {"id": "manuel", "name": "Manuel Avila", "short": "Manuel", "start": 50000, "end": 185000, "gain": 270.0, "founder": true}, {"id": "abhi", "name": "Abhi Jacknoshi", "short": "Abhi", "start": 100000, "end": 320000, "gain": 220.0, "founder": false}, {"id": "daniel", "name": "Daniel Gonzalez", "short": "Daniel", "start": 30000, "end": 92000, "gain": 206.7, "founder": false}, {"id": "camilo", "name": "Camilo Perez", "short": "Camilo", "start": 18000, "end": 44000, "gain": 144.4, "founder": false}, {"id": "aero", "name": "Aero", "short": "Aero", "start": 345000, "end": 840000, "gain": 143.5, "founder": false}, {"id": "nick", "name": "Nick", "short": "Nick", "start": 25000, "end": 52000, "gain": 108.0, "founder": false}, {"id": "pvffy", "name": "pvffy", "short": "pvffy", "start": 65000, "end": 89000, "gain": 36.9, "founder": false}];
+const CLIENTS = [{"id": "kevin", "name": "Kevin Harsh", "short": "Kevin", "start": 60000, "end": 235000, "gain": 291.7, "mult": 3.9, "ex": "Bybit and Hyperliquid", "since": "Nov 2023", "months": 30, "quote": "I was skeptical at first. Watching it trade while I'm at work, sleeping, traveling \u2014 291% later I can't imagine trading any other way.", "shot": null, "founder": false}, {"id": "manuel", "name": "Manuel Avila", "short": "Manuel", "start": 50000, "end": 185000, "gain": 270.0, "mult": 3.7, "ex": "Hyperliquid", "since": "Apr 2023", "months": 37, "quote": "", "shot": null, "founder": true}, {"id": "abhi", "name": "Abhi Jacknoshi", "short": "Abhi", "start": 100000, "end": 320000, "gain": 220.0, "mult": 3.2, "ex": "Bybit", "since": "Aug 2023", "months": 33, "quote": "Bot hitting TON, MORPHO and a few others in the past few days\u2026 holy shit. It is so good.", "shot": "img/results-abhi.jpg", "founder": false}, {"id": "daniel", "name": "Daniel Gonzalez", "short": "Daniel", "start": 30000, "end": 92000, "gain": 206.7, "mult": 3.1, "ex": "Bybit", "since": "Jun 2023", "months": 35, "quote": "", "shot": null, "founder": false}, {"id": "camilo", "name": "Camilo Perez", "short": "Camilo", "start": 18000, "end": 44000, "gain": 144.4, "mult": 2.4, "ex": "Binance", "since": "Jan 2024", "months": 28, "quote": "I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.", "shot": "img/results-camilo.jpg", "founder": false}, {"id": "aero", "name": "Aero", "short": "Aero", "start": 345000, "end": 840000, "gain": 143.5, "mult": 2.4, "ex": "Bybit", "since": "Nov 2023", "months": 30, "quote": "", "shot": null, "founder": false}, {"id": "nick", "name": "Nick", "short": "Nick", "start": 25000, "end": 52000, "gain": 108.0, "mult": 2.1, "ex": "Hyperliquid", "since": "Jan 2024", "months": 28, "quote": "", "shot": null, "founder": false}, {"id": "pvffy", "name": "pvffy", "short": "pvffy", "start": 65000, "end": 89000, "gain": 36.9, "mult": 1.4, "ex": "Hyperliquid", "since": "Mar 2025", "months": 14, "quote": "", "shot": null, "founder": false}];
 
 /* ── Slope chart: start → May 2026, log scale ── */
 (function(){
@@ -545,16 +592,44 @@ document.querySelectorAll('.sorter button').forEach(b => b.addEventListener('cli
   [...wrap.children].sort((a,c) => parseFloat(c.dataset[key]) - parseFloat(a.dataset[key])).forEach(r => wrap.appendChild(r));
 }));
 
-/* ── Account screenshot viewer ── */
+/* ── Client dashboard card (real figures only) ── */
 (function(){
-  const dlg = document.getElementById('shot'), img = document.getElementById('shot-img');
-  document.querySelectorAll('.shot-btn').forEach(b => b.addEventListener('click', () => {
-    img.src = b.dataset.shot; img.alt = b.dataset.name + "'s account in the AutoBot dashboard";
-    dlg.querySelector('#shot-title b').textContent = b.dataset.name + "'s";
-    dlg.showModal();
+  const dlg = document.getElementById('dash'), card = document.getElementById('dash-card');
+  const usd = v => '$' + Math.round(v).toLocaleString('en-US');
+  const esc = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+  function render(c){
+    const pctS = (c.start / c.end * 100).toFixed(1);
+    card.innerHTML = `
+      <div class="dash-bar"><span><strong>AutoBot</strong>Client account</span><button type="button" class="dash-close" data-close>Close</button></div>
+      <div class="dash-head">
+        <h2 class="dash-name" id="dash-name">${esc(c.name)}${c.founder ? '<span class="dash-owner">Owner’s account</span>' : ''}</h2>
+        <p class="dash-meta">${esc(c.ex)}, ${c.since} to May 2026, ${c.months} months</p>
+      </div>
+      <div class="dash-hero"><span class="dash-gain">+${c.gain.toFixed(1)}%</span><span class="dash-path">${usd(c.start)} → ${usd(c.end)}</span></div>
+      <div class="dash-bars" aria-hidden="true">
+        <span>Started</span><span class="dash-track"><span class="dash-fill" style="width:${pctS}%"></span></span><span class="v">${usd(c.start)}</span>
+        <span>May 2026</span><span class="dash-track"><span class="dash-fill end" style="width:100%"></span></span><span class="v">${usd(c.end)}</span>
+      </div>
+      <div class="dash-stats">
+        <div class="dash-stat"><span>Started with</span><b>${usd(c.start)}</b></div>
+        <div class="dash-stat"><span>May 2026 value</span><b>${usd(c.end)}</b></div>
+        <div class="dash-stat"><span>Net gain</span><b class="up">+${usd(c.end - c.start)}</b></div>
+        <div class="dash-stat"><span>Growth</span><b>${c.mult}×</b></div>
+      </div>
+      ${c.quote ? `<blockquote class="dash-quote">“${esc(c.quote)}”<cite>${esc(c.name)}</cite></blockquote>` : ''}
+      <div class="dash-foot"><span>Past performance does not guarantee future results.</span>${c.shot ? '<button type="button" class="dash-full" data-full>Open full dashboard</button>' : ''}</div>`;
+    const full = card.querySelector('[data-full]');
+    if (full) full.addEventListener('click', () => {
+      full.remove();
+      const img = new Image(); img.className = 'dash-img'; img.src = c.shot; img.alt = c.name + "'s full AutoBot dashboard";
+      card.appendChild(img);
+    });
+  }
+  document.querySelectorAll('[data-dash]').forEach(b => b.addEventListener('click', () => {
+    render(CLIENTS.find(c => c.id === b.dataset.dash)); dlg.showModal(); dlg.scrollTop = 0;
+    card.querySelector('[data-close]').focus();
   }));
-  document.getElementById('shot-close').addEventListener('click', () => dlg.close());
-  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.close(); });
 })();
 
 /* Fade-in for the closing sections */
