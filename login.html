@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AutoBot – Sign In</title>
+<script async crossorigin="anonymous"
+  data-clerk-publishable-key="pk_live_Y2xlcmsuYXV0b2JvdC50cmFkaW5nJA"
+  src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  data-clerk-frontend-api="clerk.autobot.trading"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  /* ─── MOBILE-SAFE LAYOUT (2026-04-17 rewrite) ───────────────────────────────
+     Previous body was `display: flex; min-height: 100vh; align-items: center`.
+     On iOS Safari, a flex body with min-height:100vh + no explicit height can
+     collapse flex children to 0 — this was causing the "blue screen with just
+     the logo" bug on iPhone. Now using plain block layout with margin auto
+     centering, which works identically on every browser.
+  ─────────────────────────────────────────────────────────────────────────── */
+  * { margin:0; padding:0; box-sizing:border-box }
+  html, body {
+    background: #0b0b09;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: #f2f1ed;
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: block;     /* NOT flex — iOS Safari collapses flex bodies */
+  }
+  @supports (min-height: 100dvh) {
+    body { min-height: 100dvh; }
+  }
+  .wrap {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 40px auto;    /* block-level horizontal centering */
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  @media(min-width:769px) {
+    body { padding: 80px 20px; }
+    .wrap { margin: 60px auto; }
+  }
+  #deploy-marker-login {
+    display: block;
+    max-width: 400px;
+    margin: 0 auto 18px auto;
+    padding: 10px 14px;
+    background: #4ade80;
+    color: #0b0b09;
+    border-radius: 8px;
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 0.85em;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+  @media(min-width:769px) {
+    #deploy-marker-login { display: none; }
+  }
+  .brand {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .brand-name span { color: #4ade80 }
+  .card {
+    background: #121210;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 36px 28px;
+  }
+  .tag {
+    font-size: 0.67em;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #4ade80;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6em;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .sub {
+    color: #a3a19a;
+    font-size: 0.85em;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .error-box {
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.25);
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-size: 0.82em;
+    color: #f87171;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .field {
+    margin-bottom: 16px;
+  }
+  .field label {
+    display: block;
+    font-size: 0.8em;
+    font-weight: 500;
+    color: #a3a19a;
+    margin-bottom: 7px;
+    letter-spacing: 0.3px;
+  }
+  .field input {
+    width: 100%;
+    padding: 13px 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.92em;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .field input:focus {
+    border-color: rgba(74,222,128,0.4);
+  }
+  .pw-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+  .pw-row label { margin-bottom: 0; font-size: 0.8em; font-weight: 500; color: #a3a19a; }
+  .forgot-link {
+    background: none;
+    border: none;
+    color: #75736d;
+    font-size: 0.76em;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    padding: 0;
+  }
+  .btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #4ade80, #86efac);
+    color: #0b0b09;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95em;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+    cursor: pointer;
+    margin-top: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { opacity: 0.85; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .footer-note {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #75736d;
+  }
+
+  /* 2FA screen */
+  #screen-2fa { display: none; }
+  #screen-2fa h1 { font-size: 1.4em; }
+
+/* ── AutoBot Pro client portal (cream) ── */
+html,body{background:#f2f1ed!important;color:#0e0e0c!important;font-family:'DM Sans',sans-serif;}
+#deploy-marker-login{display:none!important;}
+h1,h2,h3{font-family:'Playfair Display',serif!important;font-weight:400!important;letter-spacing:-0.015em!important;color:#0e0e0c!important;}
+.pro-mark{display:inline-flex;align-items:center;gap:10px;font-weight:500;color:#0e0e0c!important;}
+.pro-dot{width:6px;height:6px;border-radius:50%;background:#0e0e0c!important;display:inline-block;}
+.brand-name span,.brand-name .pro-mark{color:#0e0e0c!important;}
+.brand-name .pro-dot{background:#0e0e0c!important;}
+.card{background:#faf9f6!important;border:1px solid rgba(14,14,12,0.1)!important;border-radius:4px!important;box-shadow:none!important;}
+.tag{color:#8c8c89!important;font-family:'DM Mono',monospace!important;letter-spacing:0.1em!important;font-size:10px!important;font-weight:400!important;}
+.tag::before{display:none!important;}
+.sub,.footer-note,.field label,.pw-row label{color:#4e4e4b!important;}
+.field input{background:#fff!important;color:#0e0e0c!important;border:1px solid rgba(14,14,12,0.12)!important;border-radius:2px!important;}
+.field input:focus{border-color:rgba(14,14,12,0.45)!important;box-shadow:none!important;}
+.btn{background:#0e0e0c!important;color:#f2f1ed!important;border:none!important;border-radius:0!important;box-shadow:none!important;font-weight:500!important;}
+.forgot-link,.card a,.footer-note a{color:#0e0e0c!important;}
+.error-box{background:rgba(180,68,47,0.06)!important;border-color:rgba(180,68,47,0.25)!important;color:#b4442f!important;border-radius:2px!important;}
+.brand-name,.brand-name *,.btn{font-family:'DM Sans',sans-serif!important;letter-spacing:0!important;}
+.brand-name .pro-mark{font-size:22px!important;font-weight:500!important;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- DEPLOY MARKER — if you see this green banner, new code IS live. -->
+  <div id="deploy-marker-login">✅ LOGIN-FIX v5 · 2026-04-17</div>
+  <div class="brand">
+    <div class="brand-name" style="display:flex;justify-content:center"><span class="pro-mark" style="font-size:22px"><span class="pro-dot"></span>AutoBot</span></div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="screen-login">
+    <div class="card">
+      <div class="tag">Client Portal</div>
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to access your trading dashboard.</p>
+      <div class="error-box" id="login-err"></div>
+      <div class="field">
+        <label for="inp-email">Email address</label>
+        <input type="email" id="inp-email" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <div class="pw-row">
+          <label for="inp-pw">Password</label>
+          <button class="forgot-link" type="button" id="show-forgot">Forgot password?</button>
+        </div>
+        <input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn" id="login-btn" type="button">Access Dashboard →</button>
+      <div class="footer-note">Need access? <a href="/#contact" style="color:#4ade80">Get started</a></div>
+    </div>
+  </div>
+
+  <!-- 2FA -->
+  <div id="screen-2fa">
+    <div class="card">
+      <div class="tag">Verification</div>
+      <h1 id="tfa-title">Check your email</h1>
+      <p class="sub" id="tfa-sub">Enter the 6-digit code to continue.</p>
+      <div class="error-box" id="tfa-err"></div>
+      <div class="field">
+        <label for="inp-code">Verification code</label>
+        <input type="text" id="inp-code" placeholder="000000" maxlength="6"
+               autocomplete="one-time-code" inputmode="numeric"
+               style="letter-spacing:0.3em;text-align:center;font-size:1.1em">
+      </div>
+      <button class="btn" id="tfa-btn" type="button">Verify →</button>
+      <div class="footer-note"><span id="back-link" style="cursor:pointer;color:#75736d">← Back to sign in</span></div>
+    </div>
+  </div>
+
+  <!-- FORGOT -->
+  <div id="screen-forgot" style="display:none">
+    <div class="card">
+      <div class="tag">Account Recovery</div>
+      <h1>Reset password</h1>
+      <p class="sub">Enter your email and we'll send a 6-digit code.</p>
+      <div class="error-box" id="forgot-err"></div>
+      <div id="forgot-step1">
+        <div class="field">
+          <label for="inp-forgot-email">Email address</label>
+          <input type="email" id="inp-forgot-email" placeholder="you@example.com">
+        </div>
+        <button class="btn" id="forgot-send-btn" type="button">Send Code →</button>
+      </div>
+      <div id="forgot-step2" style="display:none">
+        <div class="field">
+          <label for="inp-forgot-code">6-digit code</label>
+          <input type="text" id="inp-forgot-code" placeholder="000000" maxlength="6" inputmode="numeric" style="letter-spacing:0.3em;text-align:center">
+        </div>
+        <div class="field">
+          <label for="inp-new-pw">New password</label>
+          <input type="password" id="inp-new-pw" placeholder="Min. 8 characters">
+        </div>
+        <button class="btn" id="forgot-confirm-btn" type="button">Update Password →</button>
+      </div>
+      <div class="footer-note"><span id="back-to-login" style="cursor:pointer;color:#75736d">← Back to sign in</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var _pending = null, _pendingStrategy = 'totp', _forgotSI = null;
+
+// Wait for Clerk
+function waitForClerk(cb) {
+  if (window.Clerk) { Clerk.load().then(cb).catch(cb); return; }
+  var t = setInterval(function() {
+    if (window.Clerk) { clearInterval(t); Clerk.load().then(cb).catch(cb); }
+  }, 100);
+  setTimeout(function() { clearInterval(t); cb(); }, 10000);
+}
+
+waitForClerk(function() {
+  if (window.Clerk && Clerk.user) {
+    window.location.href = 'dashboard.html';
+  }
+});
+
+function show(id) {
+  ['screen-login','screen-2fa','screen-forgot'].forEach(function(s) {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+}
+
+function setErr(id, msg) {
+  var el = document.getElementById(id);
+  el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+}
+
+function setBtn(id, txt, disabled) {
+  var b = document.getElementById(id);
+  b.textContent = txt; b.disabled = !!disabled;
+}
+
+// LOGIN
+document.getElementById('login-btn').addEventListener('click', function() {
+  var email = document.getElementById('inp-email').value.trim().toLowerCase();
+  var pw    = document.getElementById('inp-pw').value;
+  setErr('login-err', '');
+  if (!email || !pw) { setErr('login-err', 'Please enter your email and password.'); return; }
+  if (!window.Clerk) { setErr('login-err', 'Still connecting — please wait and try again.'); return; }
+  setBtn('login-btn', 'Signing in…', true);
+
+  var si = Clerk.signIn || Clerk.client.signIn;
+  si.create({ strategy: 'password', identifier: email, password: pw })
+    .then(function(r) {
+      if (r.status === 'complete') return Clerk.setActive({ session: r.createdSessionId });
+      if (r.status === 'needs_second_factor') {
+        _pending = r;
+        var factors = r.supportedSecondFactors || [];
+        var emailF = factors.find(function(f){ return f.strategy === 'email_code'; });
+        _pendingStrategy = emailF ? 'email_code' : 'totp';
+        if (emailF) {
+          document.getElementById('tfa-title').textContent = 'Check your email';
+          document.getElementById('tfa-sub').textContent = 'Enter the 6-digit code sent to ' + email;
+          r.prepareSecondFactor({ strategy: 'email_code', emailAddressId: emailF.emailAddressId }).catch(function(){});
+        } else {
+          document.getElementById('tfa-title').textContent = 'Authenticator code';
+          document.getElementById('tfa-sub').textContent = 'Enter the 6-digit code from your authenticator app.';
+        }
+        setBtn('login-btn', 'Access Dashboard →', false);
+        show('screen-2fa');
+        return;
+      }
+      throw new Error('Sign-in incomplete: ' + r.status);
+    })
+    .then(function() { window.location.href = 'dashboard.html'; })
+    .catch(function(e) {
+      setBtn('login-btn', 'Access Dashboard →', false);
+      var msg = 'Incorrect email or password.';
+      if (e && e.errors && e.errors[0]) {
+        var c = e.errors[0];
+        if (c.code === 'form_identifier_not_found') msg = 'No account found with that email.';
+        else if (c.code === 'form_password_incorrect') msg = 'Incorrect password. Try again or reset it.';
+        else if (c.code === 'strategy_for_user_invalid') msg = 'Use "Forgot password?" to set up a password.';
+        else msg = c.longMessage || c.message || msg;
+      }
+      setErr('login-err', msg);
+    });
+});
+
+// 2FA
+document.getElementById('tfa-btn').addEventListener('click', function() {
+  var code = document.getElementById('inp-code').value.trim();
+  setErr('tfa-err', '');
+  if (!code || code.length !== 6) { setErr('tfa-err', 'Enter the 6-digit code.'); return; }
+  if (!_pending) { show('screen-login'); return; }
+  setBtn('tfa-btn', 'Verifying…', true);
+  _pending.attemptSecondFactor({ strategy: _pendingStrategy, code: code })
+    .then(function(r) {
+      if (r.status === 'complete') return Clerk.setActive({ session: r.createdSessionId });
+      throw new Error('Verification failed');
+    })
+    .then(function() { window.location.href = 'dashboard.html'; })
+    .catch(function(e) {
+      setBtn('tfa-btn', 'Verify →', false);
+      var msg = (e && e.errors && e.errors[0]) ? (e.errors[0].longMessage || e.errors[0].message) : 'Invalid code.';
+      setErr('tfa-err', msg);
+    });
+});
+
+document.getElementById('back-link').addEventListener('click', function() {
+  _pending = null; setErr('tfa-err','');
+  document.getElementById('inp-code').value = '';
+  show('screen-login');
+});
+
+document.getElementById('inp-code').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g,'');
+});
+
+// FORGOT
+document.getElementById('show-forgot').addEventListener('click', function() { show('screen-forgot'); });
+document.getElementById('back-to-login').addEventListener('click', function() { show('screen-login'); });
+
+document.getElementById('forgot-send-btn').addEventListener('click', function() {
+  var email = document.getElementById('inp-forgot-email').value.trim();
+  setErr('forgot-err','');
+  if (!email) { setErr('forgot-err','Please enter your email.'); return; }
+  setBtn('forgot-send-btn','Sending…',true);
+  var si = Clerk.signIn || Clerk.client.signIn;
+  si.create({ strategy: 'reset_password_email_code', identifier: email })
+    .then(function(r) { _forgotSI = r; setBtn('forgot-send-btn','Send Code →',false); document.getElementById('forgot-step1').style.display='none'; document.getElementById('forgot-step2').style.display='block'; })
+    .catch(function() { setBtn('forgot-send-btn','Send Code →',false); document.getElementById('forgot-step1').style.display='none'; document.getElementById('forgot-step2').style.display='block'; });
+});
+
+document.getElementById('forgot-confirm-btn').addEventListener('click', function() {
+  var code = document.getElementById('inp-forgot-code').value.trim();
+  var pw   = document.getElementById('inp-new-pw').value;
+  setErr('forgot-err','');
+  if (!code || code.length < 6) { setErr('forgot-err','Enter the 6-digit code.'); return; }
+  if (!pw || pw.length < 8)     { setErr('forgot-err','Password must be at least 8 characters.'); return; }
+  setBtn('forgot-confirm-btn','Updating…',true);
+  var proceed = _forgotSI
+    ? Promise.resolve(_forgotSI)
+    : (Clerk.signIn || Clerk.client.signIn).create({ strategy:'reset_password_email_code', identifier: document.getElementById('inp-forgot-email').value.trim() });
+  proceed
+    .then(function(si) { return si.attemptFirstFactor({ strategy:'reset_password_email_code', code:code }); })
+    .then(function(r) { if (r.status === 'needs_new_password') return r.resetPassword({ password:pw }); return r; })
+    .then(function(r) { if (r.createdSessionId) return Clerk.setActive({ session:r.createdSessionId }); })
+    .then(function() { window.location.href = 'dashboard.html'; })
+    .catch(function(e) {
+      setBtn('forgot-confirm-btn','Update Password →',false);
+      var msg = (e && e.errors && e.errors[0]) ? (e.errors[0].longMessage || e.errors[0].message) : 'Invalid code or password.';
+      setErr('forgot-err', msg);
+    });
+});
+
+// Enter key support
+document.getElementById('inp-email').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('inp-pw').focus(); });
+document.getElementById('inp-pw').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('login-btn').click(); });
+document.getElementById('inp-code').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('tfa-btn').click(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>AutoBot – Client Dashboard</title>
+<script async crossorigin="anonymous" data-clerk-publishable-key="pk_live_Y2xlcmsuYXV0b2JvdC50cmFkaW5nJA" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@4/dist/clerk.browser.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--green:#4ade80;--green2:#86efac;--cyan:#d9d6cf;--gold:#d6b25e;--red:#f87171;--purple:#c9b98f;--bg:#0b0b09;--bg2:#0e0e0c;--surface:#121210;--surface2:#181816;--border:rgba(255,255,255,0.055);--text:#f2f1ed;--muted:#75736d;--muted2:#a3a19a;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;}
+body{overflow-x:hidden;}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(74,222,128,0.1)}50%{box-shadow:0 0 40px rgba(74,222,128,0.25)}}
+nav{position:fixed;top:0;width:100%;background:rgba(11,11,9,0.98);border-bottom:1px solid var(--border);padding:0;z-index:1000;transition:all 0.3s;}
+nav.scrolled{border-bottom-color:rgba(74,222,128,0.1);}
+.nav-container{max-width:none;margin:0;padding:0 40px;height:62px;display:flex;justify-content:space-between;align-items:center;}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none;}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.2em;font-weight:800;letter-spacing:-0.5px;color:#fff;}
+.logo-text span{color:var(--green);}
+.nav-links{display:flex;align-items:center;gap:0;}
+.nav-links a{color:var(--muted2);text-decoration:none;margin-left:28px;font-size:0.875em;font-weight:500;transition:color 0.2s;white-space:nowrap;}
+.nav-links a:hover{color:#fff;}
+.nav-links a.active{color:#fff;}
+.nav-cta{background:var(--green);color:#0b0b09;padding:7px 18px;border-radius:7px;font-weight:700;transition:all 0.2s;letter-spacing:0.3px;}
+.nav-cta:hover{background:var(--green2);transform:translateY(-1px);box-shadow:0 6px 24px rgba(74,222,128,0.3);}
+#login-screen{display:block;min-height:100vh;width:100%;background:#0b0b09;box-sizing:border-box;padding:90px 20px 60px;position:relative;z-index:10;}
+@supports(min-height:100dvh){#login-screen{min-height:100dvh;}}
+@media(min-width:769px){#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 40px;}}
+.dashboard-wrap{max-width:1280px;margin:0 auto;padding:36px 40px 80px;position:relative;z-index:10;}
+.page-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;}
+.section-label{font-size:0.68em;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+.section-label::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+.page-title{font-family:'Playfair Display',serif;font-size:2.1em;font-weight:800;letter-spacing:-1px;color:#fff;}
+.live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.2);padding:6px 14px;border-radius:100px;font-size:0.78em;color:var(--green);font-weight:600;letter-spacing:1px;animation:glowPulse 3s infinite;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;}
+.tabs{display:none;gap:0;margin-bottom:28px;overflow-x:auto;position:relative;}
+.tabs::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--border);}
+.tab-btn{background:none;border:none;color:var(--muted2);padding:12px 22px;font-size:0.875em;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;white-space:nowrap;position:relative;z-index:1;}
+.tab-btn:hover{color:#fff;}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green);}
+.stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:#121210;border:1px solid var(--border);border-radius:14px;padding:16px 16px;position:relative;overflow:hidden;transition:all 0.3s;}
+.stat-card:hover{border-color:rgba(74,222,128,0.15);transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,0.4);}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(0deg,rgba(74,222,128,0.02),transparent);pointer-events:none;}
+.stat-card-accent{position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card-label{font-size:0.67em;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.stat-card-value{font-family:'Playfair Display',serif;font-size:1.45em;font-weight:800;color:#fff;letter-spacing:-0.5px;line-height:1;}
+.stat-card-sub{font-size:0.77em;margin-top:8px;}.stat-card-sub.up{color:var(--green);}.stat-card-sub.dn{color:var(--red);}.stat-card-sub.neutral{color:var(--muted2);}
+.chart-container{background:rgba(18,18,16,0.7);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden;}
+.chart-container::before{content:'';position:absolute;top:0;right:0;width:300px;height:300px;pointer-events:none;background:radial-gradient(ellipse at top right,rgba(242,241,237,0.04) 0%,transparent 60%);}
+.chart-container:hover{border-color:rgba(255,255,255,0.08);}
+.chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:14px;}
+.chart-title{font-family:'Playfair Display',serif;font-size:1.05em;font-weight:700;color:#fff;margin-bottom:4px;}
+.chart-subtitle{color:var(--muted);font-size:0.78em;}
+.chart-big-value{font-family:'Playfair Display',serif;font-size:1.7em;font-weight:800;color:var(--green);letter-spacing:-0.5px;}
+.chart-big-label{color:var(--muted);font-size:0.75em;margin-bottom:4px;}
+.time-pills{display:flex;gap:6px;}.time-pill{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-size:0.73em;color:var(--muted2);cursor:pointer;transition:all 0.2s;}
+.time-pill:hover,.time-pill.active{background:rgba(74,222,128,0.1);border-color:rgba(74,222,128,0.3);color:var(--green);}
+.chart-area{height:220px;}.chart-svg-wrap{width:100%;height:100%;}.chart-labels-x{display:flex;justify-content:space-between;margin-top:10px;color:var(--muted);font-size:0.71em;}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.activity-feed{display:flex;flex-direction:column;}.activity-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.03);animation:slideRight 0.35s ease forwards;}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:5px;}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}.activity-dot.open{background:var(--green);box-shadow:0 0 8px rgba(74,222,128,0.6);}.activity-dot.close{background:var(--muted);}.activity-dot.alert{background:var(--gold);}.activity-dot.live{background:var(--green);animation:pulse 1.4s infinite;}
+.activity-line{width:1px;background:var(--border);flex:1;margin-top:5px;min-height:18px;}
+.activity-body{flex:1;}.activity-msg{font-size:0.83em;color:var(--text);font-weight:400;line-height:1.45;}.activity-msg strong{color:#fff;}.activity-msg .pos{color:var(--green);}.activity-msg .neg{color:var(--red);}
+.activity-time{font-size:0.7em;color:var(--muted);margin-top:2px;}
+.live-tag{font-size:0.6em;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:1px;margin-left:6px;vertical-align:middle;background:rgba(74,222,128,0.1);color:var(--green);border:1px solid rgba(74,222,128,0.25);animation:pulse 2s infinite;}
+.table-container{background:rgba(18,18,16,0.7);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.table-header{padding:22px 26px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.table-title{font-family:'Playfair Display',serif;font-size:0.95em;font-weight:700;color:#fff;}
+.table-count{font-size:0.76em;color:var(--muted2);}
+table{width:100%;border-collapse:collapse;}
+th{padding:11px 20px;text-align:left;font-size:0.67em;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
+td{padding:13px 20px;font-size:0.875em;border-bottom:1px solid rgba(255,255,255,0.025);transition:background 0.15s;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.018);}
+.side-badge{font-size:0.66em;padding:3px 8px;border-radius:5px;font-weight:700;letter-spacing:0.8px;}.side-badge.long{background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.2);}.side-badge.short{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.2);}
+.pnl-pos{color:var(--green);font-weight:600;}.pnl-neg{color:var(--red);font-weight:600;}.pair-name{color:#fff;font-weight:500;}.muted-cell{color:var(--muted2);}
+.analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.analytics-card{background:rgba(18,18,16,0.7);border:1px solid var(--border);border-radius:16px;padding:22px;position:relative;overflow:hidden;transition:all 0.3s;}
+.analytics-card:hover{border-color:rgba(255,255,255,0.09);transform:translateY(-2px);}
+.analytics-card-accent{position:absolute;top:0;left:0;right:0;height:2px;}
+.analytics-label{font-size:0.67em;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:9px;}
+.analytics-value{font-family:'Playfair Display',serif;font-size:1.65em;font-weight:800;color:#fff;letter-spacing:-0.5px;}
+.analytics-sub{font-size:0.76em;color:var(--muted2);margin-top:5px;}
+.risk-section{display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:start;}
+.risk-gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.risk-gauge-label{font-size:0.67em;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.risk-gauge-val{font-family:'Playfair Display',serif;font-size:1.6em;font-weight:800;color:#fff;letter-spacing:-0.5px;text-align:center;}
+.risk-gauge-status{font-size:0.77em;font-weight:600;text-align:center;}
+.risk-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.risk-stat-box{background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.risk-stat-lbl{font-size:0.66em;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.risk-stat-val{font-family:'Playfair Display',serif;font-size:1.3em;font-weight:800;color:#fff;}
+.risk-stat-sub{font-size:0.73em;color:var(--muted2);margin-top:4px;}
+.risk-bar-track{width:100%;height:4px;background:rgba(255,255,255,0.05);border-radius:2px;margin-top:10px;overflow:hidden;}
+.risk-bar-fill{height:100%;border-radius:2px;transition:width 1.4s cubic-bezier(.22,1,.36,1);}
+.position-row{background:#121210;border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:16px;transition:all 0.25s;}
+.position-row:hover{border-color:rgba(74,222,128,0.14);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.risk-submit-btn{width:100%;padding:14px;background:linear-gradient(135deg,rgba(242,241,237,0.15),rgba(242,241,237,0.08));border:1px solid rgba(242,241,237,0.3);border-radius:12px;color:var(--cyan);font-size:0.9em;font-weight:700;font-family:'Playfair Display',serif;cursor:pointer;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:0.3px;}
+.risk-submit-btn:hover{background:linear-gradient(135deg,rgba(242,241,237,0.22),rgba(242,241,237,0.12));border-color:rgba(242,241,237,0.5);box-shadow:0 8px 28px rgba(242,241,237,0.15);transform:translateY(-1px);}
+.risk-submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.risk-pending-badge{display:none;align-items:center;gap:10px;padding:14px 18px;margin-top:16px;border-radius:12px;background:rgba(214,178,94,0.06);border:1px solid rgba(214,178,94,0.2);}
+.risk-pending-badge.show{display:flex;}
+.risk-pending-title{color:var(--gold);font-weight:600;font-size:0.9em;}
+.risk-pending-sub{color:var(--muted2);font-size:0.88em;margin-top:2px;}
+.risk-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;outline:none;cursor:pointer;background:linear-gradient(90deg,var(--green) var(--pct,50%),rgba(255,255,255,0.08) var(--pct,50%));transition:background 0.1s;}
+.risk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;cursor:pointer;box-shadow:0 0 0 3px rgba(74,222,128,0.3),0 4px 16px rgba(0,0,0,0.4);transition:all 0.2s;border:2px solid var(--green);}
+.statement-row{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:rgba(18,18,16,0.7);border:1px solid var(--border);border-radius:14px;transition:all 0.25s;gap:14px;flex-wrap:wrap;}
+.statement-row:hover{border-color:rgba(255,255,255,0.09);}
+.stmt-icon{width:38px;height:38px;border-radius:9px;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.14);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.stmt-name{font-size:0.87em;font-weight:600;color:#fff;}.stmt-sub{font-size:0.73em;color:var(--muted2);margin-top:2px;}
+.download-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid rgba(74,222,128,0.25);background:rgba(74,222,128,0.06);color:var(--green);font-size:0.75em;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.download-btn:hover{background:rgba(74,222,128,0.12);border-color:rgba(74,222,128,0.4);transform:translateY(-1px);}
+.statements-total{padding:18px 22px;background:rgba(74,222,128,0.04);border:1px solid rgba(74,222,128,0.12);border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:16px;}
+.pdf-note{padding:13px 17px;background:rgba(214,178,94,0.04);border:1px solid rgba(214,178,94,0.12);border-radius:10px;font-size:0.77em;color:#d6b25e;line-height:1.6;}
+#apikey-modal{display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);}
+#apikey-modal.open{display:flex;}
+.apikey-card{background:var(--surface);border:1px solid rgba(248,113,113,0.2);border-radius:20px;padding:32px 36px;max-width:500px;width:90%;position:relative;box-shadow:0 40px 80px rgba(0,0,0,0.6);animation:fadeUp 0.3s ease;}
+#wallet-modal{display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);}
+#wallet-modal.open{display:flex;}
+#risk-modal{display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);}
+#risk-modal.open{display:flex;}
+.wallet-modal-card{background:var(--surface);border:1px solid rgba(74,222,128,0.18);border-radius:20px;padding:32px 36px;max-width:460px;width:90%;position:relative;box-shadow:0 40px 80px rgba(0,0,0,0.6);animation:fadeUp 0.3s ease;}
+.wallet-modal-tag{font-size:0.67em;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.wallet-modal-tag::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+.wallet-modal-title{font-family:'Playfair Display',serif;font-size:1.4em;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px;}
+.wallet-modal-sub{color:var(--muted2);font-size:0.84em;line-height:1.6;margin-bottom:22px;}
+.wallet-modal-input{width:100%;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:0.88em;outline:none;transition:border-color 0.2s,background 0.2s;}
+.wallet-modal-input:focus{border-color:rgba(74,222,128,0.4);background:rgba(74,222,128,0.03);}
+.wallet-modal-error{background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:9px 13px;font-size:0.8em;color:#f87171;margin-bottom:14px;display:none;}
+.wallet-modal-actions{display:flex;gap:10px;margin-top:18px;}
+.wallet-modal-save{flex:1;padding:12px;background:linear-gradient(135deg,var(--green),var(--green2));color:#0b0b09;border:none;border-radius:10px;font-size:0.9em;font-weight:700;font-family:'Playfair Display',serif;cursor:pointer;transition:all 0.2s;}
+.wallet-modal-save:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(74,222,128,0.3);}
+.wallet-modal-cancel{padding:12px 18px;background:transparent;border:1px solid var(--border);color:var(--muted2);border-radius:10px;font-size:0.88em;cursor:pointer;transition:all 0.2s;}
+.wallet-modal-cancel:hover{border-color:rgba(255,255,255,0.18);color:#fff;}
+.wallet-modal-note{font-size:0.75em;color:var(--muted);margin-top:14px;line-height:1.6;}
+footer{border-top:1px solid var(--border);padding:48px 40px;text-align:center;color:var(--muted);font-size:0.86em;margin-top:40px;position:relative;z-index:10;}
+footer p+p{margin-top:8px;}
+.footer-company{font-size:0.79em;color:var(--muted);margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+.footer-company a{color:var(--green);text-decoration:none;transition:color 0.2s;}
+.footer-company a:hover{color:var(--green2);}
+/* ---- App shell: left sidebar + main content ---- */
+.app-shell{display:flex;align-items:stretch;min-height:calc(100vh - 62px);padding-top:62px;position:relative;z-index:10;}
+.app-sidebar{width:232px;flex-shrink:0;background:rgba(14,14,12,0.5);border-right:1px solid var(--border);padding:26px 14px 22px;display:flex;flex-direction:column;position:sticky;top:62px;align-self:flex-start;height:calc(100vh - 62px);box-sizing:border-box;}
+.sidebar-section{margin-bottom:20px;}
+.sidebar-label{font-size:0.62em;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);padding:0 12px;margin-bottom:10px;}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;color:var(--muted2);font-size:0.83em;font-weight:500;cursor:pointer;transition:all 0.15s;margin-bottom:3px;background:none;border:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+.sidebar-item:hover{background:rgba(255,255,255,0.035);color:#fff;}
+.sidebar-item.active{background:rgba(74,222,128,0.08);color:var(--green);}
+.sidebar-item svg{flex-shrink:0;opacity:0.9;}
+.sidebar-user{margin-top:auto;padding:13px 12px;background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:11px;}
+.sidebar-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--green2));color:#0b0b09;font-family:'Playfair Display',serif;font-weight:800;font-size:0.9em;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:0.5px;}
+.sidebar-user-name{font-size:0.8em;font-weight:600;color:#fff;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sidebar-user-wallet{font-size:0.68em;color:var(--muted2);margin-top:3px;font-family:'DM Mono',monospace;letter-spacing:0.3px;}
+.app-shell .dashboard-wrap{max-width:none;flex:1;min-width:0;padding:26px 36px 70px;margin:0;}
+/* Utility bar: breadcrumb + live/wallet/logout actions */
+.utility-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.utility-breadcrumb{font-size:0.78em;color:var(--muted2);letter-spacing:0.3px;}
+.utility-breadcrumb strong{color:#fff;font-weight:600;}
+.utility-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:960px){
+  .app-sidebar{display:none;}
+  .app-shell{padding-top:62px;display:block;}
+  .app-shell .dashboard-wrap{padding:28px 24px 70px;}
+  .utility-bar{margin-bottom:12px;padding-bottom:12px;}
+}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}.bottom-grid{grid-template-columns:1fr;}.analytics-grid{grid-template-columns:repeat(2,1fr);}.risk-section{grid-template-columns:1fr;}.app-shell .dashboard-wrap{padding:26px 20px 70px;}.page-title{font-size:1.7em;}.nav-container{padding:0 20px;}}
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .nav-container{padding:0 14px;height:56px;}
+  .nav-links a.nav-cta{display:none;}
+  .dashboard-wrap{padding:76px 14px 34px !important;}
+  .app-shell .dashboard-wrap{padding:12px 14px 34px !important;}
+  .app-shell{padding-top:62px;}
+  .page-header{margin-bottom:18px;}
+  .page-title{font-size:1.5em;}
+  /* Tabs: keep visible on mobile, scroll horizontally so all 5 fit. */
+  .tabs{display:flex !important;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;gap:6px;padding-bottom:6px;margin-bottom:18px;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{flex:0 0 auto;white-space:nowrap;padding:9px 14px !important;font-size:0.78em !important;}
+  .stats-grid{grid-template-columns:1fr 1fr !important;gap:10px;margin-bottom:14px;}
+  .stat-card{padding:16px 14px;}
+  .stat-card-value{font-size:1.4em;}
+  /* Risk Level card: stop it from spanning 2 rows on mobile — and make its slider/button compact. */
+  .stat-card[data-card="risk"]{grid-row:auto !important;grid-column:1 / -1 !important;}
+  .stat-card[data-card="risk"] .risk-slider{margin-bottom:8px;}
+  .risk-pending-badge{padding:10px 12px;margin-top:10px;}
+  .risk-pending-badge .risk-pending-title{font-size:0.78em;}
+  .risk-pending-badge .risk-pending-sub{font-size:0.74em;}
+  .chart-container{padding:18px 14px;border-radius:14px;}
+  .chart-area{height:160px;}
+  .time-pill{padding:4px 9px;font-size:0.7em;}
+  .analytics-grid{grid-template-columns:1fr 1fr !important;gap:10px;}
+  .analytics-card{padding:16px;border-radius:12px;}
+  .risk-stats{grid-template-columns:1fr 1fr !important;gap:10px;}
+  table{min-width:520px;}
+  th,td{padding:10px 14px;font-size:0.82em;}
+  .statement-row{padding:13px 14px;gap:10px;}
+  .stmt-name{font-size:0.82em;}
+  footer{padding:30px 16px 40px;}
+  /* Top-right user controls: wrap and shrink so the header is usable on mobile. */
+  .page-header > div:last-child{gap:8px !important;}
+  #wallet-btn,#user-label{font-size:0.72em !important;}
+}
+@media(max-width:600px){
+  .stat-card[data-card="risk"]{grid-column:1 / -1 !important;}
+}
+@media(max-width:380px){.stats-grid{grid-template-columns:1fr;}.analytics-grid{grid-template-columns:1fr;}.risk-stats{grid-template-columns:1fr;}.page-title{font-size:1.3em;}.stat-card-value{font-size:1.3em;}.chart-area{height:140px;}}
+
+/* ── AutoBot Pro client portal (cream, matches autobotprotrading) ── */
+:root{--ink:#0e0e0c;--paper:#f2f1ed;--card:#faf9f6;--gray:#8c8c89;--gray-mid:#4e4e4b;--line:rgba(14,14,12,0.1);--up:#1f6f4a;--dn:#b4442f;
+  --green:#1f6f4a;--green2:#1f6f4a;--red:#b4442f;--gold:#8a6d2b;--cyan:#4e4e4b;--purple:#4e4e4b;--bg:#f2f1ed;--bg2:#f2f1ed;--surface:#faf9f6;--surface2:#fff;--border:rgba(14,14,12,0.1);--text:#0e0e0c;--muted:#8c8c89;--muted2:#4e4e4b;}
+html,body{background:var(--paper)!important;color:var(--ink)!important;font-family:'DM Sans',sans-serif;}
+footer{display:none!important;}
+/* top nav on the sign-in screen */
+#main-nav{background:rgba(242,241,237,0.94)!important;border-bottom:1px solid var(--line)!important;backdrop-filter:blur(14px);}
+.pro-mark{display:inline-flex;align-items:center;gap:10px;font-weight:500;font-size:16px;color:var(--ink)!important;}
+.pro-dot{width:6px;height:6px;border-radius:50%;background:var(--ink);display:inline-block;}
+.nav-links a{font-family:'DM Mono',monospace!important;font-size:11px!important;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray)!important;}
+.nav-links a:hover,.nav-links a.active{color:var(--ink)!important;}
+/* sign-in + code screens and pop-ups: inline dark styles mapped to the cream look */
+#login-screen,#verify-screen{background:var(--paper)!important;}
+#login-screen [style*="background:#121210"],#verify-screen [style*="background:#121210"],.wallet-modal-card,.apikey-card{background:var(--card)!important;border:1px solid var(--line)!important;border-radius:4px!important;box-shadow:none!important;}
+#login-screen [style*="color:#fff"],#verify-screen [style*="color:#fff"],.wallet-modal-card [style*="color:#fff"],.apikey-card [style*="color:#fff"],.wallet-modal-title{color:var(--ink)!important;}
+#login-screen [style*="color:#f2f1ed"],#verify-screen [style*="color:#f2f1ed"]{color:var(--gray-mid)!important;}
+#login-screen [style*="letter-spacing:3px"],#verify-screen [style*="letter-spacing:3px"],.wallet-modal-tag,.apikey-card [style*="letter-spacing:3px"]{color:var(--gray)!important;font-family:'DM Mono',monospace!important;letter-spacing:0.1em!important;font-size:10px!important;font-weight:400!important;}
+#login-screen [style*="letter-spacing:3px"] span,#verify-screen [style*="letter-spacing:3px"] span{background:var(--ink)!important;}
+#login-screen a,#verify-screen a{color:var(--ink)!important;}
+h1,h2,h3,[style*="Playfair"]{font-family:'Playfair Display',serif!important;font-weight:400!important;letter-spacing:-0.015em!important;}
+input,textarea,select{background:#fff!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:2px!important;font-family:'DM Sans',sans-serif!important;}
+input:focus,textarea:focus{border-color:rgba(14,14,12,0.45)!important;box-shadow:none!important;outline:none;}
+#login-btn,#verify-btn,.wallet-modal-save,.risk-submit-btn,#apikey-submit-btn{background:var(--ink)!important;color:var(--paper)!important;border:none!important;border-radius:0!important;box-shadow:none!important;font-family:'DM Sans',sans-serif!important;font-weight:500!important;letter-spacing:0!important;}
+.wallet-modal-cancel{background:transparent!important;color:var(--gray-mid)!important;border:1px solid var(--line)!important;border-radius:0!important;}
+#wallet-modal,#risk-modal,#apikey-modal{background:rgba(14,14,12,0.4)!important;backdrop-filter:blur(6px);}
+.wallet-modal-sub,.apikey-card [style*="color:#a3a19a"]{color:var(--gray-mid)!important;}
+#risk-display-value{color:var(--ink)!important;}
+/* ── dashboard ── */
+.pd{min-height:100vh;background:var(--paper);color:var(--ink);}
+.pd-top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:28px;padding:18px 48px;background:rgba(242,241,237,0.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+.pd-mark{display:inline-flex;align-items:center;gap:10px;font-weight:500;font-size:16px;color:var(--ink);text-decoration:none;}
+.pd-dot{width:6px;height:6px;border-radius:50%;background:var(--ink);}
+.pd-nav{display:flex;gap:26px;margin-left:12px;}
+.pd-nav a{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray);text-decoration:none;}
+.pd-nav a:hover{color:var(--ink);}
+.pd-actions{margin-left:auto;display:flex;gap:8px;}
+.pd-chip{font:400 13px 'DM Sans',sans-serif;color:var(--gray-mid);background:none;border:1px solid var(--line);padding:7px 14px;cursor:pointer;border-radius:999px;}
+.pd-chip:hover{color:var(--ink);border-color:rgba(14,14,12,0.35);}
+#risk-btn-val{color:var(--ink);font-weight:500;}
+.pd-main{max-width:1040px;margin:0 auto;padding:56px 48px 80px;}
+.pd-who{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:14px;color:var(--gray-mid);margin-bottom:40px;}
+#utility-user-name{color:var(--ink);font-weight:500;}
+.pd-sep{width:1px;height:12px;background:var(--line);}
+.pd-status{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:12px;color:var(--gray-mid);}
+.pd-status-dot{width:6px;height:6px;border-radius:50%;background:var(--gray);}
+.pd-status-dot.pd-dot-live{background:var(--up);}
+.pd-status-dot.pd-dot-updated{background:#b08a3e;}
+.pd-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);margin:0;}
+.pd-value{font-family:'Playfair Display',serif;font-size:clamp(52px,7vw,84px);line-height:1.02;letter-spacing:-0.03em;margin:10px 0 8px;}
+.pd-gain{font-family:'DM Mono',monospace;font-size:15px;margin:0;}
+.pd-gain.up,.stat-card-sub.up{color:var(--up);}.pd-gain.dn,.stat-card-sub.dn{color:var(--dn);}
+.pd-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:44px;border-top:1px solid var(--ink);}
+.pd-stats>div{padding:18px 24px 4px 0;}
+.pd-stats>div+div{padding-left:24px;border-left:1px solid var(--line);}
+.pd-stat{font-family:'Playfair Display',serif;font-size:32px;line-height:1.1;letter-spacing:-0.015em;margin:10px 0 6px;}
+.pd-sub{font-size:13px;color:var(--gray);margin:0;}
+.pd-chart{margin-top:56px;}
+.pd-chart-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.pd-h{font-size:14px;color:var(--gray-mid);margin:0;}
+.pd-chart-svg{display:block;width:100%;height:240px;}
+.time-pills{display:flex;gap:4px;}
+.time-pill{font:12px 'DM Mono',monospace;color:var(--gray);background:none;border:1px solid transparent;padding:5px 11px;border-radius:999px;cursor:pointer;}
+.time-pill:hover{color:var(--ink);}
+.time-pill.active{color:var(--ink);border-color:rgba(14,14,12,0.3);}
+.chart-labels-x{display:flex;justify-content:space-between;margin-top:10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--gray);}
+.pd-sec{margin-top:88px;}
+.pd-sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--ink);}
+.pd-h2{font-family:'Playfair Display',serif;font-size:32px;line-height:1.1;margin:0;}
+.pd-h3{font-family:'DM Sans',sans-serif!important;font-size:14px;font-weight:500!important;color:var(--ink);margin:0 0 6px;letter-spacing:0!important;}
+.pd-total{font-family:'DM Mono',monospace;font-size:16px;}
+.pd-note{font-size:13px;color:var(--gray);margin:12px 0 0;}
+.pd-bars{height:180px;margin:20px 0 8px;}
+.pd-two{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:56px;margin-top:48px;}
+.pd-list{border-top:1px solid var(--line);}
+.pd-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);}
+.pd-row b{display:block;font-weight:500;font-size:15px;}
+.pd-row span{display:block;font-size:13px;color:var(--gray);margin-top:2px;}
+.pd-row em{font-style:normal;font-family:'DM Mono',monospace;font-size:14px;white-space:nowrap;}
+.pd-up{color:var(--up);}.pd-dn{color:var(--dn);}
+.pd-empty{font-size:14px;color:var(--gray);padding:18px 0;}
+.pd-dl{margin:0;border-top:1px solid var(--line);}
+.pd-dl>div{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);}
+.pd-dl dt{font-size:14px;color:var(--gray-mid);}
+.pd-dl dd{margin:0;font-family:'DM Mono',monospace;font-size:14px;color:var(--ink)!important;}
+.pd-table-wrap{overflow-x:auto;}
+.pd-table{width:100%;border-collapse:collapse;font-size:14px;}
+.pd-table th{text-align:left;font-family:'DM Mono',monospace;font-size:11px;font-weight:400;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray);padding:12px 12px 10px 0;border-bottom:1px solid var(--line);}
+.pd-table td{padding:13px 12px 13px 0;border-bottom:1px solid var(--line);font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);}
+.pd-table tr:hover td{background:transparent;}
+.pnl-pos{color:var(--up)!important;font-weight:400!important;}.pnl-neg{color:var(--dn)!important;font-weight:400!important;}.pair-name{color:var(--ink)!important;}.muted-cell{color:var(--gray)!important;}
+.side-badge{background:none!important;border:1px solid var(--line)!important;color:var(--gray-mid)!important;border-radius:999px!important;font-weight:400!important;}
+.position-row{background:none!important;border:none!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;padding:14px 0!important;}
+.statement-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);background:none!important;border-radius:0!important;}
+.stmt-icon{display:none!important;}
+.stmt-name{font-weight:500;font-size:15px;color:var(--ink);font-family:'DM Sans',sans-serif!important;}
+.stmt-sub{font-size:13px;color:var(--gray);}
+.download-btn{font:13px 'DM Sans',sans-serif;color:var(--ink);background:none;border:1px solid var(--line);padding:7px 14px;border-radius:999px;cursor:pointer;}
+.download-btn:hover{border-color:rgba(14,14,12,0.35);}
+.pd-stmt-total{display:flex;justify-content:space-between;gap:16px;padding:18px 0;font-size:14px;color:var(--gray-mid);}
+.pd-stmt-total b{font-family:'DM Mono',monospace;font-weight:400;color:var(--ink);margin-left:8px;}
+.pd-fine{margin-top:72px;font-size:12px;color:var(--gray);}
+.activity-item{border-bottom:1px solid var(--line)!important;padding:12px 0!important;}
+.activity-msg{color:var(--ink)!important;font-size:14px!important;}.activity-msg strong{color:var(--ink)!important;}
+.activity-time{color:var(--gray)!important;}
+.activity-dot.open{background:var(--up)!important;box-shadow:none!important;}
+.pd-manual .pd-live-only{display:none!important;}
+#sync-indicator{background:var(--ink)!important;color:var(--paper)!important;border:none!important;border-radius:2px!important;font-family:'DM Sans',sans-serif;}
+@media(max-width:760px){
+  .pd-top{padding:14px 18px;gap:12px;flex-wrap:wrap;}
+  .pd-nav{order:3;width:100%;margin:0;gap:20px;overflow-x:auto;}
+  .pd-main{padding:32px 18px 64px;}
+  .pd-who{margin-bottom:28px;}
+  .pd-status{margin-left:0;width:100%;}
+  .pd-stats{grid-template-columns:1fr;}
+  .pd-stats>div,.pd-stats>div+div{padding:16px 0;border-left:none;border-bottom:1px solid var(--line);}
+  .pd-stat{font-size:28px;}
+  .pd-two{grid-template-columns:1fr;gap:40px;}
+  .pd-chart-svg{height:200px;}
+  .pd-sec{margin-top:64px;}
+  .pd-h2{font-size:28px;}
+}
+
+nav.pd-nav{position:static!important;width:auto!important;background:none!important;border:none!important;padding:0!important;z-index:auto!important;backdrop-filter:none!important;}
+.pd{width:100%;display:block;overflow-x:hidden;}
+#risk-btn-val{color:var(--ink)!important;}
+.statements-list{border:none!important;border-top:1px solid var(--line)!important;border-radius:0!important;background:none!important;padding:0!important;}
+#risk-health-text{text-transform:lowercase;}#risk-health-text::first-letter{text-transform:uppercase;}
+.pd-manual .pd-two{grid-template-columns:minmax(0,1fr);max-width:520px;}
+.pd-manual #activity-col{display:none;}
+.statement-row{border-left:none!important;border-right:none!important;border-top:none!important;padding-left:0!important;padding-right:0!important;}
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <div class="nav-container">
+    <a href="/" class="logo">
+      <span class="pro-mark"><span class="pro-dot"></span>AutoBot</span>
+    </a>
+    <div class="nav-links">
+      <a href="/results">Client results</a>
+      <a href="/compare">Compare</a>
+      <a href="dashboard.html" class="active">Client portal</a>
+    </div>
+  </div>
+</nav>
+
+<section id="login-screen" style="display:block;min-height:100vh;width:100%;background:#0b0b09;box-sizing:border-box;padding:90px 20px 60px;position:relative;z-index:10;">
+  <div style="max-width:420px;margin:0 auto;width:100%;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="display:flex;justify-content:center"><span class="pro-mark" style="font-size:22px"><span class="pro-dot"></span>AutoBot</span></div>
+    </div>
+    <div style="background:#121210;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 22px;box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+      <div style="font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#4ade80;margin-bottom:10px;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;"></span>Client Portal</div>
+      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px;">Welcome back</div>
+      <div style="color:#a3a19a;font-size:14px;line-height:1.6;margin-bottom:22px;">Sign in to access your live algorithmic trading dashboard.</div>
+      <div id="login-error" style="display:none;background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.2);border-radius:9px;padding:10px 14px;font-size:13px;color:#f87171;margin-bottom:16px;"></div>
+      <div style="margin-bottom:16px;">
+        <label for="login-email" style="display:block;margin-bottom:8px;font-weight:500;font-size:13px;color:#f2f1ed;letter-spacing:0.3px;">Email address</label>
+        <input type="email" id="login-email" autocomplete="email" placeholder="you@example.com" style="width:100%;padding:13px 16px;background:#181816;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;-webkit-appearance:none;appearance:none;">
+      </div>
+      <div style="margin-bottom:8px;">
+        <label for="login-pw" style="display:block;margin-bottom:8px;font-weight:500;font-size:13px;color:#f2f1ed;letter-spacing:0.3px;">Password</label>
+        <div style="position:relative;">
+          <input type="password" id="login-pw" autocomplete="current-password" placeholder="••••••••••" style="width:100%;padding:13px 44px 13px 16px;background:#181816;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;box-sizing:border-box;-webkit-appearance:none;appearance:none;">
+          <button type="button" onclick="togglePw('login-pw',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:#a3a19a;cursor:pointer;font-size:16px;padding:6px;line-height:1;">👁</button>
+        </div>
+      </div>
+      <button type="button" id="login-btn" onclick="doLogin()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4ade80,#86efac);color:#0b0b09;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Playfair Display',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;letter-spacing:0.3px;-webkit-appearance:none;appearance:none;">
+        <span>Access Dashboard</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:22px 0 14px 0;">
+      <div style="font-size:13px;color:#75736d;line-height:1.7;text-align:center;">No account yet? <a href="/#contact" style="color:#a3a19a;text-decoration:none;">Get started</a> — we configure your dashboard during onboarding.</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;font-size:12px;color:#75736d;letter-spacing:0.5px;"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;"></span>Encrypted · Exchange API read-only access</div>
+  </div>
+</section>
+
+<section id="verify-screen" style="display:none;min-height:100vh;width:100%;background:#0b0b09;box-sizing:border-box;padding:90px 20px 60px;position:relative;z-index:10;">
+  <div style="max-width:420px;margin:0 auto;width:100%;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="display:flex;justify-content:center"><span class="pro-mark" style="font-size:22px"><span class="pro-dot"></span>AutoBot</span></div>
+    </div>
+    <div style="background:#121210;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 22px;box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+      <div style="font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#4ade80;margin-bottom:10px;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;"></span>Email Verification</div>
+      <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px;">Check your email</div>
+      <div style="color:#a3a19a;font-size:14px;line-height:1.6;margin-bottom:4px;">We sent a 6-digit code to</div>
+      <div id="verify-email-label" style="color:#f2f1ed;font-size:14px;font-weight:600;margin-bottom:22px;word-break:break-all;">your email address.</div>
+      <div id="verify-error" style="display:none;background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.2);border-radius:9px;padding:10px 14px;font-size:13px;color:#f87171;margin-bottom:16px;"></div>
+      <div id="verify-info" style="display:none;background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.18);border-radius:9px;padding:10px 14px;font-size:13px;color:#4ade80;margin-bottom:16px;"></div>
+      <div style="margin-bottom:16px;">
+        <label for="verify-code" style="display:block;margin-bottom:8px;font-weight:500;font-size:13px;color:#f2f1ed;letter-spacing:0.3px;">Verification code</label>
+        <input type="text" id="verify-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" style="width:100%;padding:13px 16px;background:#181816;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:20px;font-family:'Playfair Display',serif;outline:none;box-sizing:border-box;-webkit-appearance:none;appearance:none;letter-spacing:6px;text-align:center;font-weight:700;">
+      </div>
+      <button type="button" id="verify-btn" onclick="doVerifyCode()" style="width:100%;padding:14px;background:linear-gradient(135deg,#4ade80,#86efac);color:#0b0b09;border:none;border-radius:10px;font-size:15px;font-weight:700;font-family:'Playfair Display',serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;letter-spacing:0.3px;-webkit-appearance:none;appearance:none;">
+        <span>Verify &amp; Continue</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:22px 0 14px 0;">
+      <div style="font-size:13px;color:#75736d;line-height:1.7;text-align:center;">Didn't get the email? <a href="javascript:void(0)" onclick="doResendCode()" style="color:#4ade80;text-decoration:none;font-weight:600;">Resend code</a> · <a href="javascript:void(0)" onclick="cancelVerify()" style="color:#a3a19a;text-decoration:none;">Use a different account</a></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;font-size:12px;color:#75736d;letter-spacing:0.5px;"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;"></span>Encrypted · One-time 6-digit code</div>
+  </div>
+</section>
+
+<div id="apikey-modal"><div class="apikey-card"><div style="font-size:0.67em;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:#f87171;margin-bottom:10px;display:flex;align-items:center;gap:8px;"><span style="width:5px;height:5px;border-radius:50%;background:#f87171;animation:pulse 2s infinite;"></span>API Key Renewal</div><div style="font-family:'Playfair Display',serif;font-size:1.4em;font-weight:800;margin-bottom:6px;color:#fff;" id="apikey-modal-title">Submit New API Key</div><div style="color:#a3a19a;font-size:0.84em;line-height:1.6;margin-bottom:22px;" id="apikey-modal-sub">Your Hyperliquid API key is expiring. Paste your new key below securely.</div><textarea id="apikey-input" placeholder="Paste API key here…" style="width:100%;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.055);border-radius:10px;color:#fff;font-size:0.86em;font-family:'DM Sans',sans-serif;outline:none;resize:vertical;min-height:80px;box-sizing:border-box;margin-bottom:12px;"></textarea><button id="apikey-submit-btn" onclick="submitApiKey()" style="width:100%;padding:13px;background:linear-gradient(135deg,#f87171,#ef4444);color:#fff;border:none;border-radius:10px;font-size:0.9em;font-weight:700;font-family:'Playfair Display',serif;cursor:pointer;transition:all 0.2s;">Send Key →</button><div id="apikey-success" style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:9px;padding:12px 14px;font-size:0.83em;color:#4ade80;margin-top:12px;display:none;line-height:1.6;">✅ Key sent securely to account manager.</div><div id="apikey-error" style="background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);border-radius:9px;padding:10px 14px;font-size:0.82em;color:#f87171;margin-top:12px;display:none;"></div><div style="text-align:center;margin-top:16px;font-size:0.78em;color:#75736d;"><span style="cursor:pointer;" onclick="closeApikeyModal()">Close</span></div></div></div>
+
+<div id="wallet-modal"><div class="wallet-modal-card"><div class="wallet-modal-tag">Hyperliquid Integration</div><div class="wallet-modal-title">Connect your wallet</div><div class="wallet-modal-sub">Enter your Hyperliquid wallet address to load live trading data.</div><div id="wallet-modal-error" class="wallet-modal-error"></div><input class="wallet-modal-input" id="wallet-address-input" type="text" placeholder="0xYourHyperliquidAddress…" autocomplete="off" spellcheck="false"><div class="wallet-modal-actions"><button class="wallet-modal-cancel" onclick="closeWalletModal()">Skip for now</button><button class="wallet-modal-save" onclick="saveWalletAddress()">Save &amp; Load Data →</button></div><div class="wallet-modal-note">🔒 Your address is stored locally. It is public-read-only — no private keys needed.</div></div></div>
+
+<div id="risk-modal"><div class="wallet-modal-card" style="max-width:440px;"><div class="wallet-modal-tag" style="color:var(--cyan);">Risk Profile</div><div class="wallet-modal-title">Adjust risk level</div><div class="wallet-modal-sub">Slide to set your preferred trading aggressiveness. Changes require manager approval.</div><div style="text-align:center;margin:18px 0 10px;"><div style="font-family:'Playfair Display',serif;font-size:3em;font-weight:800;color:var(--green);line-height:1;" id="risk-display-value">50%</div><div style="font-size:0.72em;color:var(--muted2);letter-spacing:2px;text-transform:uppercase;margin-top:6px;">Active</div></div><input type="range" class="risk-slider" id="risk-slider" min="0" max="100" value="50" oninput="updateRiskSlider(this.value)" style="margin-bottom:14px;"><button class="risk-submit-btn" id="risk-submit-btn" onclick="submitRiskRequest()" style="width:100%;padding:12px;font-size:0.88em;">Request Change</button><div class="risk-pending-badge" id="risk-pending-badge" style="margin-top:12px;"><div style="font-size:15px;">⏳</div><div><div class="risk-pending-title" style="font-size:0.8em;">Pending</div><div class="risk-pending-sub" id="risk-pending-detail" style="font-size:0.78em;">Allow 24h.</div></div></div><div style="text-align:center;margin-top:14px;font-size:0.78em;color:#75736d;cursor:pointer;" onclick="closeRiskModal()">Close</div></div></div>
+
+
+<div id="dashboard-screen" class="pd" style="display:none;">
+  <header class="pd-top">
+    <a class="pd-mark" href="/"><span class="pd-dot"></span>AutoBot</a>
+    <nav class="pd-nav" aria-label="Dashboard sections">
+      <a href="#tab-overview">Overview</a><a href="#tab-analytics">Monthly</a><a href="#tab-trades" class="pd-live-only">Trades</a><a href="#tab-statements">Statements</a>
+    </nav>
+    <div class="pd-actions">
+      <button id="risk-btn" class="pd-chip" onclick="showRiskModal()">Risk <span id="risk-btn-val">—</span></button>
+      <button id="wallet-btn" class="pd-chip pd-live-only" onclick="showWalletModal()">Connect wallet</button>
+      <button class="pd-chip" onclick="doLogout()">Log out</button>
+    </div>
+  </header>
+
+  <main class="pd-main">
+    <section id="tab-overview" class="pd-hero">
+      <div class="pd-who">
+        <span id="utility-user-name">Client</span>
+        <span class="pd-sep"></span><span id="sidebar-user-wallet">—</span>
+        <span class="pd-status" id="main-live-badge"><span class="pd-status-dot" id="main-live-dot"></span><span id="main-live-text">Connecting…</span></span>
+      </div>
+      <p class="pd-label">Account value</p>
+      <div class="pd-value" id="s-value">—</div>
+      <p class="pd-gain" id="s-profit"></p>
+      <div class="pd-stats">
+        <div><p class="pd-label" id="lbl-capital">Invested</p><p class="pd-stat" id="s-capital">—</p><p class="pd-sub" id="sub-capital">Account baseline</p></div>
+        <div><p class="pd-label">Total return</p><p class="pd-stat" id="s-return">—</p><p class="pd-sub" id="sub-return">vs money invested</p></div>
+        <div><p class="pd-label" id="lbl-winrate">Win rate</p><p class="pd-stat" id="s-winrate">—</p><p class="pd-sub" id="s-winrate-sub">—</p></div>
+      </div>
+
+      <div class="pd-chart">
+        <div class="pd-chart-top">
+          <p class="pd-h">Account value over time</p>
+          <div class="time-pills"><button class="time-pill" onclick="setPeriod(30,this)">1M</button><button class="time-pill" onclick="setPeriod(90,this)">3M</button><button class="time-pill" onclick="setPeriod(365,this)">1Y</button><button class="time-pill active" onclick="setPeriod(9999,this)">All</button></div>
+        </div>
+        <svg class="pd-chart-svg" id="equity-svg" viewBox="0 0 800 220" preserveAspectRatio="none"></svg>
+        <div class="chart-labels-x" id="x-labels"></div>
+        <span id="equity-current-val" hidden></span>
+      </div>
+    </section>
+
+    <section id="tab-analytics" class="pd-sec">
+      <div class="pd-sec-head"><h2 class="pd-h2">Monthly results</h2><span class="pd-total" id="monthly-total"></span></div>
+      <p class="pd-note" id="monthly-note">Profit or loss each month.</p>
+      <div id="monthly-bars-svg-wrap" class="pd-bars"></div>
+      <div class="pd-two">
+        <div id="activity-col">
+          <h3 class="pd-h3" id="activity-title">Recent activity</h3>
+          <div class="activity-feed pd-list" id="activity-feed"></div>
+        </div>
+        <div>
+          <h3 class="pd-h3">Risk</h3>
+          <dl class="pd-dl">
+            <div><dt>Current drop from peak</dt><dd id="risk-gauge-val">—</dd></div>
+            <div><dt>Largest drop from peak</dt><dd id="risk-max-dd">—</dd></div>
+            <div class="pd-live-only"><dt>Profit factor</dt><dd id="risk-pf">—</dd></div>
+            <div><dt>Status</dt><dd id="risk-health-text">—</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-trades" class="pd-sec pd-live-only">
+      <div class="pd-sec-head"><h2 class="pd-h2">Trades</h2><span class="pd-note" id="trade-count-label"></span></div>
+      <div class="pd-table-wrap"><table class="pd-table"><thead><tr><th>Date</th><th>Pair</th><th>Side</th><th>Entry</th><th>Exit</th><th>Result</th><th>Return</th></tr></thead><tbody id="all-trades-body"></tbody></table></div>
+    </section>
+
+    <section id="tab-positions" class="pd-sec pd-live-only">
+      <div class="pd-sec-head"><h2 class="pd-h2">Open positions</h2><span class="pd-note" id="positions-count-label"></span></div>
+      <div class="positions-list" id="positions-list"></div>
+    </section>
+
+    <section id="tab-statements" class="pd-sec">
+      <div class="pd-sec-head"><h2 class="pd-h2">Statements</h2><span class="pd-note">Monthly summaries for your records</span></div>
+      <div class="statements-list pd-list" id="statements-list"></div>
+      <div class="pd-stmt-total"><span>Total result <b id="stmt-total-pnl">—</b></span><span>Invested <b id="stmt-initial-capital">—</b></span></div>
+    </section>
+
+    <p class="pd-fine">Trading crypto involves risk of loss. Past performance does not guarantee future results.</p>
+  </main>
+
+  <!-- kept for the data code; not displayed -->
+  <div hidden>
+    <span id="sidebar-avatar"></span><span id="sidebar-user-name"></span>
+    <table><tbody id="recent-trades-body"></tbody></table><span id="recent-pnl-total"></span>
+    <span id="positions-total-unrealised"></span><span id="positions-avg-size"></span><span id="positions-leverage"></span>
+    <span id="risk-gauge-status"></span><span id="risk-sharpe"></span><svg><path id="gauge-arc"/></svg>
+    <span id="rb1"></span><span id="rb2"></span><span id="rb3"></span><span id="rb4"></span>
+    <span id="a-avgwin"></span><span id="a-avgloss"></span><span id="a-best"></span><span id="a-best-sub"></span><span id="a-worst"></span><span id="a-worst-sub"></span><span id="a-pf"></span><span id="a-total"></span><span id="a-total-sub"></span>
+    <div id="tab-overview-legacy"></div>
+  </div>
+</div>
+<footer><div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;"><span class="pro-mark"><span class="pro-dot"></span>AutoBot</span></div><p>© 2026 AutoBot. All rights reserved.</p><p style="margin-top:8px;font-size:0.79em;">Cryptocurrency trading involves significant risk of loss.</p><div class="footer-company"><a href="/#contact">Risk Disclosure &amp; Terms</a> · <a href="/#contact">Get Started</a></div></footer>
+
+<script>
+var INITIAL_CAPITAL=0,PORTFOLIO_VALUE=0,WIN_RATE=0,OPEN_POSITIONS=0,USER_CREATED_AT=null;
+var trades=[],positions=[],monthlyData=[],statementsData=[],ALL_EQUITY=[],activityLog=[];
+// Holds the in-progress Clerk signIn while we do email-code verification.
+// { attempt: SignInResource, stage: 'first'|'second', email: string, factor: {...} }
+var _abPendingSignIn=null;
+function initClerk(){if(typeof Clerk==='undefined'){setTimeout(initClerk,100);return;}Clerk.load().then(function(){if(Clerk.user){document.getElementById('login-screen').style.display='none';showDashboard(Clerk.user);}}).catch(function(e){console.warn('Clerk:',e);});}
+// Finish a signIn once Clerk returns status:'complete'
+function __finishLogin(r){return Clerk.setActive({session:r.createdSessionId}).then(function(){document.getElementById('login-screen').style.display='none';var vs=document.getElementById('verify-screen');if(vs)vs.style.display='none';_abPendingSignIn=null;showDashboard(Clerk.user);});}
+// Pick an email-based factor from a Clerk supportedFirstFactors/supportedSecondFactors list.
+function __pickEmailFactor(list){
+  if(!list||!list.length)return null;
+  for(var i=0;i<list.length;i++){if(list[i]&&list[i].strategy==='email_code')return list[i];}
+  return null;
+}
+// Swap screens
+function __showScreen(id){
+  ['login-screen','verify-screen','dashboard-screen'].forEach(function(s){
+    var el=document.getElementById(s); if(el) el.style.display=(s===id?(s==='dashboard-screen'?'block':'block'):'none');
+  });
+}
+function setVerifyError(m){var e=document.getElementById('verify-error');if(!e)return;if(m){e.textContent=m;e.style.display='block';}else{e.textContent='';e.style.display='none';}}
+function setVerifyInfo(m){var e=document.getElementById('verify-info');if(!e)return;if(m){e.textContent=m;e.style.display='block';}else{e.textContent='';e.style.display='none';}}
+// Kick the verify screen: send the email, swap screens, update labels.
+function __beginEmailVerify(attempt, stage, factor, emailForLabel){
+  _abPendingSignIn = {attempt:attempt, stage:stage, factor:factor, email:emailForLabel||''};
+  var prep = (stage==='first')
+    ? attempt.prepareFirstFactor({strategy:'email_code', emailAddressId: factor.emailAddressId})
+    : attempt.prepareSecondFactor({strategy:'email_code', emailAddressId: factor.emailAddressId});
+  return prep.then(function(){
+    var lbl=document.getElementById('verify-email-label');
+    if(lbl) lbl.textContent = emailForLabel || (factor.safeIdentifier||'your email address.');
+    setVerifyError(''); setVerifyInfo('');
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('verify-screen').style.display='block';
+    var codeInput=document.getElementById('verify-code'); if(codeInput){codeInput.value=''; setTimeout(function(){try{codeInput.focus();}catch(_){}}, 80);}
+  });
+}
+function doLogin(){
+  var e=document.getElementById('login-email').value.trim(),
+      p=document.getElementById('login-pw').value,
+      b=document.getElementById('login-btn');
+  setLoginError('');
+  // If a Clerk session is already active, just go to dashboard.
+  if(window.Clerk && Clerk.session && Clerk.user){
+    document.getElementById('login-screen').style.display='none';
+    showDashboard(Clerk.user);
+    return;
+  }
+  if(!e||!p){setLoginError('Enter email and password.');return;}
+  b.disabled=true;
+  Clerk.client.signIn.create({identifier:e,password:p}).then(function(r){
+    if(r.status==='complete'){return __finishLogin(r);}
+    // Email verification required as FIRST factor (e.g. unverified email on account)
+    if(r.status==='needs_first_factor'){
+      var f1 = __pickEmailFactor(r.supportedFirstFactors);
+      if(f1){
+        return __beginEmailVerify(r, 'first', f1, e).then(function(){ b.disabled=false; })
+          .catch(function(err){
+            var m=(err&&err.errors&&err.errors[0]&&err.errors[0].message)||'Could not send verification email.';
+            setLoginError(m); b.disabled=false;
+          });
+      }
+      setLoginError('Email verification is required but not configured on this account.');
+      b.disabled=false; return;
+    }
+    // Email verification as SECOND factor (2FA via email)
+    if(r.status==='needs_second_factor'){
+      var f2 = __pickEmailFactor(r.supportedSecondFactors);
+      if(f2){
+        return __beginEmailVerify(r, 'second', f2, e).then(function(){ b.disabled=false; })
+          .catch(function(err){
+            var m=(err&&err.errors&&err.errors[0]&&err.errors[0].message)||'Could not send verification email.';
+            setLoginError(m); b.disabled=false;
+          });
+      }
+      // Clerk account is set to TOTP/phone 2FA — we don't want that.
+      setLoginError('Two-factor is set to an authenticator app on this account. Ask the admin to switch 2FA to email on the Clerk dashboard.');
+      b.disabled=false; return;
+    }
+    // Unknown non-complete status — show it so we can diagnose.
+    setLoginError('Sign-in status: '+r.status+'. Please contact support.');
+    b.disabled=false;
+  }).catch(function(err){
+    var code=err&&err.errors&&err.errors[0]&&err.errors[0].code;
+    // If the user already has a session, Clerk throws instead of returning
+    // a complete status — catch that here and just route to dashboard.
+    if(code==='session_exists' || (err&&err.message&&/already signed in/i.test(err.message))){
+      if(window.Clerk && Clerk.user){
+        document.getElementById('login-screen').style.display='none';
+        showDashboard(Clerk.user); return;
+      }
+    }
+    var m=(err&&err.errors&&err.errors[0]&&err.errors[0].message)||'Sign-in failed. Check your credentials.';
+    setLoginError(m); b.disabled=false;
+  });
+}
+function doVerifyCode(){
+  if(!_abPendingSignIn){setVerifyError('Session expired. Please sign in again.');return;}
+  var codeEl=document.getElementById('verify-code');
+  var code=(codeEl&&codeEl.value||'').trim();
+  var btn=document.getElementById('verify-btn');
+  setVerifyError(''); setVerifyInfo('');
+  if(!/^\d{4,8}$/.test(code)){setVerifyError('Enter the 6-digit code from your email.');return;}
+  btn.disabled=true;
+  var p = _abPendingSignIn.stage==='first'
+    ? _abPendingSignIn.attempt.attemptFirstFactor({strategy:'email_code', code:code})
+    : _abPendingSignIn.attempt.attemptSecondFactor({strategy:'email_code', code:code});
+  p.then(function(r){
+    if(r.status==='complete'){ _abPendingSignIn=null; return __finishLogin(r); }
+    // If a first-factor verify still leaves a second factor, chain it.
+    if(r.status==='needs_second_factor'){
+      var f2=__pickEmailFactor(r.supportedSecondFactors);
+      if(f2){ return __beginEmailVerify(r, 'second', f2, _abPendingSignIn.email).then(function(){btn.disabled=false;}); }
+      setVerifyError('Additional verification is required but not available via email.');
+      btn.disabled=false; return;
+    }
+    setVerifyError('Verification did not complete. Status: '+r.status);
+    btn.disabled=false;
+  }).catch(function(err){
+    var m=(err&&err.errors&&err.errors[0]&&err.errors[0].message)||'Code is incorrect or expired.';
+    setVerifyError(m); btn.disabled=false;
+  });
+}
+function doResendCode(){
+  if(!_abPendingSignIn){setVerifyError('Session expired. Please sign in again.');return;}
+  setVerifyError(''); setVerifyInfo('Sending a new code…');
+  var s=_abPendingSignIn;
+  var p = s.stage==='first'
+    ? s.attempt.prepareFirstFactor({strategy:'email_code', emailAddressId: s.factor.emailAddressId})
+    : s.attempt.prepareSecondFactor({strategy:'email_code', emailAddressId: s.factor.emailAddressId});
+  p.then(function(){ setVerifyInfo('A new code was sent to your email.'); })
+   .catch(function(err){
+     var m=(err&&err.errors&&err.errors[0]&&err.errors[0].message)||'Could not resend the code.';
+     setVerifyInfo(''); setVerifyError(m);
+   });
+}
+function cancelVerify(){
+  _abPendingSignIn=null;
+  setVerifyError(''); setVerifyInfo('');
+  document.getElementById('verify-screen').style.display='none';
+  document.getElementById('login-screen').style.display='block';
+  var pw=document.getElementById('login-pw'); if(pw) pw.value='';
+}
+function setLoginError(m){var e=document.getElementById('login-error');if(m){e.textContent=m;e.style.display='block';}else{e.textContent='';e.style.display='none';}}
+document.addEventListener('DOMContentLoaded',function(){
+  var vc=document.getElementById('verify-code');
+  if(vc){vc.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();doVerifyCode();}});}
+  var lp=document.getElementById('login-pw');
+  if(lp){lp.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();doLogin();}});}
+});
+function _wipeUserState(){MANUAL_MODE=false;var _ds=document.getElementById('dashboard-screen');if(_ds)_ds.classList.remove('pd-manual');var _ag=document.querySelector('.analytics-grid');if(_ag)_ag.style.display='';document.querySelectorAll('.risk-stat-box').forEach(function(x){x.style.display='';});trades=[];positions=[];monthlyData=[];statementsData=[];ALL_EQUITY=[];activityLog=[];PORTFOLIO_VALUE=0;WIN_RATE=0;OPEN_POSITIONS=0;USER_CREATED_AT=null;INITIAL_CAPITAL=0;}
+function doLogout(){_wipeUserState();var ak=window._autobotUserKey||'';try{if(ak){/* keep per-user keys, just clear in-memory state */}}catch(e){}try{Clerk.signOut().then(function(){document.getElementById('dashboard-screen').style.display='none';document.getElementById('login-email').value='';document.getElementById('login-pw').value='';showLogin();});}catch(e){showLogin();}}
+function showLogin(){var _mn=document.getElementById('main-nav');if(_mn)_mn.style.display='';document.getElementById('login-screen').style.display='block';var _vs=document.getElementById('verify-screen');if(_vs)_vs.style.display='none';document.getElementById('dashboard-screen').style.display='none';_abPendingSignIn=null;}
+function showDashboard(u){
+  var _mn=document.getElementById('main-nav');if(_mn)_mn.style.display='none';
+  document.getElementById('login-screen').style.display='none';
+  var _vs=document.getElementById('verify-screen');if(_vs)_vs.style.display='none';
+  var d=document.getElementById('dashboard-screen');d.style.display='';/* clear inline so .app-shell{display:flex} kicks in on desktop, block on mobile */
+  var n=(u.firstName&&u.lastName)?u.firstName+' '+u.lastName:(u.firstName||(u.primaryEmailAddress&&u.primaryEmailAddress.emailAddress?u.primaryEmailAddress.emailAddress.split('@')[0]:'Client'));
+  var _uln=document.getElementById('user-label'); if(_uln) _uln.textContent='● '+n;
+  var _utn=document.getElementById('utility-user-name'); if(_utn) _utn.textContent=n;
+  // Sidebar user block
+  var _sAv=document.getElementById('sidebar-avatar'), _sNm=document.getElementById('sidebar-user-name');
+  if(_sNm) _sNm.textContent=n;
+  if(_sAv){
+    var ini=(n||'A').trim().split(/\s+/).map(function(x){return x.charAt(0);}).join('').slice(0,2).toUpperCase()||'A';
+    _sAv.textContent=ini;
+  }
+  // Wipe prior user's in-memory state before loading this user's.
+  _wipeUserState();
+  var m=u.publicMetadata||{},um=u.unsafeMetadata||{},k=u.id?('_'+u.id):'';
+  window._autobotUserKey=k;
+  // Admin-set hl_address takes precedence (publicMetadata), then user's own, then per-user localStorage.
+  var a=m.hl_address||um.hl_address||localStorage.getItem('autobot_hl_address'+k)||null;
+  // Initial capital from admin publicMetadata only; no fake default.
+  var ic = parseFloat(m.initial_capital);
+  if(!isFinite(ic)||ic<=0){ic = parseFloat(um.initial_capital);}
+  INITIAL_CAPITAL = isFinite(ic)&&ic>0 ? ic : 0;
+  var cr=u.createdAt||u.created_at||null;
+  if(cr){USER_CREATED_AT=(cr instanceof Date)?cr:new Date(cr);if(isNaN(USER_CREATED_AT.getTime()))USER_CREATED_AT=new Date();}
+  else{USER_CREATED_AT=new Date();}
+  // Update wallet button label based on whether we already have an address.
+  var wb=document.getElementById('wallet-btn');
+  if(wb){wb.textContent = a ? (a.slice(0,6)+'…'+a.slice(-4)) : 'Connect wallet';}
+  var _sW=document.getElementById('sidebar-user-wallet');
+  if(_sW){_sW.textContent = a ? (a.slice(0,6)+'…'+a.slice(-4)) : 'No wallet';}
+  // Risk level: prefer Clerk publicMetadata (admin set), then unsafeMetadata (user set), then per-user localStorage.
+  var rlAdmin = parseInt(m.risk_level);
+  var rlUser  = parseInt(um.risk_level);
+  var rlEffective = isFinite(rlAdmin)&&rlAdmin>=0&&rlAdmin<=100 ? rlAdmin
+                  : (isFinite(rlUser)&&rlUser>=0&&rlUser<=100 ? rlUser : null);
+  if(rlEffective!=null){
+    try{localStorage.setItem('autobot_risk_level'+k,rlEffective);}catch(_){}
+    var sl=document.getElementById('risk-slider'); if(sl){sl.value=rlEffective; updateRiskSlider(rlEffective);}
+  }
+  // Pending risk-change request from unsafeMetadata. Auto-clear if stale.
+  var prr = um.pending_risk_request || null;
+  var prrLevel = prr ? (prr.requested_level!=null?prr.requested_level:prr.value) : null;
+  // Stale check: if the request matches current risk_level (admin already applied it),
+  // or if there's no requested_level at all, wipe the pending state from Clerk.
+  if(prr && (prrLevel==null || (rlEffective!=null && parseInt(prrLevel)===parseInt(rlEffective)))){
+    try{
+      var cleared = Object.assign({}, um); delete cleared.pending_risk_request;
+      if(window.Clerk && Clerk.user){ Clerk.user.update({unsafeMetadata: cleared}).catch(function(){}); }
+    }catch(_){}
+    prr = null;
+  }
+  if(prr && prrLevel!=null){
+    var bge=document.getElementById('risk-pending-badge');
+    var rv = parseInt(prrLevel);
+    var rln = rv<=25?'Conservative':rv<=50?'Moderate':rv<=75?'Aggressive':'Maximum';
+    if(bge){bge.className='risk-pending-badge show';}
+    var det=document.getElementById('risk-pending-detail');
+    if(det){det.innerHTML=rv+'% ('+rln+') - awaiting approval. <a href="#" onclick="cancelRiskRequest();return false;" style="color:var(--gold);text-decoration:underline;margin-left:6px;">Cancel</a>';}
+    var rb=document.getElementById('risk-submit-btn');
+    if(rb){rb.disabled=true; rb.innerHTML='⏳ Pending';}
+  }
+  renderAllCounters();
+  buildEquityFromTrades();
+  drawEquity(9999);
+  renderRecentTrades();
+  renderActivityFeed();
+  renderAllTrades();
+  renderPositions();
+  renderStatements();
+  updateAnalyticsCards();
+  updateRiskMonitor();
+  if(rlEffective==null){loadSavedRiskLevel();}
+  // Exchange routing: Bybit clients pull through the signed proxy keyed by their Clerk user_id;
+  // Hyperliquid clients keep the existing wallet-address flow.
+  var exch=((m.exchange||um.exchange||'hyperliquid')+'').toLowerCase();
+  window._autobotExchange=exch;
+  var manual=(m.data_mode==='manual')||(exch==='bybit');
+  if(manual){
+    renderManualAccount(m);
+    
+    var _sw2=document.getElementById('sidebar-user-wallet'); if(_sw2) _sw2.textContent=(exch==='bybit'?'Bybit':'Exchange')+' account';
+  } else if(a){
+    fetchHyperliquidData(a); startAutoRefresh(a);
+  } else {
+    showSyncIndicator('⚠ No wallet connected — click &ldquo;Connect Wallet&rdquo;','var(--gold)',6000);
+  }
+}
+function togglePw(i,b){var el=document.getElementById(i);el.type=el.type==='password'?'text':'password';b.textContent=el.type==='password'?'👁':'🙈';}
+function setMobNav(b){document.querySelectorAll('.mob-nav-btn').forEach(function(btn){btn.classList.remove('active');});b.classList.add('active');}
+function switchTab(n,b){var el=document.getElementById('tab-'+n);if(el&&el.offsetParent!==null)el.scrollIntoView({behavior:'smooth',block:'start'});if(n==='analytics'){drawMonthly();}}
+// Sidebar click handler: sync the top tab buttons AND call the main switchTab.
+function switchTabFromSidebar(n, el){
+  // Find matching tab button and delegate (so sizing/transitions behave identically).
+  var map={overview:0,positions:1,trades:2,analytics:3,statements:4};
+  var btns=document.querySelectorAll('.tab-btn');
+  var b=btns[map[n]];
+  if(b){ switchTab(n, b); }
+  else { switchTab(n, el); }
+}
+
+// ---------- Formatting helpers ----------
+function fmtUsd(v,sign){v=parseFloat(v)||0;var s=(v<0?'-':'')+'$'+Math.abs(Math.round(v)).toLocaleString();return sign&&v>0?'+'+'$'+Math.abs(Math.round(v)).toLocaleString():s;}
+function fmtUsd2(v){v=parseFloat(v)||0;return (v<0?'-':'')+'$'+Math.abs(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtPct(v,sign,dec){v=parseFloat(v)||0;dec=(dec==null?2:dec);return (sign&&v>0?'+':'')+v.toFixed(dec)+'%';}
+function getTimeAgo(ts){var s=Math.floor((Date.now()-ts)/1000);if(s<45)return 'just now';var m=Math.floor(s/60);if(m<60)return m+'m ago';var h=Math.floor(m/60);if(h<24)return h+'h ago';var d=Math.floor(h/24);if(d<7)return d+'d ago';var w=Math.floor(d/7);if(w<5)return w+'w ago';return new Date(ts).toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+
+// ---------- Overview counters ----------
+function animateCounter(e,t,p,s,d,dec){if(!e)return;var st=performance.now();p=p||'';s=s||'';d=d||1100;dec=dec||0;function step(now){var pct=Math.min((now-st)/d,1),ease=1-Math.pow(1-pct,3),v=t*ease;e.textContent=p+(dec?v.toFixed(dec):Math.round(v).toLocaleString())+s;if(pct<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+function renderAllCounters(){
+  var set=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v;};
+  if(INITIAL_CAPITAL<=0 && PORTFOLIO_VALUE<=0){set('s-capital','—');set('s-value','—');set('s-return','—');set('s-winrate','—');set('s-profit','No data yet');return;}
+  var prf=PORTFOLIO_VALUE-INITIAL_CAPITAL;
+  var pct=(INITIAL_CAPITAL>0?(prf/INITIAL_CAPITAL*100):0);
+  animateCounter(document.getElementById('s-capital'),INITIAL_CAPITAL,'$','',900);
+  animateCounter(document.getElementById('s-value'),PORTFOLIO_VALUE,'$','',1100);
+  var retEl=document.getElementById('s-return');
+  if(retEl){retEl.style.color=pct>=0?'var(--up)':'var(--dn)';animateCounter(retEl,pct,pct>=0?'+':'','%',1100,2);}
+  animateCounter(document.getElementById('s-winrate'),WIN_RATE,'','%',900);
+  var pEl=document.getElementById('s-profit');
+  if(pEl){pEl.textContent=(prf>=0?'+':'-')+'$'+Math.abs(Math.round(prf)).toLocaleString()+' profit';pEl.className='pd-gain '+(prf>=0?'up':'dn');}
+}
+
+// ---------- Equity curve ----------
+function buildEquityFromTrades(){
+  // ALL_EQUITY is an array of {v, d} (value at date).
+  // Prefer a snapshot series if fetchHyperliquidData built one; otherwise
+  // fall back to a simple 2-point curve.
+  if(ALL_EQUITY && ALL_EQUITY.length>=2) return;
+  var now=new Date();
+  var st=(USER_CREATED_AT&&!isNaN(new Date(USER_CREATED_AT).getTime()))?new Date(USER_CREATED_AT):new Date(now.getTime()-24*60*60*1000);
+  if(st.getTime()>=now.getTime()){st=new Date(now.getTime()-24*60*60*1000);}
+  var ic=INITIAL_CAPITAL>0?INITIAL_CAPITAL:(PORTFOLIO_VALUE>0?PORTFOLIO_VALUE:0);
+  var cv=PORTFOLIO_VALUE>0?PORTFOLIO_VALUE:ic;
+  if(!ic && !cv){ALL_EQUITY=[];return;}
+  ALL_EQUITY=[{v:ic,d:st},{v:cv,d:now}];
+}
+function drawEquity(days){
+  var e=document.getElementById('equity-svg'),xEl=document.getElementById('x-labels'),curEl=document.getElementById('equity-current-val');
+  if(curEl){curEl.textContent=PORTFOLIO_VALUE>0?('$'+Math.round(PORTFOLIO_VALUE).toLocaleString()):'—';}
+  if(!ALL_EQUITY.length||(PORTFOLIO_VALUE<=0&&INITIAL_CAPITAL<=0)){
+    if(e)e.innerHTML='<text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="13" fill="#8c8c89">Your chart appears once your account has data</text>';
+    if(xEl)xEl.innerHTML='';return;
+  }
+  var d=ALL_EQUITY;
+  if(days<9999){var co=new Date();co.setDate(co.getDate()-days);d=ALL_EQUITY.filter(function(p){return p.d>=co;});}
+  if(d.length<2){d=ALL_EQUITY.slice(-2);}
+  var W=800,H=220,pad=10;
+  var vals=d.map(function(x){return x.v;});
+  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals),rng=(mx-mn)||Math.max(1,mx*0.01);
+  // Monthly-updated accounts: space points by real dates so long gaps look long.
+  var t0=d[0].d.getTime(),tspan=(d[d.length-1].d.getTime()-t0)||1;
+  var pts=d.map(function(x,i){var f=MANUAL_MODE?((x.d.getTime()-t0)/tspan):(i/(d.length-1||1));return{x:parseFloat((pad+f*(W-pad*2)).toFixed(1)),y:parseFloat((H-pad-((x.v-mn)/rng)*(H-pad*2)).toFixed(1))};});
+  var ps=pts.map(function(c){return c.x+','+c.y;});
+  var color = d[d.length-1].v>=d[0].v ? '#1f6f4a' : '#b4442f';
+  var grad = color==='#4ade80' ? '0 0 0 0' : '0 0 0 0'; // placeholder
+  e.innerHTML='<defs><linearGradient id="gfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity="0.12"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs><path d="M '+ps[0]+' L '+ps.join(' L ')+' L '+(W-pad)+','+(H-pad)+' L '+pad+','+(H-pad)+' Z" fill="url(#gfill)"/><polyline points="'+ps.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>';
+  if(xEl&&MANUAL_MODE){var fm=function(t){return t.toLocaleDateString('en-US',{month:'short',year:'numeric'});};xEl.innerHTML='<span>'+fm(d[0].d)+'</span><span>'+fm(d[d.length-1].d)+'</span>';return;}
+  if(xEl){var xl='',step=Math.max(1,Math.floor(d.length/5));for(var i=0;i<d.length;i+=step){xl+='<span>'+d[i].d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</span>';}xEl.innerHTML=xl;}
+}
+function setPeriod(d,e){document.querySelectorAll('.time-pill').forEach(function(p){p.classList.remove('active');});e.classList.add('active');drawEquity(d);}
+
+// ---------- Monthly bars ----------
+function drawMonthly(){
+  var w=document.getElementById('monthly-bars-svg-wrap'); if(!w)return;
+  var totEl=document.getElementById('monthly-total');
+  if(!monthlyData.length){
+    w.innerHTML='<div style="padding:52px 20px;text-align:center;color:var(--muted);font-size:0.85em;">Monthly data will appear once trades are recorded.</div>';
+    if(totEl){totEl.textContent='';}
+    return;
+  }
+  var totalPnl=monthlyData.reduce(function(s,m){return s+m.pnl;},0);
+  if(totEl){totEl.textContent=(totalPnl>=0?'+':'-')+'$'+Math.abs(Math.round(totalPnl)).toLocaleString();totEl.style.color=totalPnl>=0?'var(--green)':'var(--red)';}
+  var W=800,H=180,pad=20,bars=monthlyData.length;
+  var mx=Math.max.apply(null,monthlyData.map(function(m){return Math.abs(m.pnl);}))||1;
+  var slot=(W-pad*2)/bars,bw=Math.max(10,Math.min(44,slot*0.45)),gap=slot-bw;
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="100%" preserveAspectRatio="none">';
+  svg+='<line x1="'+pad+'" y1="'+(H/2)+'" x2="'+(W-pad)+'" y2="'+(H/2)+'" stroke="rgba(14,14,12,0.15)" stroke-dasharray="3 4"/>';
+  monthlyData.forEach(function(m,i){
+    var x=pad+i*slot+gap/2;
+    var h=(Math.abs(m.pnl)/mx)*(H/2-10);
+    var y=m.pnl>=0?(H/2-h):(H/2);
+    var c=m.pnl>=0?'#1f6f4a':'#b4442f';
+    svg+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="1" fill="'+c+'" opacity="0.85"><title>'+m.label+': '+(m.pnl>=0?'+':'-')+'$'+Math.abs(Math.round(m.pnl)).toLocaleString()+'</title></rect>';
+    svg+='<text x="'+(x+bw/2).toFixed(1)+'" y="'+(H-4)+'" font-family="sans-serif" font-size="10" fill="#8c8c89" text-anchor="middle">'+m.short+'</text>';
+  });
+  svg+='</svg>';
+  w.innerHTML=svg;
+}
+
+// ---------- Activity feed ----------
+function buildActivityFromFills(fills){
+  if(!fills||!fills.length){activityLog=[];return;}
+  // Take the newest 20 fills, only closing fills (closedPnl != 0) and big opens.
+  var items=[];
+  var sorted=fills.slice().sort(function(a,b){return (b.time||0)-(a.time||0);});
+  for(var i=0;i<sorted.length && items.length<12;i++){
+    var f=sorted[i];
+    var pnl=parseFloat(f.closedPnl||0);
+    var dir=(f.dir||'').toLowerCase();
+    var coin=f.coin||'?';
+    var sz=parseFloat(f.sz)||0;
+    var px=parseFloat(f.px)||0;
+    var msg='', type='close';
+    if(dir.indexOf('open')===0){
+      type='open';
+      var sideWord = dir.indexOf('long')>-1 ? 'long' : 'short';
+      msg='Opened <strong>'+coin+'</strong> '+sideWord+' at $'+px.toLocaleString();
+    } else if(dir.indexOf('close')===0 || pnl!==0){
+      type='close';
+      var sign=pnl>=0?'pos':'neg', pfx=pnl>=0?'+':'-';
+      msg='Closed <strong>'+coin+'</strong> for <span class="'+sign+'">'+pfx+'$'+Math.abs(pnl).toLocaleString(undefined,{maximumFractionDigits:2})+'</span>';
+    } else {
+      msg='Traded <strong>'+coin+'</strong> at $'+px.toLocaleString();
+    }
+    items.push({type:type,msg:msg,time:getTimeAgo(f.time||Date.now()),badge:false,ts:f.time||0});
+  }
+  activityLog=items;
+}
+function renderActivityFeed(items){
+  var f=document.getElementById('activity-feed'); if(!f)return;
+  var i=items||activityLog;
+  f.innerHTML='';
+  if(!i.length){f.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-size:0.84em;">No activity yet.</div>';return;}
+  var lim=Math.min(i.length,8);
+  i.slice(0,lim).forEach(function(item,idx){
+    var dotCls=item.type==='live'?'live':item.type==='open'?'open':item.type==='alert'?'alert':'close';
+    var el=document.createElement('div');
+    el.className='activity-item';el.style.animationDelay=(idx*55)+'ms';
+    var line=idx<lim-1?'<div class="activity-line"></div>':'';
+    el.innerHTML='<div class="activity-dot-col"><div class="activity-dot '+dotCls+'"></div>'+line+'</div>'+
+      '<div class="activity-body"><div class="activity-msg">'+item.msg+(item.badge?'<span class="live-tag">LIVE</span>':'')+'</div><div class="activity-time">'+item.time+'</div></div>';
+    f.appendChild(el);
+  });
+}
+
+// ---------- Trades ----------
+function renderRecentTrades(){
+  var t=document.getElementById('recent-trades-body'),tot=document.getElementById('recent-pnl-total'); if(!t)return;
+  if(!trades.length){if(tot){tot.textContent='—';tot.style.color='var(--muted)';}t.innerHTML='<tr><td colspan="5" style="padding:32px 20px;text-align:center;color:var(--muted);font-size:0.85em;">No trades yet.</td></tr>';return;}
+  var r=trades.slice(0,5),s=r.reduce(function(sum,tr){return sum+tr.pnl;},0);
+  if(tot){tot.textContent=(s>=0?'+':'-')+'$'+Math.abs(Math.round(s)).toLocaleString();tot.style.color=s>=0?'var(--green)':'var(--red)';}
+  t.innerHTML='';
+  r.forEach(function(tr){
+    var p=tr.pnl>=0, entry=(tr.entry||0), exit=(tr.exit||0);
+    t.innerHTML+='<tr><td class="pair-name" style="padding:11px 20px;">'+tr.pair+'</td>'+
+      '<td style="padding:11px 20px;"><span class="side-badge '+tr.side.toLowerCase()+'">'+tr.side+'</span></td>'+
+      '<td class="muted-cell" style="padding:11px 20px;">$'+entry.toLocaleString(undefined,{maximumFractionDigits:entry<10?4:2})+'</td>'+
+      '<td class="muted-cell" style="padding:11px 20px;">$'+exit.toLocaleString(undefined,{maximumFractionDigits:exit<10?4:2})+'</td>'+
+      '<td class="'+(p?'pnl-pos':'pnl-neg')+'" style="padding:11px 20px;">'+(p?'+':'-')+'$'+Math.abs(tr.pnl).toLocaleString(undefined,{maximumFractionDigits:2})+'</td></tr>';
+  });
+}
+function renderAllTrades(){
+  var t=document.getElementById('all-trades-body'),l=document.getElementById('trade-count-label');
+  if(l)l.textContent=trades.length?trades.length+' closed trades':'';
+  if(!t)return; t.innerHTML='';
+  if(!trades.length){t.innerHTML='<tr><td colspan="7" style="padding:52px 20px;text-align:center;color:var(--muted);">No trade history yet.</td></tr>';return;}
+  trades.forEach(function(tr){
+    var p=tr.pnl>=0, entry=(tr.entry||0), exit=(tr.exit||0);
+    t.innerHTML+='<tr><td class="muted-cell">'+tr.date+'</td>'+
+      '<td class="pair-name">'+tr.pair+'</td>'+
+      '<td><span class="side-badge '+tr.side.toLowerCase()+'">'+tr.side+'</span></td>'+
+      '<td class="muted-cell">$'+entry.toLocaleString(undefined,{maximumFractionDigits:entry<10?4:2})+'</td>'+
+      '<td class="muted-cell">$'+exit.toLocaleString(undefined,{maximumFractionDigits:exit<10?4:2})+'</td>'+
+      '<td class="'+(p?'pnl-pos':'pnl-neg')+'">'+(p?'+':'-')+'$'+Math.abs(tr.pnl).toLocaleString(undefined,{maximumFractionDigits:2})+'</td>'+
+      '<td class="'+(p?'pnl-pos':'pnl-neg')+'">'+(p?'+':'')+(tr.pct||0).toFixed(2)+'%</td></tr>';
+  });
+}
+
+// ---------- Positions ----------
+function renderPositions(){
+  var l=document.getElementById('positions-list');if(!l)return;
+  var c=document.getElementById('positions-count-label'),tot=document.getElementById('positions-total-unrealised'),avg=document.getElementById('positions-avg-size'),lev=document.getElementById('positions-leverage');
+  var n=positions.length;
+  if(c)c.textContent=n+' open position'+(n===1?'':'s');
+  if(!n){
+    if(tot){tot.textContent='—';tot.style.color='var(--muted2)';}
+    if(avg){avg.textContent='—';avg.style.color='var(--muted2)';}
+    if(lev){lev.textContent='—';lev.style.color='var(--muted2)';}
+    l.innerHTML='<div style="padding:52px 20px;text-align:center;color:var(--muted);">No open positions.</div>';
+    return;
+  }
+  var tu=0,ts=0,lvSum=0,lvCnt=0;
+  positions.forEach(function(p){tu+=(parseFloat(p.upnl)||0);ts+=(parseFloat(p.notional)||0);if(p.leverage){lvSum+=parseFloat(p.leverage)||0;lvCnt++;}});
+  var as=n>0?ts/n:0;
+  if(tot){var pos=tu>=0;tot.textContent=(pos?'+':'-')+'$'+Math.abs(Math.round(tu)).toLocaleString();tot.style.color=pos?'var(--green)':'var(--red)';}
+  if(avg){avg.textContent='$'+Math.round(as).toLocaleString();avg.style.color='#fff';}
+  if(lev){if(lvCnt>0){lev.textContent=(lvSum/lvCnt).toFixed(1)+'x';lev.style.color='#fff';}else{lev.textContent='—';lev.style.color='var(--muted2)';}}
+  l.innerHTML='';
+  positions.forEach(function(p){
+    var pos=p.upnl>=0, row=document.createElement('div'); row.className='position-row';
+    row.innerHTML='<div><div style="font-weight:600;color:#fff;font-size:.92em;">'+p.pair+' <span class="side-badge '+p.side.toLowerCase()+'" style="font-size:.58em;">'+p.side+'</span></div><div style="font-size:.73em;color:var(--muted);margin-top:3px;">'+p.exchange+(p.leverage?(' · '+parseFloat(p.leverage).toFixed(1)+'x'):'')+'</div></div>'+
+      '<div style="text-align:right;"><div style="font-size:.66em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Size</div><div style="font-size:.84em;color:var(--muted2);">'+p.size+'</div></div>'+
+      '<div style="text-align:right;"><div style="font-size:.66em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Entry</div><div style="font-size:.84em;color:var(--muted2);">'+p.entry+'</div></div>'+
+      '<div style="text-align:right;"><div style="font-size:.66em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Unrealised</div><div class="'+(pos?'pnl-pos':'pnl-neg')+'" style="font-size:.9em;">'+(pos?'+':'-')+'$'+Math.abs(p.upnl).toLocaleString(undefined,{maximumFractionDigits:2})+' <span style="font-size:.77em;font-weight:400;">('+(pos?'+':'')+(p.upct||0).toFixed(2)+'%)</span></div></div>';
+    l.appendChild(row);
+  });
+}
+
+// ---------- Risk slider ----------
+function updateRiskSlider(v){
+  v=parseInt(v);var e=document.getElementById('risk-display-value');if(!e)return;
+  var c=v<=25?'var(--green)':v<=50?'var(--cyan)':v<=75?'var(--gold)':'var(--red)';
+  e.textContent=v+'%';e.style.color=c;
+  var g=v<=25?'#4ade80':v<=50?'#d9d6cf':v<=75?'#d6b25e':'#f87171';
+  document.getElementById('risk-slider').style.background='linear-gradient(90deg,'+g+' '+v+'%,rgba(255,255,255,0.08) '+v+'%)';
+  // Keep the compact Risk chip in the utility bar in sync.
+  var rbv=document.getElementById('risk-btn-val'); if(rbv){rbv.textContent=v+'%';rbv.style.color=g;}
+  try{localStorage.setItem('autobot_risk_level'+(window._autobotUserKey||''),v);}catch(_){}
+}
+function showRiskModal(){document.getElementById('risk-modal').classList.add('open');}
+function closeRiskModal(){document.getElementById('risk-modal').classList.remove('open');}
+function loadSavedRiskLevel(){var k='autobot_risk_level'+(window._autobotUserKey||''),s=parseInt(localStorage.getItem(k));if(!isNaN(s)&&s>=0&&s<=100){var sl=document.getElementById('risk-slider');if(sl){sl.value=s;updateRiskSlider(s);}}else{var sl2=document.getElementById('risk-slider');if(sl2){sl2.value=50;updateRiskSlider(50);}}}
+function cancelRiskRequest(){
+  var bge=document.getElementById('risk-pending-badge');
+  if(bge)bge.className='risk-pending-badge';
+  var rb=document.getElementById('risk-submit-btn');
+  if(rb){rb.disabled=false; rb.innerHTML='Request Change';}
+  if(window.Clerk && Clerk.user){
+    var um = Object.assign({}, Clerk.user.unsafeMetadata||{});
+    delete um.pending_risk_request;
+    Clerk.user.update({unsafeMetadata: um}).catch(function(ex){ console.warn('Clerk cancel risk:', ex); });
+  }
+}
+function submitRiskRequest(){
+  var v=parseInt(document.getElementById('risk-slider').value),
+      b=document.getElementById('risk-submit-btn'),
+      bge=document.getElementById('risk-pending-badge'),
+      ln=v<=25?'Conservative':v<=50?'Moderate':v<=75?'Aggressive':'Maximum';
+  b.disabled=true; b.innerHTML='✅ Request Sent';
+  if(bge)bge.className='risk-pending-badge show';
+  var det=document.getElementById('risk-pending-detail');
+  if(det)det.textContent=v+'% ('+ln+') - submitted. Allow 24h.';
+  // Persist the pending request to Clerk so it survives across devices + reloads.
+  if(window.Clerk && Clerk.user){
+    var payload = { requested_level: v, requested_at: new Date().toISOString(), label: ln };
+    Clerk.user.update({
+      unsafeMetadata: Object.assign({}, Clerk.user.unsafeMetadata||{}, { pending_risk_request: payload })
+    }).catch(function(ex){ console.warn('Clerk risk update:', ex); });
+  }
+}
+
+// ---------- Statements ----------
+function renderStatements(){
+  var l=document.getElementById('statements-list');if(!l)return;
+  l.innerHTML='';
+  var stmtTotal=document.getElementById('stmt-total-pnl'),stmtIc=document.getElementById('stmt-initial-capital');
+  if(stmtIc){stmtIc.textContent=INITIAL_CAPITAL>0?('$'+Math.round(INITIAL_CAPITAL).toLocaleString()):'—';}
+  if(!statementsData.length){
+    l.innerHTML='<div style="padding:52px 20px;text-align:center;color:var(--muted);">No statements yet.</div>';
+    if(stmtTotal){stmtTotal.textContent='—';stmtTotal.style.color='var(--muted2)';}
+    return;
+  }
+  var tot=0;
+  statementsData.forEach(function(s,i){
+    tot+=s.pnl;
+    var p=s.pnl>=0;
+    var row=document.createElement('div');row.className='statement-row';
+    row.innerHTML='<div style="display:flex;align-items:center;gap:14px;flex:1;min-width:200px;">'+
+      '<div class="stmt-icon">📅</div>'+
+      '<div><div class="stmt-name">'+s.label+'</div><div class="stmt-sub">'+(s.manual?('Balance $'+Math.round(s.close).toLocaleString()+(s.deposit?(', '+(s.deposit>0?'added':'withdrew')+' $'+Math.abs(Math.round(s.deposit)).toLocaleString()):'')):(s.tradeCount+' trades'))+' · <span class="'+(p?'pd-up':'pd-dn')+'">'+(p?'+':'-')+'$'+Math.abs(Math.round(s.pnl)).toLocaleString()+'</span></div></div>'+
+      '</div>'+
+      '<button class="download-btn" onclick="downloadStatement(\''+s.key+'\')">Download</button>';
+    l.appendChild(row);
+  });
+  if(stmtTotal){stmtTotal.textContent=(tot>=0?'+':'-')+'$'+Math.abs(Math.round(tot)).toLocaleString();stmtTotal.style.color=tot>=0?'var(--green)':'var(--red)';}
+}
+function downloadStatement(key){
+  var s=statementsData.find(function(x){return x.key===key;}); if(!s)return;
+  var lines=['AutoBot Monthly Statement — '+s.label,'==============================================',''];
+  lines.push('Client: '+((window.Clerk&&Clerk.user&&Clerk.user.primaryEmailAddress)?Clerk.user.primaryEmailAddress.emailAddress:'—'));
+  lines.push('Period: '+s.label);
+  lines.push('Initial Capital: '+(INITIAL_CAPITAL>0?('$'+Math.round(INITIAL_CAPITAL).toLocaleString()):'—'));
+  if(s.manual){
+    lines.push('Opening balance: $'+Math.round(s.open).toLocaleString());
+    if(s.deposit)lines.push((s.deposit>0?'Money added: +$':'Money withdrawn: -$')+Math.abs(Math.round(s.deposit)).toLocaleString());
+    lines.push('Closing balance: $'+Math.round(s.close).toLocaleString()+' (updated '+s.updated.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+')');
+    lines.push('Result this month: '+(s.pnl>=0?'+':'-')+'$'+Math.abs(Math.round(s.pnl)).toLocaleString());
+    lines.push('');lines.push('Balance updated monthly by the AutoBot team. Trade-by-trade detail is not included for this account.');
+    var blobM=new Blob([lines.join('\n')],{type:'text/plain'});var urlM=URL.createObjectURL(blobM),aM=document.createElement('a');
+    aM.href=urlM;aM.download='autobot-statement-'+s.key+'.txt';document.body.appendChild(aM);aM.click();
+    setTimeout(function(){document.body.removeChild(aM);URL.revokeObjectURL(urlM);},100);
+    return;
+  }
+  lines.push('Total Trades: '+s.tradeCount);
+  lines.push('Net PnL: '+(s.pnl>=0?'+':'-')+'$'+Math.abs(s.pnl).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}));
+  lines.push('');
+  lines.push('Trades:');
+  lines.push('--------');
+  s.trades.forEach(function(t){
+    lines.push(t.date+'  '+t.pair+'  '+t.side+'  entry=$'+(t.entry||0)+'  exit=$'+(t.exit||0)+'  pnl='+(t.pnl>=0?'+':'-')+'$'+Math.abs(t.pnl).toFixed(2));
+  });
+  var blob=new Blob([lines.join('\n')],{type:'text/plain'});
+  var url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='autobot-statement-'+s.key+'.txt';document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+}
+
+// ---------- Analytics cards ----------
+function updateAnalyticsCards(){
+  var set=function(id,val,color){var e=document.getElementById(id);if(e){e.textContent=val;if(color)e.style.color=color;}};
+  if(!trades.length){
+    set('a-avgwin','—');set('a-avgloss','—');set('a-best','—');set('a-best-sub','No trades');set('a-worst','—');set('a-worst-sub','No trades');set('a-pf','—');set('a-total','0');set('a-total-sub','No trades recorded');
+    return;
+  }
+  var wins=trades.filter(function(t){return t.pnl>0;}),losses=trades.filter(function(t){return t.pnl<0;});
+  var sumW=wins.reduce(function(s,t){return s+t.pnl;},0);
+  var sumL=Math.abs(losses.reduce(function(s,t){return s+t.pnl;},0));
+  var avgW=wins.length?sumW/wins.length:0;
+  var avgL=losses.length?sumL/losses.length:0;
+  var best=trades.reduce(function(m,t){return !m||t.pnl>m.pnl?t:m;},null);
+  var worst=trades.reduce(function(m,t){return !m||t.pnl<m.pnl?t:m;},null);
+  var pf=sumL>0?(sumW/sumL):(sumW>0?Infinity:0);
+  set('a-avgwin',wins.length?('+$'+avgW.toLocaleString(undefined,{maximumFractionDigits:2})):'—');
+  set('a-avgloss',losses.length?('-$'+avgL.toLocaleString(undefined,{maximumFractionDigits:2})):'—');
+  if(best){set('a-best','+$'+best.pnl.toLocaleString(undefined,{maximumFractionDigits:2}));set('a-best-sub',best.pair+' · '+best.date);}else{set('a-best','—');set('a-best-sub','—');}
+  if(worst){set('a-worst',(worst.pnl>=0?'+':'-')+'$'+Math.abs(worst.pnl).toLocaleString(undefined,{maximumFractionDigits:2}));set('a-worst-sub',worst.pair+' · '+worst.date);}else{set('a-worst','—');set('a-worst-sub','—');}
+  set('a-pf',isFinite(pf)?pf.toFixed(2):'∞');
+  set('a-total',trades.length.toLocaleString());
+  set('a-total-sub','Since '+trades[trades.length-1].date);
+}
+
+// ---------- Risk monitor / drawdown ----------
+function computeDrawdown(){
+  // Using ALL_EQUITY (running equity curve) to get current and max drawdown.
+  if(!ALL_EQUITY||ALL_EQUITY.length<2)return{cur:0,max:0};
+  var peak=-Infinity,maxDd=0,curDd=0;
+  ALL_EQUITY.forEach(function(p){if(p.v>peak)peak=p.v;var dd=peak>0?(p.v-peak)/peak*100:0;if(dd<maxDd)maxDd=dd;curDd=dd;});
+  return{cur:Math.round(curDd*10)/10,max:Math.round(maxDd*10)/10};
+}
+function computeSharpe(){
+  if(trades.length<2)return 0;
+  // Naive Sharpe on per-trade returns (not annualised).
+  var rets=trades.map(function(t){return INITIAL_CAPITAL>0?(t.pnl/INITIAL_CAPITAL):0;});
+  var mean=rets.reduce(function(s,r){return s+r;},0)/rets.length;
+  var vari=rets.reduce(function(s,r){return s+(r-mean)*(r-mean);},0)/rets.length;
+  var sd=Math.sqrt(vari);
+  return sd>0?Math.round((mean/sd)*100)/100:0;
+}
+function computeProfitFactor(){
+  var w=0,l=0;
+  trades.forEach(function(t){if(t.pnl>0)w+=t.pnl;else if(t.pnl<0)l+=Math.abs(t.pnl);});
+  return l>0?Math.round((w/l)*100)/100:(w>0?999:0);
+}
+function updateRiskMonitor(){
+  var dd=computeDrawdown(),pf=computeProfitFactor(),sh=computeSharpe();
+  var set=function(id,v,c){var e=document.getElementById(id);if(e){e.textContent=v;if(c)e.style.color=c;}};
+  var ddCol=dd.cur>=-3?'var(--green)':dd.cur>=-8?'var(--gold)':'var(--red)';
+  var health=dd.cur>=-3?'HEALTHY':dd.cur>=-8?'CAUTION':'ELEVATED';
+  var healthCol=dd.cur>=-3?'var(--green)':dd.cur>=-8?'var(--gold)':'var(--red)';
+  var hasCurve=trades.length||(MANUAL_MODE&&ALL_EQUITY.length>=2);
+  set('risk-gauge-val',hasCurve?(dd.cur.toFixed(1)+'%'):'—',ddCol);
+  set('risk-gauge-status',hasCurve?('● '+(health==='HEALTHY'?'Healthy':health==='CAUTION'?'Caution':'Elevated')):'● —',healthCol);
+  set('risk-max-dd',hasCurve?(dd.max.toFixed(1)+'%'):'—','var(--red)');
+  set('risk-sharpe',trades.length?sh.toFixed(2):'—');
+  set('risk-pf',trades.length?(isFinite(pf)?pf.toFixed(2):'∞'):'—');
+  var htx=document.getElementById('risk-health-text');if(htx){htx.textContent=hasCurve?health:'—';}
+  // Update the gauge arc: maps cur drawdown 0..-20% to 0..100% of dashoffset.
+  var arc=document.getElementById('gauge-arc');
+  if(arc){var len=220,pct=Math.min(1,Math.abs(dd.cur)/20),off=len-len*pct;arc.setAttribute('stroke-dashoffset',off);}
+  animateRiskBars(dd,pf,sh);
+}
+function animateRiskBars(dd,pf,sh){
+  dd=dd||{cur:0,max:0};pf=pf||computeProfitFactor();sh=(sh==null?computeSharpe():sh);
+  var w = function(id,pct){var el=document.getElementById(id);if(el)el.style.width=Math.max(0,Math.min(100,pct))+'%';};
+  setTimeout(function(){w('rb1',Math.min(100,Math.abs(dd.max)/20*100));},200);
+  setTimeout(function(){w('rb2',Math.min(100,Math.abs(dd.cur)/3*100));},350);
+  setTimeout(function(){w('rb3',Math.min(100,Math.max(0,sh)/3*100));},500);
+  setTimeout(function(){w('rb4',Math.min(100,(isFinite(pf)?pf:3)/5*100));},650);
+}
+
+// ---------- Sync indicator ----------
+function showSyncIndicator(m,c,dur){
+  var ex=document.getElementById('sync-indicator'); if(ex&&ex.parentNode)ex.parentNode.removeChild(ex);
+  var ind=document.createElement('div');ind.id='sync-indicator';
+  ind.style.cssText='position:fixed;bottom:24px;right:24px;background:rgba(18,18,16,0.95);border:1px solid rgba(74,222,128,0.2);border-radius:12px;padding:11px 18px;font-size:0.79em;color:'+(c||'var(--green)')+';display:flex;align-items:center;gap:9px;z-index:999;box-shadow:0 16px 40px rgba(0,0,0,0.5);max-width:min(92vw,360px);';
+  ind.innerHTML=m;document.body.appendChild(ind);
+  if(dur)setTimeout(function(){if(ind.parentNode)ind.parentNode.removeChild(ind);},dur);
+  return ind;
+}
+
+// ---------- Wallet modal ----------
+function showWalletModal(){var s='';if(window.Clerk&&Clerk.user){var m=Clerk.user.publicMetadata||{},um=Clerk.user.unsafeMetadata||{};s=m.hl_address||um.hl_address||'';}if(!s){s=localStorage.getItem('autobot_hl_address'+(window._autobotUserKey||''))||'';}document.getElementById('wallet-address-input').value=s;document.getElementById('wallet-modal-error').style.display='none';document.getElementById('wallet-modal').classList.add('open');}
+function closeWalletModal(){document.getElementById('wallet-modal').classList.remove('open');}
+function saveWalletAddress(){
+  var a=document.getElementById('wallet-address-input').value.trim(),e=document.getElementById('wallet-modal-error');
+  e.style.display='none';
+  if(!a){e.textContent='Please enter a wallet address.';e.style.display='block';return;}
+  if(!a.match(/^0x[0-9a-fA-F]{40}$/)){e.textContent='Invalid address format.';e.style.display='block';return;}
+  var k=(window.Clerk&&Clerk.user&&Clerk.user.id)?('_'+Clerk.user.id):(window._autobotUserKey||'');
+  try{localStorage.setItem('autobot_hl_address'+k,a);}catch(_){}
+  if(window.Clerk&&Clerk.user){Clerk.user.update({unsafeMetadata:Object.assign({},Clerk.user.unsafeMetadata||{},{hl_address:a})}).catch(function(ex){console.warn('Clerk:',ex);});}
+  var b=document.getElementById('wallet-btn');if(b)b.textContent=a.slice(0,6)+'…'+a.slice(-4);
+  var _sw=document.getElementById('sidebar-user-wallet');if(_sw)_sw.textContent=a.slice(0,6)+'…'+a.slice(-4);
+  closeWalletModal();
+  var ex=document.getElementById('sync-indicator');if(ex&&ex.parentNode)ex.parentNode.removeChild(ex);
+  fetchHyperliquidData(a);
+}
+
+// ---------- API-key modal ----------
+function showApikeyModal(){document.getElementById('apikey-modal').classList.add('open');}
+function closeApikeyModal(){document.getElementById('apikey-modal').classList.remove('open');}
+function submitApiKey(){var k=document.getElementById('apikey-input').value.trim(),b=document.getElementById('apikey-submit-btn'),e=document.getElementById('apikey-error');e.style.display='none';if(!k){e.textContent='Please enter an API key.';e.style.display='block';return;}b.disabled=true;b.textContent='Sending…';setTimeout(function(){document.getElementById('apikey-success').style.display='block';b.textContent='✅ Sent';setTimeout(function(){closeApikeyModal();},2000);},1500);}
+
+// ---------- Hyperliquid data ----------
+function fetchHyperliquidDirect(a){
+  var b='https://api.hyperliquid.xyz/info',h={'Content-Type':'application/json'};
+  return Promise.all([
+    fetch(b,{method:'POST',headers:h,body:JSON.stringify({type:'clearinghouseState',user:a})}),
+    fetch(b,{method:'POST',headers:h,body:JSON.stringify({type:'userFills',user:a})})
+  ]).then(function(rs){if(!rs[0].ok||!rs[1].ok)throw new Error('HL API error');return Promise.all([rs[0].json(),rs[1].json()]);})
+   .then(function(d){return{state:d[0],fills:d[1]};});
+}
+function _deriveTradesFromFills(fills){
+  // Each fill with closedPnl !== 0 is a close event. Derive entry price from closedPnl.
+  // long: entry = px - pnl/sz ; short: entry = px + pnl/sz
+  var out=[];
+  if(!fills||!fills.length)return out;
+  fills.forEach(function(f){
+    var pnl=parseFloat(f.closedPnl||0);
+    if(Math.abs(pnl)<0.0001)return;
+    var dir=(f.dir||'').toLowerCase();
+    var wasLong = dir.indexOf('long')>-1; // "Close Long"
+    var wasShort = dir.indexOf('short')>-1;
+    if(!wasLong && !wasShort){
+      // fallback: 'B' closes short, 'A' closes long in HL fill semantics
+      wasLong = (f.side==='A');wasShort=(f.side==='B');
+    }
+    var px=parseFloat(f.px)||0, sz=parseFloat(f.sz)||0;
+    var entry=px;
+    if(sz>0){entry = wasLong ? (px - pnl/sz) : (px + pnl/sz);}
+    var pct=entry>0?((px-entry)/entry*(wasLong?1:-1))*100:0;
+    out.push({
+      date: new Date(f.time||Date.now()).toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+      ts: f.time||0,
+      pair: (f.coin||'?')+'/USDC',
+      side: wasLong?'LONG':'SHORT',
+      entry: Math.round(entry*10000)/10000,
+      exit: Math.round(px*10000)/10000,
+      pnl: Math.round(pnl*100)/100,
+      pct: Math.round(pct*100)/100
+    });
+  });
+  // Newest first
+  out.sort(function(a,b){return (b.ts||0)-(a.ts||0);});
+  return out;
+}
+function _buildMonthlyAndStatements(){
+  monthlyData=[]; statementsData=[];
+  if(!trades.length)return;
+  var bucket={};
+  trades.forEach(function(t){
+    var d=new Date(t.ts||Date.now()),k=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2);
+    if(!bucket[k]){bucket[k]={key:k,label:d.toLocaleDateString('en-US',{month:'long',year:'numeric'}),short:d.toLocaleDateString('en-US',{month:'short'}),pnl:0,tradeCount:0,trades:[]};}
+    bucket[k].pnl+=t.pnl;bucket[k].tradeCount++;bucket[k].trades.push(t);
+  });
+  var keys=Object.keys(bucket).sort();
+  monthlyData=keys.map(function(k){return bucket[k];});
+  statementsData=keys.slice().reverse().map(function(k){return bucket[k];});
+}
+function _buildEquitySeriesFromFills(fills,currentEquity){
+  // Walk fills in time order, accumulating closedPnl to build a running equity series.
+  // Start point = initial capital (or currentEquity - totalRealized - unrealizedLookup fallback).
+  if(!fills||!fills.length){ALL_EQUITY=[];return;}
+  var sorted=fills.slice().filter(function(f){return Math.abs(parseFloat(f.closedPnl||0))>0.0001;}).sort(function(a,b){return (a.time||0)-(b.time||0);});
+  var totalRealized=sorted.reduce(function(s,f){return s+parseFloat(f.closedPnl||0);},0);
+  var startEquity=(INITIAL_CAPITAL>0?INITIAL_CAPITAL:(currentEquity-totalRealized));
+  if(!isFinite(startEquity)||startEquity<=0){startEquity=currentEquity>0?currentEquity:10000;}
+  var series=[];
+  var running=startEquity;
+  var startTime=sorted.length?new Date(sorted[0].time-24*60*60*1000):new Date(Date.now()-24*60*60*1000);
+  series.push({v:Math.round(startEquity*100)/100,d:startTime});
+  sorted.forEach(function(f){running+=parseFloat(f.closedPnl||0);series.push({v:Math.round(running*100)/100,d:new Date(f.time)});});
+  series.push({v:currentEquity>0?currentEquity:running,d:new Date()});
+  ALL_EQUITY=series;
+}
+function fetchHyperliquidData(a){
+  var ind=showSyncIndicator('<div style="width:12px;height:12px;border:2px solid rgba(74,222,128,.2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;"></div> syncing…','var(--green)',0);
+  var b=document.getElementById('wallet-btn');if(b)b.textContent=a.slice(0,6)+'…'+a.slice(-4);
+  var pp=fetch('/.netlify/functions/hl-proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:a})}).then(function(r){if(!r.ok)throw new Error('Proxy error');return r.json();});
+  pp.catch(function(err){console.warn('Proxy failed, trying direct:',err&&err.message);return fetchHyperliquidDirect(a);})
+    .then(function(res){
+      if(res&&res.error)throw new Error(res.error);
+      var st=res.state||{},fills=res.fills||[];
+      // ----- Account value -----
+      if(st.marginSummary){var eq=parseFloat(st.marginSummary.accountValue);if(eq>0)PORTFOLIO_VALUE=Math.round(eq*100)/100;}
+      // ----- Positions -----
+      positions=(st.assetPositions||[]).filter(function(p){return parseFloat(p.position&&p.position.szi)!==0;}).map(function(p){
+        var pos=p.position,size=parseFloat(pos.szi),side=size>0?'LONG':'SHORT';
+        var entryPx=parseFloat(pos.entryPx||0),upnl=parseFloat(pos.unrealizedPnl||0);
+        var notional=Math.abs(parseFloat(pos.positionValue||0));
+        var upct=notional>0?Math.round((upnl/notional)*10000)/100:0;
+        var lev=pos.leverage?(parseFloat(pos.leverage.value)||0):0;
+        return{pair:pos.coin+'/USDC',side:side,exchange:'Hyperliquid',size:'$'+Math.round(notional).toLocaleString(),entry:'$'+entryPx.toLocaleString(undefined,{maximumFractionDigits:entryPx<10?4:2}),upnl:Math.round(upnl*100)/100,upct:upct,notional:notional,leverage:lev};
+      });
+      OPEN_POSITIONS=positions.length;
+      // ----- Trades -----
+      trades=_deriveTradesFromFills(fills);
+      WIN_RATE=trades.length?Math.round((trades.filter(function(t){return t.pnl>0;}).length/trades.length)*100):0;
+      // ----- Initial capital (approx) -----
+      if(INITIAL_CAPITAL<=0 && PORTFOLIO_VALUE>0){
+        var realized=trades.reduce(function(s,t){return s+t.pnl;},0);
+        var unreal=positions.reduce(function(s,p){return s+(parseFloat(p.upnl)||0);},0);
+        var derived=PORTFOLIO_VALUE-realized-unreal;
+        if(derived>0) INITIAL_CAPITAL=Math.round(derived*100)/100;
+      }
+      // ----- Monthly + statements -----
+      _buildMonthlyAndStatements();
+      // ----- Equity series -----
+      _buildEquitySeriesFromFills(fills,PORTFOLIO_VALUE);
+      // ----- Activity -----
+      buildActivityFromFills(fills);
+      // ----- Render all -----
+      renderAllCounters();
+      renderPositions();
+      renderRecentTrades();
+      renderAllTrades();
+      renderActivityFeed();
+      renderStatements();
+      updateAnalyticsCards();
+      updateRiskMonitor();
+      drawEquity(9999);
+      drawMonthly();
+      // Live badge
+      var lt=document.getElementById('main-live-text'); if(lt) lt.textContent='Live';var ldt=document.getElementById('main-live-dot');if(ldt)ldt.classList.add('pd-dot-live');
+      if(ind&&ind.parentNode)ind.parentNode.removeChild(ind);
+      showSyncIndicator('✅ Data synced','var(--green)',3000);
+    })
+    .catch(function(err){
+      console.error('HL fetch error:',err);
+      if(ind&&ind.parentNode)ind.parentNode.removeChild(ind);
+      var lt=document.getElementById('main-live-text'); if(lt) lt.textContent='Offline';
+      showSyncIndicator('⚠ Sync failed: '+(err&&err.message?err.message:'unknown'),'var(--gold)',6000);
+    });
+}
+// ---------- Monthly figures (accounts we can't read live, e.g. Bybit) ----------
+// The AutoBot team enters a balance each month in the admin panel. It's stored on the
+// client's Clerk publicMetadata (read-only for the client):
+//   initial_capital: number, start_date: 'YYYY-MM-DD',
+//   manual_snapshots: [{date:'YYYY-MM-DD', balance:number, deposit:number}]
+// deposit = money added since the previous update (negative = withdrawn).
+var MANUAL_MODE=false;
+function _manualSnapshots(m){
+  var list=Array.isArray(m.manual_snapshots)?m.manual_snapshots:[];
+  return list.map(function(x){return{key:String(x.date||''),date:new Date(String(x.date||'')+'T12:00:00'),balance:parseFloat(x.balance)||0,deposit:parseFloat(x.deposit)||0};})
+    .filter(function(x){return !isNaN(x.date.getTime())&&x.balance>0;})
+    .sort(function(a,b){return a.date-b.date;});
+}
+function _manualMsg(text){return '<div style="padding:44px 20px;text-align:center;color:var(--muted);font-size:0.86em;line-height:1.6;max-width:440px;margin:0 auto;">'+text+'</div>';}
+function renderManualAccount(m){
+  MANUAL_MODE=true;
+  var snaps=_manualSnapshots(m);
+  var base=parseFloat(m.initial_capital)||0;
+  var start=m.start_date?new Date(m.start_date+'T12:00:00'):(USER_CREATED_AT||new Date());
+  if(isNaN(start.getTime()))start=USER_CREATED_AT||new Date();
+  var added=snaps.reduce(function(t,x){return t+x.deposit;},0);
+  INITIAL_CAPITAL=base+added;                       // total money put in
+  PORTFOLIO_VALUE=snaps.length?snaps[snaps.length-1].balance:base;
+  ALL_EQUITY=(base>0?[{v:base,d:start}]:[]).concat(snaps.map(function(x){return{v:x.balance,d:x.date};}));
+  // Each month's result = change in balance, not counting money added or withdrawn.
+  // A gap longer than ~6 weeks (e.g. the first update after a long-running start) is shown
+  // as one multi-month period, never as a single month.
+  var periods=[],prev=base,prevDate=start;
+  snaps.forEach(function(x){
+    var pnl=x.balance-prev-x.deposit, days=(x.date-prevDate)/864e5, multi=days>45;
+    var mo=function(d){return d.toLocaleDateString('en-US',{month:'short',year:'numeric'});};
+    periods.push({key:x.key.slice(0,7)+(multi?'-period':''),
+      label:multi?(mo(prevDate)+' – '+mo(x.date)):x.date.toLocaleDateString('en-US',{month:'long',year:'numeric'}),
+      short:x.date.toLocaleDateString('en-US',{month:'short'}),
+      pnl:pnl,tradeCount:0,trades:[],manual:true,multi:multi,open:prev,close:x.balance,deposit:x.deposit,updated:x.date});
+    prev=x.balance;prevDate=x.date;
+  });
+  monthlyData=periods.filter(function(x){return !x.multi;});
+  statementsData=periods.slice().reverse();
+  trades=[];positions=[];OPEN_POSITIONS=0;activityLog=[];
+  var upMonths=monthlyData.filter(function(x){return x.pnl>0;}).length;
+  WIN_RATE=monthlyData.length?Math.round(upMonths/monthlyData.length*100):0;
+
+  renderAllCounters();renderPositions();renderRecentTrades();renderAllTrades();renderActivityFeed();
+  renderStatements();updateAnalyticsCards();updateRiskMonitor();drawEquity(9999);drawMonthly();
+
+  // Labels that mean something different for a monthly-updated account
+  document.getElementById('dashboard-screen').classList.add('pd-manual');
+  var setT=function(id,t){var e=document.getElementById(id);if(e)e.textContent=t;};
+  setT('lbl-capital','Invested');
+  setT('sub-capital',added?('Includes '+(added>0?'+':'-')+'$'+Math.abs(Math.round(added)).toLocaleString()+' added'):'Account baseline');
+  setT('lbl-winrate','Positive months');
+  setT('s-winrate-sub',monthlyData.length?(upMonths+' of '+monthlyData.length+' months'):'No updates yet');
+  setT('monthly-note','Change in balance each month, not counting money added or withdrawn.');
+  setT('activity-title','Monthly updates');
+  // Activity = the monthly updates
+  var af=document.getElementById('activity-feed');
+  if(af){
+    if(!statementsData.length){af.innerHTML='<p class="pd-empty">Your first monthly update will appear here.</p>';}
+    else{af.innerHTML=statementsData.slice(0,8).map(function(x){
+      var up=x.pnl>=0,dep=x.deposit?(', '+(x.deposit>0?'added ':'withdrew ')+'$'+Math.abs(Math.round(x.deposit)).toLocaleString()):'';
+      return '<div class="pd-row"><div><b>'+x.label+'</b><span>Balance $'+Math.round(x.close).toLocaleString()+dep+'</span></div><em class="'+(up?'pd-up':'pd-dn')+'">'+(up?'+':'-')+'$'+Math.abs(Math.round(x.pnl)).toLocaleString()+'</em></div>';
+    }).join('');}
+  }
+  // Status badge: show when it was last updated, never "Live"
+  var lt=document.getElementById('main-live-text'),dot=document.getElementById('main-live-dot');
+  if(lt)lt.textContent=snaps.length?('Updated '+snaps[snaps.length-1].date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})):'Awaiting first update';
+  if(dot){dot.classList.add('pd-dot-updated');}
+}
+
+// ---------- Bybit data (client-side signing) ----------
+// Bybit's api.bybit.com (and api.bytick.com) are geo-blocked against US traffic,
+// so we can't call them from Netlify's us-east-1 Lambda functions. Instead:
+//   1) Ask get-bybit-creds for THIS logged-in user's own API keys
+//      (server verifies the Clerk session before handing them over).
+//   2) Sign + call Bybit directly from the user's browser, whose IP is wherever
+//      the Bybit client actually sits (not geo-blocked since they use Bybit).
+// The data is then normalized into the SAME {state, fills} shape fetchHyperliquidData
+// produced, so the render pipeline runs unchanged.
+
+// HMAC-SHA256 → hex, via the browser's Web Crypto API.
+async function _hmacSha256Hex(secret, msg){
+  var enc=new TextEncoder();
+  var key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  var sig=await crypto.subtle.sign('HMAC',key,enc.encode(msg));
+  var arr=new Uint8Array(sig),hex='';
+  for(var i=0;i<arr.length;i++){hex+=('0'+arr[i].toString(16)).slice(-2);}
+  return hex;
+}
+
+// Signed Bybit V5 GET — executed from the user's browser directly.
+async function _bybitGetClient(path, params, apiKey, apiSecret){
+  var keys=Object.keys(params||{}).sort();
+  var qs=keys.map(function(k){return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}).join('&');
+  var ts=Date.now().toString(), recv='5000';
+  var sig=await _hmacSha256Hex(apiSecret, ts+apiKey+recv+qs);
+  var url='https://api.bybit.com'+path+(qs?('?'+qs):'');
+  var r=await fetch(url,{method:'GET',headers:{
+    'X-BAPI-API-KEY':apiKey,
+    'X-BAPI-SIGN':sig,
+    'X-BAPI-TIMESTAMP':ts,
+    'X-BAPI-RECV-WINDOW':recv,
+    'X-BAPI-SIGN-TYPE':'2'
+  }});
+  var txt=await r.text();
+  try{return JSON.parse(txt);}
+  catch(e){throw new Error('Bybit '+path+' returned non-JSON (HTTP '+r.status+'): '+txt.slice(0,160));}
+}
+
+function _bybitStripQuote(s){return String(s||'').replace(/(USDT|USDC|USD|PERP)$/i,'')||s;}
+
+// Map Bybit position list → HL-style assetPositions.
+function _bybitMapPositions(list){
+  return (list||[])
+    .filter(function(p){return parseFloat(p.size||0)>0;})
+    .map(function(p){
+      var size=parseFloat(p.size||0),isLong=(p.side||'').toLowerCase()==='buy';
+      var szi=isLong?size:-size,lev=parseFloat(p.leverage||0)||0;
+      return{position:{
+        coin:_bybitStripQuote(p.symbol),
+        szi:szi.toString(),
+        entryPx:String(p.avgPrice||p.entryPrice||0),
+        unrealizedPnl:String(p.unrealisedPnl||0),
+        positionValue:String(p.positionValue||0),
+        leverage:{value:lev,type:(p.tradeMode===1?'isolated':'cross')}
+      }};
+    });
+}
+
+// Map Bybit closed-pnl history → HL-style fills (each closed trade = one row).
+function _bybitMapFills(list){
+  return (list||[]).map(function(r){
+    var closeSide=(r.side||'').toLowerCase(),wasLong=closeSide==='sell';
+    return{
+      closedPnl:parseFloat(r.closedPnl||0),
+      dir:wasLong?'Close Long':'Close Short',
+      side:wasLong?'A':'B',
+      px:parseFloat(r.avgExitPrice||r.orderPrice||0),
+      sz:parseFloat(r.qty||r.closedSize||0),
+      time:parseInt(r.updatedTime||r.createdTime||0,10),
+      coin:_bybitStripQuote(r.symbol)
+    };
+  });
+}
+
+// Cached creds so we don't re-hit get-bybit-creds on every 60s refresh.
+var _abBybitCreds=null;
+
+function fetchBybitData(userId){
+  if(!userId){showSyncIndicator('⚠ Bybit: missing user id','var(--gold)',4000);return;}
+  var ind=showSyncIndicator('<div style="width:12px;height:12px;border:2px solid rgba(74,222,128,.2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;"></div> syncing Bybit…','var(--green)',0);
+
+  // Step 1: get our own keys (once per page load, via verified Clerk session).
+  var credsPromise = _abBybitCreds
+    ? Promise.resolve(_abBybitCreds)
+    : fetch('/.netlify/functions/get-bybit-creds',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({session_id:(window.Clerk&&Clerk.session&&Clerk.session.id)||''})
+      }).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j&&j.error?j.error:('creds HTTP '+r.status));_abBybitCreds=j;return j;});});
+
+  credsPromise
+    .then(function(creds){
+      // Step 2: sign + call Bybit directly from this browser.
+      return Promise.all([
+        _bybitGetClient('/v5/account/wallet-balance', {accountType:'UNIFIED'}, creds.api_key, creds.api_secret),
+        _bybitGetClient('/v5/position/list',         {category:'linear',settleCoin:'USDT'}, creds.api_key, creds.api_secret),
+        _bybitGetClient('/v5/position/closed-pnl',   {category:'linear',limit:'100'}, creds.api_key, creds.api_secret)
+      ]);
+    })
+    .then(function(results){
+      var walletResp=results[0]||{},positionResp=results[1]||{},closedResp=results[2]||{};
+      var firstErr=[walletResp,positionResp,closedResp].find(function(x){return x&&x.retCode!==0;});
+      if(firstErr)throw new Error('Bybit: '+(firstErr.retMsg||'unknown')+' (code '+firstErr.retCode+')');
+
+      var walletList=(walletResp.result&&walletResp.result.list)||[];
+      var unified=walletList.find(function(w){return(w.accountType||'').toUpperCase()==='UNIFIED';})||walletList[0]||{};
+      var totalEquity=parseFloat(unified.totalEquity||0);
+      var state={
+        marginSummary:{
+          accountValue:totalEquity.toString(),
+          totalRawUsd:totalEquity.toString(),
+          totalNtlPos:unified.totalPerpValue||'0',
+          totalMarginUsed:unified.totalInitialMargin||'0'
+        },
+        assetPositions:_bybitMapPositions((positionResp.result&&positionResp.result.list)||[]),
+        withdrawable:(parseFloat(unified.totalAvailableBalance||0)).toString()
+      };
+      var fills=_bybitMapFills((closedResp.result&&closedResp.result.list)||[]);
+      return {state:state,fills:fills};
+    })
+    .then(function(res){
+      if(res&&res.error)throw new Error(res.error);
+      var st=res.state||{},fills=res.fills||[];
+      if(st.marginSummary){var eq=parseFloat(st.marginSummary.accountValue);if(eq>0)PORTFOLIO_VALUE=Math.round(eq*100)/100;}
+      positions=(st.assetPositions||[]).filter(function(p){return parseFloat(p.position&&p.position.szi)!==0;}).map(function(p){
+        var pos=p.position,size=parseFloat(pos.szi),side=size>0?'LONG':'SHORT';
+        var entryPx=parseFloat(pos.entryPx||0),upnl=parseFloat(pos.unrealizedPnl||0);
+        var notional=Math.abs(parseFloat(pos.positionValue||0));
+        var upct=notional>0?Math.round((upnl/notional)*10000)/100:0;
+        var lev=pos.leverage?(parseFloat(pos.leverage.value)||0):0;
+        return{pair:pos.coin+'/USDT',side:side,exchange:'Bybit',size:'$'+Math.round(notional).toLocaleString(),entry:'$'+entryPx.toLocaleString(undefined,{maximumFractionDigits:entryPx<10?4:2}),upnl:Math.round(upnl*100)/100,upct:upct,notional:notional,leverage:lev};
+      });
+      OPEN_POSITIONS=positions.length;
+      trades=_deriveTradesFromFills(fills).map(function(t){return Object.assign({},t,{pair:t.pair.replace('/USDC','/USDT')});});
+      WIN_RATE=trades.length?Math.round((trades.filter(function(t){return t.pnl>0;}).length/trades.length)*100):0;
+      if(INITIAL_CAPITAL<=0 && PORTFOLIO_VALUE>0){
+        var realized=trades.reduce(function(s,t){return s+t.pnl;},0);
+        var unreal=positions.reduce(function(s,p){return s+(parseFloat(p.upnl)||0);},0);
+        var derived=PORTFOLIO_VALUE-realized-unreal;
+        if(derived>0) INITIAL_CAPITAL=Math.round(derived*100)/100;
+      }
+      _buildMonthlyAndStatements();
+      _buildEquitySeriesFromFills(fills,PORTFOLIO_VALUE);
+      buildActivityFromFills(fills);
+      renderAllCounters();
+      renderPositions();
+      renderRecentTrades();
+      renderAllTrades();
+      renderActivityFeed();
+      renderStatements();
+      updateAnalyticsCards();
+      updateRiskMonitor();
+      drawEquity(9999);
+      drawMonthly();
+      var lt=document.getElementById('main-live-text'); if(lt) lt.textContent='Live';var ldt=document.getElementById('main-live-dot');if(ldt)ldt.classList.add('pd-dot-live');
+      if(ind&&ind.parentNode)ind.parentNode.removeChild(ind);
+      showSyncIndicator('✅ Bybit synced','var(--green)',3000);
+    })
+    .catch(function(err){
+      console.error('Bybit fetch error:',err);
+      if(ind&&ind.parentNode)ind.parentNode.removeChild(ind);
+      var lt=document.getElementById('main-live-text'); if(lt) lt.textContent='Offline';
+      showSyncIndicator('⚠ Bybit sync failed: '+(err&&err.message?err.message:'unknown'),'var(--gold)',6000);
+    });
+}
+
+// Periodic refresh so "live" numbers stay current on any device.
+// If bybitUserId is provided, refreshes via fetchBybitData; otherwise refreshes HL by address.
+var _abRefreshTimer=null;
+function startAutoRefresh(addr, bybitUserId){
+  if(_abRefreshTimer)clearInterval(_abRefreshTimer);
+  if(!addr && !bybitUserId)return;
+  _abRefreshTimer=setInterval(function(){
+    if(!(window.Clerk&&Clerk.user)){clearInterval(_abRefreshTimer);return;}
+    if(bybitUserId){fetchBybitData(bybitUserId);}
+    else{fetchHyperliquidData(addr);}
+  },60*1000);
+}
+function stopAutoRefresh(){if(_abRefreshTimer){clearInterval(_abRefreshTimer);_abRefreshTimer=null;}}
+window.addEventListener('scroll',function(){document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>10);});
+document.getElementById('apikey-modal').addEventListener('click',function(e){if(e.target===this)closeApikeyModal();});
+document.getElementById('wallet-modal').addEventListener('click',function(e){if(e.target===this)closeWalletModal();});
+(function(){var rm=document.getElementById('risk-modal');if(rm)rm.addEventListener('click',function(e){if(e.target===this)closeRiskModal();});})();
+document.addEventListener('DOMContentLoaded',initClerk);
+</script>
+</body>
+</html>

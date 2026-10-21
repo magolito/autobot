@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoBot – Admin Panel</title>
+<script async crossorigin="anonymous" data-clerk-publishable-key="pk_live_Y2xlcmsuYXV0b2JvdC50cmFkaW5nJA" src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" data-clerk-frontend-api="clerk.autobot.trading"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #00e87a; --green2: #00ffa3; --cyan: #00d4ff; --gold: #f0b429;
+  --red: #ff3d6b; --purple: #a78bfa; --bg: #04070d; --bg2: #070c14;
+  --surface: #0b1120; --surface2: #0f1929; --border: rgba(255,255,255,0.055);
+  --text: #dde8f0; --muted: #4a5d70; --muted2: #7a8fa0;
+}
+* { margin:0; padding:0; box-sizing:border-box }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+h1,h2,h3,h4 { font-family:'Space Grotesk',sans-serif }
+::-webkit-scrollbar { width:3px } ::-webkit-scrollbar-thumb { background:rgba(0,232,122,0.2); border-radius:2px }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── NAV ── */
+nav { position:fixed; top:0; width:100%; background:rgba(4,7,13,0.95); backdrop-filter:blur(24px); border-bottom:1px solid var(--border); z-index:100; }
+.nav-inner { max-width:1400px; margin:0 auto; padding:0 32px; height:60px; display:flex; align-items:center; justify-content:space-between; }
+.nav-brand { display:flex; align-items:center; gap:10px; font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.15em; color:#fff; }
+.nav-brand span { color:var(--green) }
+.admin-badge { background:rgba(167,139,250,0.12); border:1px solid rgba(167,139,250,0.3); color:var(--purple); font-size:0.65em; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:3px 10px; border-radius:100px; }
+.nav-right { display:flex; align-items:center; gap:14px; }
+.nav-user { font-size:0.78em; color:var(--muted2); }
+.nav-btn { background:transparent; border:1px solid var(--border); color:var(--muted2); padding:6px 14px; border-radius:8px; cursor:pointer; font-size:0.78em; font-family:sans-serif; transition:all .2s; }
+.nav-btn:hover { border-color:rgba(255,255,255,.18); color:#fff; }
+.refresh-btn { background:rgba(0,232,122,0.07); border:1px solid rgba(0,232,122,0.2); color:var(--green); }
+.refresh-btn:hover { background:rgba(0,232,122,0.14); }
+
+/* ── SCREENS ── */
+#loading-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+.loading-spinner { width:32px; height:32px; border:3px solid rgba(0,232,122,0.15); border-top-color:var(--green); border-radius:50%; animation:spin .8s linear infinite; }
+.loading-text { font-size:0.8em; color:var(--muted2); }
+
+#denied-screen { min-height:100vh; display:none; align-items:center; justify-content:center; flex-direction:column; gap:20px; text-align:center; padding:40px; }
+.denied-icon { font-size:3em; }
+.denied-title { font-family:'Space Grotesk',sans-serif; font-size:1.8em; font-weight:800; color:#fff; }
+.denied-sub { color:var(--muted2); font-size:0.9em; max-width:380px; line-height:1.7; }
+
+/* ── LOGIN ── */
+#login-screen { min-height:100vh; display:none; align-items:center; justify-content:center; flex-direction:column; gap:24px; }
+.auth-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:36px; width:100%; max-width:420px; position:relative; box-shadow:0 40px 80px rgba(0,0,0,0.5); animation:fadeUp .4s ease; }
+.auth-card::before { content:''; position:absolute; top:0; left:15%; right:15%; height:1px; background:linear-gradient(90deg,transparent,rgba(0,232,122,0.5),transparent); }
+.auth-tag { font-size:0.67em; font-weight:500; letter-spacing:3px; text-transform:uppercase; color:var(--purple); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.auth-tag::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--purple); animation:pulse 2s infinite; }
+.auth-title { font-size:1.7em; font-weight:800; color:#fff; letter-spacing:-.8px; margin-bottom:5px; }
+.auth-sub { color:var(--muted2); font-size:0.85em; margin-bottom:26px; }
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; font-size:0.78em; font-weight:500; color:var(--muted2); margin-bottom:7px; letter-spacing:.5px; }
+.form-group input { width:100%; padding:11px 14px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:10px; color:#fff; font-size:0.9em; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s; }
+.form-group input:focus { border-color:rgba(167,139,250,0.4); background:rgba(167,139,250,0.03); }
+.auth-btn { width:100%; padding:13px; background:linear-gradient(135deg,var(--purple),#8b5cf6); color:#fff; border:none; border-radius:10px; font-size:0.93em; font-weight:700; font-family:'Space Grotesk',sans-serif; cursor:pointer; transition:all .2s; display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px; }
+.auth-btn:hover { transform:translateY(-2px); box-shadow:0 10px 32px rgba(167,139,250,0.3); }
+.auth-btn:disabled { opacity:0.5; transform:none; cursor:not-allowed; }
+.auth-error { background:rgba(255,61,107,0.07); border:1px solid rgba(255,61,107,0.2); border-radius:9px; padding:10px 14px; font-size:0.82em; color:var(--red); margin-bottom:16px; display:none; }
+
+/* ── ADMIN DASHBOARD ── */
+#admin-screen { display:none; padding-top:60px; }
+.admin-wrap { max-width:1400px; margin:0 auto; padding:32px; }
+
+.page-header { margin-bottom:28px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; }
+.page-tag { font-size:0.67em; font-weight:500; letter-spacing:3px; text-transform:uppercase; color:var(--purple); margin-bottom:7px; display:flex; align-items:center; gap:8px; }
+.page-tag::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--purple); animation:pulse 2s infinite; }
+.page-title { font-size:2em; font-weight:800; letter-spacing:-1px; color:#fff; }
+
+/* ── SUMMARY CARDS ── */
+.summary-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+.sum-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 22px; position:relative; overflow:hidden; }
+.sum-card-accent { position:absolute; top:0; left:0; right:0; height:2px; }
+.sum-label { font-size:0.66em; font-weight:500; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+.sum-value { font-family:'Space Grotesk',sans-serif; font-size:1.8em; font-weight:800; color:#fff; letter-spacing:-0.5px; line-height:1; }
+.sum-sub { font-size:0.77em; color:var(--muted2); margin-top:7px; }
+
+/* ── CLIENT TABLE ── */
+.table-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; margin-bottom:28px; }
+.table-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.table-title { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.05em; color:#fff; }
+.table-sub { font-size:0.78em; color:var(--muted2); margin-top:2px; }
+.client-table { width:100%; border-collapse:collapse; }
+.client-table th { font-size:0.67em; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); padding:12px 20px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+.client-table td { padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.03); font-size:0.88em; vertical-align:middle; }
+.client-table tr:last-child td { border-bottom:none; }
+.client-table tr:hover td { background:rgba(255,255,255,0.02); }
+.client-name { font-weight:600; color:#fff; font-size:0.92em; }
+.client-email { font-size:0.75em; color:var(--muted2); margin-top:2px; }
+.wallet-addr { font-size:0.78em; color:var(--muted2); font-family:monospace; }
+.pnl-pos { color:var(--green); font-weight:700; }
+.pnl-neg { color:var(--red); font-weight:700; }
+.risk-pill { display:inline-flex; align-items:center; padding:3px 10px; border-radius:100px; font-size:0.72em; font-weight:700; letter-spacing:.5px; }
+.risk-conservative { background:rgba(0,232,122,0.1); color:var(--green); border:1px solid rgba(0,232,122,0.2); }
+.risk-moderate { background:rgba(0,212,255,0.1); color:var(--cyan); border:1px solid rgba(0,212,255,0.2); }
+.risk-aggressive { background:rgba(240,180,41,0.1); color:var(--gold); border:1px solid rgba(240,180,41,0.2); }
+.risk-maximum { background:rgba(255,61,107,0.1); color:var(--red); border:1px solid rgba(255,61,107,0.2); }
+.status-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:6px; }
+.status-live { background:var(--green); box-shadow:0 0 8px var(--green); }
+.status-loading { background:var(--gold); animation:pulse 1.5s infinite; }
+.status-error { background:var(--red); }
+.view-btn { background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.2); color:var(--purple); padding:5px 12px; border-radius:7px; cursor:pointer; font-size:0.76em; font-weight:600; font-family:sans-serif; transition:all .2s; white-space:nowrap; }
+.view-btn:hover { background:rgba(167,139,250,0.16); }
+.loading-row td { text-align:center; padding:40px; color:var(--muted); font-size:0.85em; }
+.empty-row td { text-align:center; padding:48px; }
+.empty-icon { font-size:2em; margin-bottom:12px; }
+.empty-title { color:var(--muted2); font-weight:600; margin-bottom:6px; }
+.empty-desc { color:var(--muted); font-size:0.83em; line-height:1.6; }
+
+/* ── CLIENT DETAIL MODAL ── */
+#client-modal { display:none; position:fixed; inset:0; z-index:200; align-items:center; justify-content:center; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); padding:20px; }
+#client-modal.open { display:flex; }
+.modal-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:0; max-width:680px; width:100%; max-height:90vh; overflow-y:auto; position:relative; animation:fadeUp .3s ease; }
+.modal-card::before { content:''; position:absolute; top:0; left:15%; right:15%; height:1px; background:linear-gradient(90deg,transparent,rgba(167,139,250,0.4),transparent); }
+.modal-header { padding:24px 28px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-start; }
+.modal-name { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.3em; color:#fff; }
+.modal-email { font-size:0.8em; color:var(--muted2); margin-top:3px; }
+.modal-close { background:none; border:1px solid var(--border); color:var(--muted2); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:1.1em; display:flex; align-items:center; justify-content:center; transition:all .2s; flex-shrink:0; }
+.modal-close:hover { border-color:rgba(255,255,255,.2); color:#fff; }
+.modal-body { padding:24px 28px; }
+.modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+.modal-stat { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.modal-stat-label { font-size:0.65em; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+.modal-stat-value { font-family:'Space Grotesk',sans-serif; font-size:1.4em; font-weight:800; color:#fff; }
+.modal-stat-sub { font-size:0.75em; color:var(--muted2); margin-top:4px; }
+.modal-section-title { font-size:0.7em; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:12px; margin-top:20px; }
+.modal-wallet { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; padding:12px 16px; font-family:monospace; font-size:0.82em; color:var(--muted2); word-break:break-all; }
+.modal-actions { display:flex; gap:10px; margin-top:20px; }
+.modal-action-btn { flex:1; padding:11px; border-radius:10px; font-size:0.86em; font-weight:700; font-family:'Space Grotesk',sans-serif; cursor:pointer; transition:all .2s; text-align:center; border:1px solid; }
+.modal-action-primary { background:rgba(0,232,122,0.08); border-color:rgba(0,232,122,0.2); color:var(--green); }
+.modal-action-primary:hover { background:rgba(0,232,122,0.14); }
+.modal-action-secondary { background:rgba(167,139,250,0.08); border-color:rgba(167,139,250,0.2); color:var(--purple); }
+.modal-action-secondary:hover { background:rgba(167,139,250,0.14); }
+.positions-mini { margin-top:4px; }
+.pos-mini-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.83em; }
+.pos-mini-row:last-child { border-bottom:none; }
+.no-positions { color:var(--muted); font-size:0.83em; padding:8px 0; }
+
+/* ── ADD CLIENT SECTION ── */
+.add-client-card { background:var(--surface); border:1px solid rgba(167,139,250,0.15); border-radius:16px; padding:24px 28px; margin-bottom:28px; }
+.add-client-title { font-family:'Space Grotesk',sans-serif; font-weight:700; color:#fff; margin-bottom:5px; }
+.add-client-sub { font-size:0.82em; color:var(--muted2); margin-bottom:20px; line-height:1.6; }
+.add-client-grid { display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:12px; align-items:end; }
+.add-input-group label { display:block; font-size:0.72em; font-weight:500; color:var(--muted2); margin-bottom:6px; letter-spacing:.5px; }
+.add-input { width:100%; padding:10px 13px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:9px; color:#fff; font-size:0.86em; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .2s; }
+.add-input:focus { border-color:rgba(167,139,250,0.4); }
+.add-input::placeholder { color:var(--muted); }
+.add-submit-btn { padding:10px 20px; background:linear-gradient(135deg,var(--purple),#8b5cf6); color:#fff; border:none; border-radius:9px; font-size:0.86em; font-weight:700; font-family:'Space Grotesk',sans-serif; cursor:pointer; transition:all .2s; white-space:nowrap; height:40px; }
+.add-submit-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(167,139,250,0.3); }
+.add-note { font-size:0.75em; color:var(--muted); margin-top:12px; line-height:1.6; }
+.add-success { background:rgba(0,232,122,0.06); border:1px solid rgba(0,232,122,0.2); border-radius:9px; padding:10px 14px; font-size:0.82em; color:var(--green); margin-top:12px; display:none; }
+.add-error { background:rgba(255,61,107,0.06); border:1px solid rgba(255,61,107,0.2); border-radius:9px; padding:10px 14px; font-size:0.82em; color:var(--red); margin-top:12px; display:none; }
+
+@media(max-width:900px) {
+  .summary-grid { grid-template-columns:repeat(2,1fr); }
+  .add-client-grid { grid-template-columns:1fr 1fr; }
+  .modal-grid { grid-template-columns:1fr; }
+  .admin-wrap { padding:20px 16px; }
+}
+@media(max-width:600px) {
+  .summary-grid { grid-template-columns:1fr 1fr; }
+  .add-client-grid { grid-template-columns:1fr; }
+}
+
+.mf-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px}
+.mf-row label{display:flex;flex-direction:column;gap:5px;font-size:0.72em;color:var(--muted2);flex:1;min-width:130px}
+.mf-row input{padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:1.1em;font-family:sans-serif;outline:none}
+.mf-row input:focus{border-color:rgba(167,139,250,0.4)}
+.mf-btn{padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:#fff;border-radius:8px;font-size:0.82em;font-weight:700;cursor:pointer;white-space:nowrap}
+.mf-primary{background:rgba(0,232,122,0.1);border-color:rgba(0,232,122,0.25);color:var(--green)}
+.mf-table{width:100%;border-collapse:collapse;font-size:0.82em}
+.mf-table th{text-align:left;color:var(--muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border)}
+.mf-table td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.04);color:#fff}
+.mf-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:0.95em}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="admin-nav" style="display:none">
+  <div class="nav-inner">
+    <div class="nav-brand">Auto<span>Bot</span> <span class="admin-badge">ADMIN</span></div>
+    <div class="nav-right">
+      <span class="nav-user" id="admin-user-label"></span>
+      <button class="nav-btn refresh-btn" onclick="refreshAll()">⟳ Refresh All</button>
+      <button class="nav-btn" onclick="doAdminLogout()">logout →</button>
+    </div>
+  </div>
+</nav>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Initializing admin portal…</div>
+</div>
+
+<!-- ACCESS DENIED -->
+<div id="denied-screen">
+  <div class="denied-icon">🔒</div>
+  <div class="denied-title">Access Denied</div>
+  <div class="denied-sub">This page is restricted to AutoBot administrators. If you believe this is an error, contact support.</div>
+  <button class="nav-btn" onclick="doAdminLogout()" style="margin-top:8px">Sign out →</button>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div style="text-align:center;margin-bottom:8px">
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:1.3em;font-weight:800;color:#fff">Auto<span style="color:var(--green)">Bot</span></div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-tag">Admin Portal</div>
+    <div class="auth-title">Admin sign in</div>
+    <div class="auth-sub">Restricted access — AutoBot administrators only.</div>
+    <div class="auth-error" id="login-error"></div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="login-email" placeholder="admin@example.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="auth-btn" id="login-btn" onclick="doLogin()">
+      <span>Access Admin Panel</span>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- 2FA SCREEN -->
+<div id="totp-screen" style="display:none;min-height:100vh;align-items:center;justify-content:center;flex-direction:column;gap:24px">
+  <div class="auth-card">
+    <div class="auth-tag">Verification</div>
+    <div class="auth-title" id="totp-title">Check your email</div>
+    <div class="auth-sub" id="totp-sub">Enter the 6-digit code to continue.</div>
+    <div class="auth-error" id="totp-error"></div>
+    <div class="form-group">
+      <label>Verification code</label>
+      <input type="text" id="totp-code" placeholder="000000" maxlength="6" autocomplete="one-time-code" style="letter-spacing:.3em;font-size:1.1em;text-align:center">
+    </div>
+    <button class="auth-btn" id="totp-btn" onclick="doTotp()">
+      <span>Verify →</span>
+    </button>
+    <div style="text-align:center;margin-top:14px;font-size:0.8em;color:var(--muted2)"><span style="cursor:pointer;color:var(--muted2)" onclick="showLoginScreen()">← Back to sign in</span></div>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="admin-screen">
+  <div class="admin-wrap">
+
+    <div class="page-header">
+      <div>
+        <div class="page-tag">Admin Panel</div>
+        <div class="page-title">Client Overview</div>
+      </div>
+      <div style="font-size:0.78em;color:var(--muted2)" id="last-refresh-label"></div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="summary-grid">
+      <div class="sum-card">
+        <div class="sum-card-accent" style="background:linear-gradient(90deg,var(--green),transparent)"></div>
+        <div class="sum-label">Total AUM</div>
+        <div class="sum-value" id="sum-aum">$0</div>
+        <div class="sum-sub" id="sum-aum-sub">across all clients</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-card-accent" style="background:linear-gradient(90deg,var(--cyan),transparent)"></div>
+        <div class="sum-label">Total Clients</div>
+        <div class="sum-value" id="sum-clients">0</div>
+        <div class="sum-sub" id="sum-clients-sub">registered accounts</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-card-accent" style="background:linear-gradient(90deg,var(--purple),transparent)"></div>
+        <div class="sum-label">Total PnL</div>
+        <div class="sum-value" id="sum-pnl">$0</div>
+        <div class="sum-sub" id="sum-pnl-sub">realized + unrealized</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-card-accent" style="background:linear-gradient(90deg,var(--gold),transparent)"></div>
+        <div class="sum-label">Avg Return</div>
+        <div class="sum-value" id="sum-return">0%</div>
+        <div class="sum-sub">across all accounts</div>
+      </div>
+    </div>
+
+    <!-- HOW TO ADD CLIENTS -->
+    <div class="add-client-card">
+      <div class="add-client-title">Adding a New Client</div>
+      <div class="add-client-sub">Clients are managed directly in Clerk. To add a new one:</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:4px">
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:0.67em;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:8px">Step 1</div>
+          <div style="font-size:0.88em;color:#fff;font-weight:600;margin-bottom:5px">Create in Clerk</div>
+          <div style="font-size:0.78em;color:var(--muted2);line-height:1.6">Go to Clerk Dashboard → Users → Create user. Set their name, email, and password.</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:0.67em;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:8px">Step 2</div>
+          <div style="font-size:0.88em;color:#fff;font-weight:600;margin-bottom:5px">Set publicMetadata</div>
+          <div style="font-size:0.78em;color:var(--muted2);line-height:1.6">Click the user → Edit public metadata. Add <code>hl_address</code>, <code>initial_capital</code>, and <code>risk_level</code>.</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px">
+          <div style="font-size:0.67em;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:8px">Step 3</div>
+          <div style="font-size:0.88em;color:#fff;font-weight:600;margin-bottom:5px">Refresh here</div>
+          <div style="font-size:0.78em;color:var(--muted2);line-height:1.6">Click "Refresh All" above and they'll appear automatically with their live Hyperliquid data.</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+        <a href="https://dashboard.clerk.com" target="_blank" style="display:inline-flex;align-items:center;gap:7px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);color:var(--purple);padding:9px 16px;border-radius:9px;font-size:0.83em;font-weight:600;text-decoration:none;transition:all .2s" onmouseover="this.style.background='rgba(167,139,250,0.16)'" onmouseout="this.style.background='rgba(167,139,250,0.08)'">Open Clerk Dashboard ↗</a>
+        <span style="font-size:0.76em;color:var(--muted)">Clients with <code>hl_address</code> set will auto-appear below.</span>
+      </div>
+    </div>
+
+    <!-- CLIENT TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <div>
+          <div class="table-title">All Clients</div>
+          <div class="table-sub">Live data from Hyperliquid — click a client to see details</div>
+        </div>
+        <div style="font-size:0.78em;color:var(--muted2)" id="client-count-label"></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="client-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Portfolio Value</th>
+              <th>PnL</th>
+              <th>Return</th>
+              <th>Risk Level</th>
+              <th>API Key Expiry</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="clients-tbody">
+            <tr class="loading-row"><td colspan="8"><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div style="width:14px;height:14px;border:2px solid rgba(0,232,122,.15);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite"></div> Loading clients…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CLIENT DETAIL MODAL -->
+<div id="client-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div>
+        <div class="modal-name" id="modal-name">—</div>
+        <div class="modal-email" id="modal-email">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div class="modal-stat">
+          <div class="modal-stat-label">Portfolio Value</div>
+          <div class="modal-stat-value" id="modal-value">—</div>
+          <div class="modal-stat-sub" id="modal-value-sub">—</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">PnL</div>
+          <div class="modal-stat-value" id="modal-pnl">—</div>
+          <div class="modal-stat-sub" id="modal-return">—</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Initial Capital</div>
+          <div class="modal-stat-value" id="modal-capital">—</div>
+        </div>
+        <div class="modal-stat">
+          <div class="modal-stat-label">Risk Level</div>
+          <div class="modal-stat-value" id="modal-risk">—</div>
+          <div class="modal-stat-sub" id="modal-risk-sub">—</div>
+        </div>
+      </div>
+
+      <div class="modal-section-title">Wallet Address</div>
+      <div class="modal-wallet" id="modal-wallet">—</div>
+
+      <!-- API Key Expiry Management -->
+      <div class="modal-section-title">API Key Expiry</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div id="modal-expiry-display" style="font-size:0.88em;color:var(--muted2)">Not set</div>
+        <div style="display:flex;gap:8px;align-items:center;flex:1;min-width:200px">
+          <input type="date" id="modal-expiry-input" style="flex:1;padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:0.84em;font-family:sans-serif;outline:none;min-width:140px" onchange="this.style.borderColor='rgba(167,139,250,0.4)'">
+          <button onclick="saveExpiryDate()" style="padding:8px 14px;background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);color:var(--purple);border-radius:8px;font-size:0.82em;font-weight:700;font-family:sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s" onmouseover="this.style.background='rgba(167,139,250,0.18)'" onmouseout="this.style.background='rgba(167,139,250,0.1)'">Update →</button>
+        </div>
+      </div>
+      <div id="modal-expiry-result" style="display:none;margin-top:8px;font-size:0.78em;padding:8px 12px;border-radius:7px"></div>
+
+
+      <!-- Monthly figures (accounts we can't read live, e.g. Bybit) -->
+      <div id="modal-manual-section" style="display:none">
+        <div class="modal-section-title">Monthly figures</div>
+        <div style="font-size:0.8em;color:var(--muted2);line-height:1.6;margin-bottom:12px">This client's dashboard shows these figures, marked "Updated" with the date. Add one update a month.</div>
+        <div class="mf-row">
+          <label>Starting amount<input type="number" id="mf-base" min="0" step="0.01" placeholder="e.g. 18000"></label>
+          <label>Start date<input type="date" id="mf-start"></label>
+          <button type="button" class="mf-btn" onclick="saveManualBase()">Save start</button>
+        </div>
+        <div class="mf-row">
+          <label>Update date<input type="date" id="mf-date"></label>
+          <label>Balance on that date<input type="number" id="mf-balance" min="0" step="0.01" placeholder="e.g. 82630"></label>
+          <label>Money added (− for withdrawal)<input type="number" id="mf-deposit" step="0.01" placeholder="0"></label>
+          <button type="button" class="mf-btn mf-primary" onclick="addSnapshot()">Add update</button>
+        </div>
+        <div id="mf-result" style="display:none;margin:4px 0 10px;font-size:0.8em;padding:8px 12px;border-radius:7px"></div>
+        <div id="mf-list"></div>
+      </div>
+
+      <div class="modal-section-title">Open Positions</div>
+      <div class="positions-mini" id="modal-positions"></div>
+
+      <!-- Pending risk request section -->
+      <div id="modal-pending-section" style="display:none;margin-top:20px;background:rgba(240,180,41,0.05);border:1px solid rgba(240,180,41,0.2);border-radius:12px;padding:16px">
+        <div style="font-size:0.67em;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">⏳ Pending Risk Change Request</div>
+        <div style="font-size:0.88em;color:#fff;margin-bottom:4px">Client is requesting a change to: <strong id="modal-pending-value" style="color:var(--gold)">—</strong></div>
+        <div style="font-size:0.77em;color:var(--muted2);margin-bottom:14px">Submitted: <span id="modal-pending-time">—</span></div>
+        <div style="display:flex;gap:10px">
+          <button id="modal-approve-btn" onclick="handleRiskRequest('approve')" style="flex:1;padding:10px;background:rgba(0,232,122,0.1);border:1px solid rgba(0,232,122,0.25);color:var(--green);border-radius:9px;font-size:0.86em;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .2s">✅ Approve</button>
+          <button id="modal-reject-btn" onclick="handleRiskRequest('reject')" style="flex:1;padding:10px;background:rgba(255,61,107,0.08);border:1px solid rgba(255,61,107,0.2);color:var(--red);border-radius:9px;font-size:0.86em;font-weight:700;font-family:'Space Grotesk',sans-serif;cursor:pointer;transition:all .2s">❌ Reject</button>
+        </div>
+        <div id="modal-request-result" style="display:none;margin-top:10px;font-size:0.8em;text-align:center;padding:8px;border-radius:8px"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-action-btn modal-action-primary" id="modal-hl-link" onclick="">View on Hyperliquid ↗</button>
+        <button class="modal-action-btn modal-action-secondary" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+var ADMIN_EMAILS = ['autobottradingai@gmail.com', 'manuelavila2311@gmail.com'];
+var HL_PROXY = '/.netlify/functions/hl-proxy';
+var BYBIT_PROXY = '/.netlify/functions/bybit-proxy';
+
+// Calls a protected Netlify function with the admin's Clerk session token.
+// The server re-checks admin status itself; this just proves who is calling.
+function authFetch(url, opts) {
+  opts = opts || {};
+  if (!window.Clerk || !Clerk.session) return Promise.reject(new Error('Not signed in'));
+  return Clerk.session.getToken().then(function(token) {
+    opts.headers = Object.assign({}, opts.headers || {}, { 'Authorization': 'Bearer ' + token });
+    return fetch(url, opts);
+  });
+}
+// Per-client data key: Bybit clients have no on-chain address, so we key by user id.
+function dataKey(c){ return (c.exchange === 'bybit') ? ('bybit:' + c.id) : c.hl_address; }
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+var _clients = [];      // array of client config objects
+var _clientData = {};   // keyed by hl_address: { value, pnl, positions, status }
+var _pendingSignIn = null;
+var _pendingSecondStrategy = 'totp';
+var _adminUser = null;
+
+// ─── CLERK INIT ───────────────────────────────────────────────────────────────
+window.addEventListener('load', function() {
+  var check = setInterval(function() {
+    if (window.Clerk) { clearInterval(check); initClerk(); }
+  }, 100);
+  setTimeout(function() {
+    clearInterval(check);
+    if (!window.Clerk) {
+      document.getElementById('loading-screen').style.display = 'none';
+      showLoginScreen();
+    }
+  }, 8000);
+});
+
+function initClerk() {
+  Clerk.load().then(function() {
+    document.getElementById('loading-screen').style.display = 'none';
+    if (Clerk.user) {
+      checkAdminAccess(Clerk.user);
+    } else {
+      showLoginScreen();
+    }
+  }).catch(function() {
+    document.getElementById('loading-screen').style.display = 'none';
+    showLoginScreen();
+  });
+}
+
+function checkAdminAccess(user) {
+  _adminUser = user;
+  var meta = user.publicMetadata || {};
+  var email = user.primaryEmailAddress ? user.primaryEmailAddress.emailAddress : '';
+  var isAdmin = meta.is_admin === true || ADMIN_EMAILS.indexOf(email) !== -1;
+  if (!isAdmin) {
+    document.getElementById('denied-screen').style.display = 'flex';
+    return;
+  }
+  showAdminDashboard(user);
+}
+
+function showLoginScreen() {
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ─── LOGIN ───────────────────────────────────────────────────────────────────
+function doLogin() {
+  var email = document.getElementById('login-email').value.trim().toLowerCase();
+  var pw = document.getElementById('login-pw').value;
+  var err = document.getElementById('login-error');
+  var btn = document.getElementById('login-btn');
+  err.style.display = 'none';
+  if (!email || !pw) { err.textContent = 'Please enter your email and password.'; err.style.display = 'block'; return; }
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div> Signing in…';
+
+  var signInObj = Clerk.signIn || Clerk.client.signIn;
+  signInObj.create({ strategy: 'password', identifier: email, password: pw })
+    .then(function(signIn) {
+      if (signIn.status === 'complete') return Clerk.setActive({ session: signIn.createdSessionId });
+      if (signIn.status === 'needs_second_factor') {
+        _pendingSignIn = signIn;
+        btn.disabled = false;
+        btn.innerHTML = '<span>Access Admin Panel</span>';
+        var secondFactors = signIn.supportedSecondFactors || [];
+        var emailFactor = secondFactors.find(function(f){ return f.strategy === 'email_code'; });
+        _pendingSecondStrategy = emailFactor ? 'email_code' : 'totp';
+        if (emailFactor) {
+          document.getElementById('totp-title').textContent = 'Check your email';
+          document.getElementById('totp-sub').textContent = 'We sent a 6-digit code to ' + email + '.';
+          signIn.prepareSecondFactor({ strategy: 'email_code', emailAddressId: emailFactor.emailAddressId }).catch(function(){});
+        }
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('totp-screen').style.display = 'flex';
+        document.getElementById('totp-code').focus();
+        return;
+      }
+      throw new Error('Sign-in incomplete: ' + signIn.status);
+    })
+    .then(function() { if (Clerk.user) { checkAdminAccess(Clerk.user); } })
+    .catch(function(e) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Access Admin Panel</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+      var msg = 'Incorrect email or password.';
+      if (e && e.errors && e.errors[0]) msg = e.errors[0].longMessage || e.errors[0].message || msg;
+      err.textContent = msg; err.style.display = 'block';
+    });
+}
+
+function doTotp() {
+  var code = document.getElementById('totp-code').value.trim();
+  var err = document.getElementById('totp-error');
+  var btn = document.getElementById('totp-btn');
+  err.style.display = 'none';
+  if (!code || code.length !== 6) { err.textContent = 'Enter the 6-digit code.'; err.style.display = 'block'; return; }
+  if (!_pendingSignIn) { showLoginScreen(); return; }
+  btn.disabled = true; btn.innerHTML = '<div style="width:13px;height:13px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>';
+  _pendingSignIn.attemptSecondFactor({ strategy: _pendingSecondStrategy, code: code })
+    .then(function(r) {
+      if (r.status === 'complete') return Clerk.setActive({ session: r.createdSessionId });
+      throw new Error('Verification failed');
+    })
+    .then(function() { _pendingSignIn = null; checkAdminAccess(Clerk.user); })
+    .catch(function(e) {
+      btn.disabled = false; btn.innerHTML = '<span>Verify →</span>';
+      var msg = (e && e.errors && e.errors[0]) ? e.errors[0].longMessage || e.errors[0].message : 'Invalid code.';
+      err.textContent = msg; err.style.display = 'block';
+    });
+}
+
+function doAdminLogout() {
+  Clerk.signOut().then(function() {
+    document.getElementById('admin-screen').style.display = 'none';
+    document.getElementById('admin-nav').style.display = 'none';
+    showLoginScreen();
+  });
+}
+
+// ─── ADMIN DASHBOARD ──────────────────────────────────────────────────────────
+function showAdminDashboard(user) {
+  var email = user.primaryEmailAddress ? user.primaryEmailAddress.emailAddress : '';
+  var name = (user.firstName || '') + ' ' + (user.lastName || '');
+  document.getElementById('admin-user-label').textContent = '● ' + name.trim();
+  document.getElementById('admin-nav').style.display = 'block';
+  document.getElementById('admin-screen').style.display = 'block';
+  loadClients();
+}
+
+function loadClients() {
+  var tbody = document.getElementById('clients-tbody');
+  tbody.innerHTML = '<tr class="loading-row"><td colspan="8"><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div style="width:14px;height:14px;border:2px solid rgba(0,232,122,.15);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite"></div> Fetching clients from Clerk…</div></td></tr>';
+
+  authFetch('/.netlify/functions/get-clients')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) throw new Error(data.error);
+
+      _clients = data.clients || [];
+      var configured = _clients.filter(function(c){ return c.configured; });
+      var unconfigured = _clients.filter(function(c){ return !c.configured; });
+
+      document.getElementById('client-count-label').textContent =
+        _clients.length + ' total · ' + configured.length + ' with wallet configured';
+      document.getElementById('sum-clients').textContent = _clients.length;
+
+      if (_clients.length === 0) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="8"><div class="empty-icon">👥</div><div class="empty-title">No clients yet</div><div class="empty-desc">Create users in Clerk → Users, then add their<br><code>hl_address</code> to publicMetadata.</div></td></tr>';
+        updateSummary([]);
+        return;
+      }
+
+      // Render skeleton rows — configured clients first, then unconfigured
+      tbody.innerHTML = '';
+
+      // Configured clients get full data rows
+      configured.forEach(function(c, i) {
+        c._tableIndex = i;
+        var tr = document.createElement('tr');
+        tr.id = 'client-row-' + i;
+        tr.innerHTML = '<td><div class="client-name">'+esc(c.name)+'</div><div class="client-email">'+esc(c.email)+'</div></td>'
+          + '<td colspan="6"><div style="display:flex;align-items:center;gap:8px;color:var(--muted);font-size:0.83em"><div style="width:10px;height:10px;border:2px solid rgba(0,232,122,.15);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite"></div>Fetching live data…</div></td><td></td>';
+        tbody.appendChild(tr);
+      });
+
+      // Unconfigured clients shown as a notice row
+      if (unconfigured.length > 0) {
+        var noticeRow = document.createElement('tr');
+        noticeRow.innerHTML = '<td colspan="8" style="padding:12px 20px;background:rgba(240,180,41,0.03);border-top:1px solid rgba(240,180,41,0.1)">'
+          + '<span style="font-size:0.78em;color:var(--gold)">⚠ ' + unconfigured.length + ' user' + (unconfigured.length>1?'s':'') + ' without wallet configured: '
+          + unconfigured.map(function(c){ return '<strong>'+esc(c.name)+'</strong>'; }).join(', ')
+          + ' — add <code>hl_address</code> to their Clerk publicMetadata.</span></td>';
+        tbody.appendChild(noticeRow);
+      }
+
+      // Fetch live HL data for configured clients
+      Promise.all(configured.map(function(c, i) { return fetchClientData(c, i); }))
+        .then(function(results) {
+          updateSummary(results);
+          updateLastRefresh();
+        });
+    })
+    .catch(function(e) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="8">'
+        + '<div class="empty-icon">⚠️</div>'
+        + '<div class="empty-title" style="color:var(--red)">Could not load clients</div>'
+        + '<div class="empty-desc">' + esc(e.message) + '<br><br>Make sure <strong>CLERK_SECRET_KEY</strong> is set in your Netlify environment variables.</div>'
+        + '</td></tr>';
+    });
+}
+
+// Monthly-figures clients (e.g. Bybit): value comes from the team's saved monthly updates.
+function isManual(c){ return c.data_mode === 'manual' || c.exchange === 'bybit'; }
+function manualSummary(c){
+  var snaps = (c.manual_snapshots || []).slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+  var base = parseFloat(c.initial_capital) || 0;
+  var added = snaps.reduce(function(t,x){ return t + (parseFloat(x.deposit) || 0); }, 0);
+  var invested = base + added;
+  var last = snaps.length ? snaps[snaps.length-1] : null;
+  var value = last ? parseFloat(last.balance) : base;
+  var pnl = Math.round((value - invested) * 100) / 100;
+  return { snaps: snaps, base: base, added: added, invested: invested, value: value, pnl: pnl,
+           ret: invested > 0 ? Math.round(pnl / invested * 10000) / 100 : 0, last: last };
+}
+function fetchClientData(client, index) {
+  if (isManual(client)) {
+    var ms = manualSummary(client);
+    var mr = { client: client, index: index, value: ms.value, pnl: ms.pnl, ret: ms.ret, positions: [], fills: [], status: 'manual', manual: ms };
+    _clientData[dataKey(client)] = mr;
+    renderClientRow(mr);
+    return Promise.resolve(mr);
+  }
+  var isBybit = (client.exchange === 'bybit');
+  // Both proxies return the same normalized {state, fills} shape so everything below is shared.
+  var fetchPromise = isBybit
+    ? authFetch(BYBIT_PROXY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: client.id })
+      }).then(function(r){ return r.json().then(function(j){ if(!r.ok) throw new Error(j&&j.error?j.error:('HTTP '+r.status)); return j; }); })
+    : fetch(HL_PROXY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: client.hl_address })
+      })
+      .then(function(r) { return r.json(); })
+      .catch(function() {
+        // HL fallback: direct API if proxy dies
+        return Promise.all([
+          fetch('https://api.hyperliquid.xyz/info', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'clearinghouseState',user:client.hl_address}) }),
+          fetch('https://api.hyperliquid.xyz/info', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'userFills',user:client.hl_address}) })
+        ]).then(function(rs) { return Promise.all([rs[0].json(), rs[1].json()]); })
+          .then(function(d) { return { state: d[0], fills: d[1] }; });
+      });
+
+  return fetchPromise
+  .then(function(data) {
+    if (data && data.error) throw new Error(data.error);
+    var state = data.state || {};
+    var fills = data.fills || [];
+    var capital = client.initial_capital || 10000;
+    var value = capital;
+    var positions = [];
+
+    if (state.marginSummary) {
+      var eq = parseFloat(state.marginSummary.accountValue);
+      if (eq > 0) value = Math.round(eq * 100) / 100;
+    }
+    if (state.assetPositions) {
+      positions = state.assetPositions
+        .filter(function(p){ return parseFloat(p.position.szi) !== 0; })
+        .map(function(p) {
+          var pos = p.position;
+          return {
+            coin: pos.coin,
+            side: parseFloat(pos.szi) > 0 ? 'LONG' : 'SHORT',
+            upnl: Math.round(parseFloat(pos.unrealizedPnl)*100)/100,
+            notional: Math.round(Math.abs(parseFloat(pos.positionValue)))
+          };
+        });
+    }
+
+    var pnl = Math.round((value - capital) * 100) / 100;
+    var ret = capital > 0 ? Math.round((pnl / capital) * 10000) / 100 : 0;
+    var clientResult = { client: client, index: index, value: value, pnl: pnl, ret: ret, positions: positions, fills: fills, status: 'live' };
+    _clientData[dataKey(client)] = clientResult;
+    renderClientRow(clientResult);
+    return clientResult;
+  })
+  .catch(function(e) {
+    console.warn('[' + (client.exchange||'hl') + '] fetch failed for', client.email, e && e.message);
+    var clientResult = { client: client, index: index, value: client.initial_capital || 0, pnl: 0, ret: 0, positions: [], fills: [], status: 'error' };
+    _clientData[dataKey(client)] = clientResult;
+    renderClientRow(clientResult);
+    return clientResult;
+  });
+}
+
+function renderClientRow(r) {
+  var row = document.getElementById('client-row-' + r.index);
+  if (!row) return;
+  var c = r.client;
+  var riskLabel = getRiskLabel(c.risk_level || 50);
+  var riskClass = 'risk-' + riskLabel.toLowerCase();
+  var pnlClass = r.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+  var pnlStr = (r.pnl >= 0 ? '+' : '') + '$' + Math.abs(r.pnl).toLocaleString();
+  var retStr = (r.ret >= 0 ? '+' : '') + r.ret + '%';
+  var statusHtml = r.status === 'live'
+    ? '<span class="status-dot status-live"></span>Live'
+    : r.status === 'manual'
+      ? '<span class="status-dot" style="background:var(--gold)"></span>' + (r.manual && r.manual.last ? ('Updated ' + new Date(r.manual.last.date + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})) : 'Needs first update')
+      : '<span class="status-dot status-error"></span>Error';
+
+  var pendingBadge = (c.pending_risk_request && c.pending_risk_request.status === 'pending')
+    ? ' <span style="display:inline-flex;align-items:center;background:rgba(240,180,41,0.12);border:1px solid rgba(240,180,41,0.3);color:var(--gold);font-size:0.65em;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:100px;margin-left:6px;vertical-align:middle">⏳ REQUEST</span>'
+    : '';
+  // API key expiry
+  var expiryHtml = '<span style="color:var(--muted);font-size:0.82em">Not set</span>';
+  if (c.hl_api_key_expiry) {
+    var expDate = new Date(c.hl_api_key_expiry);
+    var daysLeft = Math.ceil((expDate - new Date()) / (1000*60*60*24));
+    var expStr = expDate.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    if (daysLeft <= 0) {
+      expiryHtml = '<span style="color:var(--red);font-weight:700;font-size:0.82em">🚨 Expired</span><div style="font-size:0.72em;color:var(--muted2)">' + expStr + '</div>';
+    } else if (daysLeft <= 7) {
+      expiryHtml = '<span style="color:var(--red);font-weight:700;font-size:0.82em">🔴 ' + daysLeft + 'd left</span><div style="font-size:0.72em;color:var(--muted2)">' + expStr + '</div>';
+    } else if (daysLeft <= 30) {
+      expiryHtml = '<span style="color:var(--gold);font-weight:600;font-size:0.82em">⚠ ' + daysLeft + 'd left</span><div style="font-size:0.72em;color:var(--muted2)">' + expStr + '</div>';
+    } else {
+      expiryHtml = '<span style="color:var(--green);font-size:0.82em">✅ ' + daysLeft + 'd left</span><div style="font-size:0.72em;color:var(--muted2)">' + expStr + '</div>';
+    }
+  }
+
+  row.innerHTML = '<td><div class="client-name">'+esc(c.name)+pendingBadge+'</div><div class="client-email">'+esc(c.email||'')+'</div></td>'
+    + '<td><strong style="color:#fff;font-family:\'Space Grotesk\',sans-serif">$'+r.value.toLocaleString()+'</strong></td>'
+    + '<td class="'+pnlClass+'">'+pnlStr+'</td>'
+    + '<td class="'+(r.ret>=0?'pnl-pos':'pnl-neg')+'">'+retStr+'</td>'
+    + '<td><span class="risk-pill '+riskClass+'">'+(c.risk_level||50)+'% · '+riskLabel+'</span></td>'
+    + '<td>'+expiryHtml+'</td>'
+    + '<td style="font-size:0.8em;color:var(--muted2)">'+statusHtml+'</td>'
+    + '<td><button class="view-btn" onclick="openModal('+r.index+')">View →</button></td>';
+}
+
+function updateSummary(results) {
+  var validResults = results.filter(function(r){ return r && r.status === 'live'; });
+  var totalAUM = validResults.reduce(function(s,r){ return s + r.value; }, 0);
+  var totalPnl = validResults.reduce(function(s,r){ return s + r.pnl; }, 0);
+  var avgRet = validResults.length ? Math.round(validResults.reduce(function(s,r){ return s + r.ret; },0) / validResults.length * 100) / 100 : 0;
+  document.getElementById('sum-aum').textContent = '$' + Math.round(totalAUM).toLocaleString();
+  document.getElementById('sum-clients').textContent = _clients.length;
+  document.getElementById('sum-pnl').textContent = (totalPnl >= 0 ? '+' : '') + '$' + Math.round(Math.abs(totalPnl)).toLocaleString();
+  document.getElementById('sum-pnl').style.color = totalPnl >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('sum-return').textContent = (avgRet >= 0 ? '+' : '') + avgRet + '%';
+  document.getElementById('sum-return').style.color = avgRet >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('sum-clients-sub').textContent = validResults.length + ' with live data';
+}
+
+function updateLastRefresh() {
+  document.getElementById('last-refresh-label').textContent = 'Last refresh: ' + new Date().toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' });
+}
+
+function refreshAll() {
+  var btn = document.querySelector('.refresh-btn');
+  btn.textContent = '⟳ Refreshing…';
+  btn.disabled = true;
+  loadClients();
+  setTimeout(function() {
+    btn.textContent = '⟳ Refresh All';
+    btn.disabled = false;
+  }, 5000);
+}
+
+// ─── ADD CLIENT ───────────────────────────────────────────────────────────────
+function addClient() {
+  var name = document.getElementById('new-name').value.trim();
+  var email = document.getElementById('new-email').value.trim();
+  var wallet = document.getElementById('new-wallet').value.trim();
+  var capital = parseInt(document.getElementById('new-capital').value) || 10000;
+  var risk = parseInt(document.getElementById('new-risk').value) || 50;
+  var errEl = document.getElementById('add-error');
+  var succEl = document.getElementById('add-success');
+  errEl.style.display = 'none'; succEl.style.display = 'none';
+
+  if (!name) { errEl.textContent = 'Please enter a client name.'; errEl.style.display = 'block'; return; }
+  if (!wallet || !wallet.match(/^0x[0-9a-fA-F]{40}$/)) { errEl.textContent = 'Invalid wallet address — must be 0x + 40 hex characters.'; errEl.style.display = 'block'; return; }
+  if (_clients.find(function(c){ return c.hl_address && c.hl_address.toLowerCase() === wallet.toLowerCase(); })) {
+    errEl.textContent = 'This wallet address is already in your client list.'; errEl.style.display = 'block'; return;
+  }
+
+  var newClient = { name: name, email: email, hl_address: wallet, initial_capital: capital, risk_level: risk };
+  var updatedClients = _clients.concat([newClient]);
+
+  // Save to admin's Clerk publicMetadata (requires admin to have Clerk backend access)
+  // For now, save to unsafeMetadata as it's client-writable, and note the limitation
+  Clerk.user.update({ unsafeMetadata: Object.assign({}, Clerk.user.unsafeMetadata || {}, { clients: updatedClients }) })
+    .then(function() {
+      _clients = updatedClients;
+      succEl.style.display = 'block';
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-email').value = '';
+      document.getElementById('new-wallet').value = '';
+      document.getElementById('new-capital').value = '';
+      document.getElementById('new-risk').value = '';
+      var newIndex = _clients.length - 1;
+      var tbody = document.getElementById('clients-tbody');
+      // Remove empty row if present
+      var emptyRow = tbody.querySelector('.empty-row');
+      if (emptyRow) emptyRow.remove();
+      var tr = document.createElement('tr');
+      tr.id = 'client-row-' + newIndex;
+      tr.innerHTML = '<td><div class="client-name">'+esc(newClient.name)+'</div><div class="client-email">'+esc(newClient.email||'')+'</div></td><td colspan="6"><div style="display:flex;align-items:center;gap:8px;color:var(--muted);font-size:0.83em"><div style="width:10px;height:10px;border:2px solid rgba(0,232,122,.15);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite"></div>Loading…</div></td><td></td></tr>';
+      tbody.appendChild(tr);
+      document.getElementById('client-count-label').textContent = _clients.length + ' client' + (_clients.length === 1 ? '' : 's');
+      document.getElementById('sum-clients').textContent = _clients.length;
+      fetchClientData(newClient, newIndex).then(function(r){ updateSummary(Object.values(_clientData)); });
+      setTimeout(function(){ succEl.style.display = 'none'; }, 4000);
+    })
+    .catch(function(e) {
+      errEl.textContent = 'Could not save: ' + (e.message || 'unknown error'); errEl.style.display = 'block';
+    });
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openModal(index) {
+  var c = _clients[index];
+  var d = _clientData[dataKey(c)];
+  if (!c || !d) return;
+  var isBybit = (c.exchange === 'bybit');
+
+  document.getElementById('modal-name').textContent = c.name;
+  document.getElementById('modal-email').textContent = c.email || 'No email on file';
+  document.getElementById('modal-value').textContent = '$' + d.value.toLocaleString();
+  document.getElementById('modal-value-sub').textContent = 'Initial: $' + (c.initial_capital||10000).toLocaleString();
+  var pnl = d.pnl;
+  document.getElementById('modal-pnl').textContent = (pnl>=0?'+':'')+  '$'+Math.abs(pnl).toLocaleString();
+  document.getElementById('modal-pnl').style.color = pnl >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('modal-return').textContent = (d.ret>=0?'+':'')+d.ret+'% return';
+  document.getElementById('modal-capital').textContent = '$' + (c.initial_capital||10000).toLocaleString();
+  var risk = c.risk_level || 50;
+  document.getElementById('modal-risk').textContent = risk + '%';
+  document.getElementById('modal-risk').style.color = risk<=25?'var(--green)':risk<=50?'var(--cyan)':risk<=75?'var(--gold)':'var(--red)';
+  document.getElementById('modal-risk-sub').textContent = getRiskLabel(risk);
+  document.getElementById('modal-wallet').textContent = isBybit ? ('Bybit UTA · ' + (c.email || c.id)) : c.hl_address;
+
+  // API key expiry
+  var expiryDisplay = document.getElementById('modal-expiry-display');
+  var expiryInput   = document.getElementById('modal-expiry-input');
+  document.getElementById('modal-expiry-result').style.display = 'none';
+  if (c.hl_api_key_expiry) {
+    var expDate  = new Date(c.hl_api_key_expiry);
+    var daysLeft = Math.ceil((expDate - new Date()) / (1000*60*60*24));
+    var expStr   = expDate.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    var color    = daysLeft <= 0 ? 'var(--red)' : daysLeft <= 30 ? 'var(--gold)' : 'var(--green)';
+    expiryDisplay.innerHTML = '<span style="color:'+color+';font-weight:600">' + expStr + '</span> <span style="color:var(--muted);font-size:0.85em">(' + (daysLeft<=0?'expired':daysLeft+'d remaining') + ')</span>';
+    expiryInput.value = c.hl_api_key_expiry.split('T')[0];
+  } else {
+    expiryDisplay.textContent = 'Not configured — add hl_api_key_expiry to Clerk publicMetadata.';
+    expiryInput.value = '';
+  }
+
+  var posEl = document.getElementById('modal-positions');
+  if (d.positions.length === 0) {
+    posEl.innerHTML = '<div class="no-positions">No open positions</div>';
+  } else {
+    var quote = isBybit ? '/USDT' : '/USDC';
+    posEl.innerHTML = d.positions.map(function(p) {
+      var upnlClass = p.upnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+      return '<div class="pos-mini-row"><span><strong style="color:#fff">'+p.coin+quote+'</strong> <span style="font-size:0.85em;color:var(--muted2)">'+p.side+'</span></span><span class="'+upnlClass+'">'+(p.upnl>=0?'+':'')+'$'+Math.abs(p.upnl)+'</span></div>';
+    }).join('');
+  }
+
+  var extBtn = document.getElementById('modal-hl-link');
+  if (isBybit) {
+    extBtn.textContent = 'View on Bybit ↗';
+    extBtn.onclick = function(){ window.open('https://www.bybit.com/app/user/assets/home/trading', '_blank'); };
+  } else {
+    extBtn.textContent = 'View on Hyperliquid ↗';
+    extBtn.onclick = function(){ window.open('https://app.hyperliquid.xyz/portfolio/'+c.hl_address, '_blank'); };
+  }
+
+  // Pending risk request
+  var pendingSection = document.getElementById('modal-pending-section');
+  var pending = c.pending_risk_request;
+  if (pending && pending.status === 'pending') {
+    document.getElementById('modal-pending-value').textContent = pending.value + '% (' + pending.levelName + ')';
+    document.getElementById('modal-pending-time').textContent = pending.time || '—';
+    document.getElementById('modal-request-result').style.display = 'none';
+    document.getElementById('modal-approve-btn').disabled = false;
+    document.getElementById('modal-approve-btn').textContent = '✅ Approve';
+    document.getElementById('modal-reject-btn').disabled = false;
+    document.getElementById('modal-reject-btn').textContent = '❌ Reject';
+    pendingSection.style.display = 'block';
+  } else {
+    pendingSection.style.display = 'none';
+  }
+
+  // Monthly figures
+  var manSec = document.getElementById('modal-manual-section');
+  if (isManual(c)) {
+    manSec.style.display = 'block';
+    document.getElementById('mf-base').value = c.initial_capital || '';
+    document.getElementById('mf-start').value = c.start_date || '';
+    document.getElementById('mf-date').value = new Date().toISOString().slice(0,10);
+    document.getElementById('mf-balance').value = '';
+    document.getElementById('mf-deposit').value = '';
+    document.getElementById('mf-result').style.display = 'none';
+    renderSnapshotList(c);
+    var msum = manualSummary(c);
+    document.getElementById('modal-capital').textContent = '$' + Math.round(msum.invested).toLocaleString();
+    document.getElementById('modal-value-sub').textContent = 'Invested: $' + Math.round(msum.invested).toLocaleString();
+    document.getElementById('modal-positions').innerHTML = '<div class="no-positions">Not tracked: this account is updated monthly</div>';
+  } else {
+    manSec.style.display = 'none';
+  }
+
+  // Store current client index for approve/reject
+  document.getElementById('client-modal').dataset.clientIndex = index;
+
+  document.getElementById('client-modal').classList.add('open');
+}
+
+function saveExpiryDate() {
+  var index   = parseInt(document.getElementById('client-modal').dataset.clientIndex);
+  var configured = _clients.filter(function(cl){ return cl.configured; });
+  var c       = configured[index];
+  var newDate = document.getElementById('modal-expiry-input').value;
+  var resultEl = document.getElementById('modal-expiry-result');
+  if (!c || !newDate) { resultEl.textContent = '⚠ Please select a date.'; resultEl.style.display='block'; resultEl.style.color='var(--red)'; return; }
+
+  resultEl.textContent = 'Saving…'; resultEl.style.display='block'; resultEl.style.color='var(--muted2)';
+
+  authFetch('/.netlify/functions/update-client', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userId: c.id, action: 'update_expiry', expiry_date: newDate })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.error) throw new Error(d.error);
+    c.hl_api_key_expiry = newDate;
+    var expDate  = new Date(newDate);
+    var daysLeft = Math.ceil((expDate - new Date()) / (1000*60*60*24));
+    var expStr   = expDate.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+    document.getElementById('modal-expiry-display').innerHTML = '<span style="color:var(--green);font-weight:600">' + expStr + '</span> <span style="color:var(--muted);font-size:0.85em">(' + daysLeft + 'd remaining)</span>';
+    resultEl.textContent = '✅ Expiry date updated in Clerk.';
+    resultEl.style.color = 'var(--green)';
+    // Re-render row so expiry column updates
+    var rowData = _clientData[dataKey(c)] || { value: c.initial_capital, pnl:0, ret:0, positions:[], status:'live' };
+    renderClientRow(Object.assign({}, rowData, { client: c, index: index }));
+    setTimeout(function(){ resultEl.style.display='none'; }, 4000);
+  })
+  .catch(function(e){
+    resultEl.textContent = '⚠ Error: ' + e.message;
+    resultEl.style.color = 'var(--red)';
+  });
+}
+
+function handleRiskRequest(action) {
+  var index = parseInt(document.getElementById('client-modal').dataset.clientIndex);
+  var c = _clients.filter(function(cl){ return cl.configured; })[index];
+  if (!c) return;
+
+  var pending = c.pending_risk_request;
+  var approveBtn = document.getElementById('modal-approve-btn');
+  var rejectBtn  = document.getElementById('modal-reject-btn');
+  var resultEl   = document.getElementById('modal-request-result');
+
+  approveBtn.disabled = true;
+  rejectBtn.disabled  = true;
+  approveBtn.textContent = action === 'approve' ? '⏳ Approving…' : '✅ Approve';
+  rejectBtn.textContent  = action === 'reject'  ? '⏳ Rejecting…' : '❌ Reject';
+
+  authFetch('/.netlify/functions/update-client', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userId:     c.id,
+      action:     action,
+      risk_level: pending ? pending.value : c.risk_level
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.error) throw new Error(data.error);
+
+    var isApprove = action === 'approve';
+    resultEl.style.display = 'block';
+    resultEl.style.background = isApprove ? 'rgba(0,232,122,0.08)' : 'rgba(255,61,107,0.08)';
+    resultEl.style.color = isApprove ? 'var(--green)' : 'var(--red)';
+    resultEl.textContent = isApprove
+      ? '✅ Approved! Risk level updated to ' + data.risk_level + '% in Clerk.'
+      : '❌ Request rejected. Client will be notified on next login.';
+
+    approveBtn.textContent = '✅ Approve';
+    rejectBtn.textContent  = '❌ Reject';
+
+    // Update local client data so table reflects change
+    c.pending_risk_request = { status: action === 'approve' ? 'approved' : 'rejected' };
+    if (isApprove) c.risk_level = pending.value;
+    var _dk = dataKey(c); renderClientRow({ client: c, index: index, value: (_clientData[_dk]||{}).value || c.initial_capital, pnl: (_clientData[_dk]||{}).pnl || 0, ret: (_clientData[_dk]||{}).ret || 0, positions: (_clientData[_dk]||{}).positions || [], status: 'live' });
+
+    // Hide pending section after action
+    setTimeout(function(){ document.getElementById('modal-pending-section').style.display = 'none'; }, 3000);
+  })
+  .catch(function(e) {
+    resultEl.style.display = 'block';
+    resultEl.style.background = 'rgba(255,61,107,0.08)';
+    resultEl.style.color = 'var(--red)';
+    resultEl.textContent = '⚠ Error: ' + e.message;
+    approveBtn.disabled = false; approveBtn.textContent = '✅ Approve';
+    rejectBtn.disabled  = false; rejectBtn.textContent  = '❌ Reject';
+  });
+}
+
+
+// ---- Monthly figures: save start, add/delete monthly updates ----
+function currentModalClient(){ return _clients[parseInt(document.getElementById('client-modal').dataset.clientIndex)]; }
+function mfMsg(text, ok){ var el=document.getElementById('mf-result'); el.textContent=text; el.style.display='block';
+  el.style.background = ok ? 'rgba(0,232,122,0.08)' : 'rgba(255,61,107,0.08)'; el.style.color = ok ? 'var(--green)' : 'var(--red)'; }
+function renderSnapshotList(c){
+  var el = document.getElementById('mf-list'), ms = manualSummary(c);
+  if (!ms.snaps.length){ el.innerHTML = '<div class="no-positions">No monthly updates yet.</div>'; return; }
+  var prev = ms.base;
+  var rows = ms.snaps.map(function(x){
+    var bal = parseFloat(x.balance), dep = parseFloat(x.deposit)||0, chg = bal - prev - dep; prev = bal;
+    return '<tr><td>' + esc(x.date) + '</td><td>$' + Math.round(bal).toLocaleString() + '</td><td>' + (dep ? ((dep>0?'+':'−') + '$' + Math.abs(Math.round(dep)).toLocaleString()) : '—') + '</td>'
+      + '<td class="' + (chg>=0?'pnl-pos':'pnl-neg') + '">' + (chg>=0?'+':'−') + '$' + Math.abs(Math.round(chg)).toLocaleString() + '</td>'
+      + '<td><button class="mf-del" title="Delete this update" onclick="deleteSnapshot(\'' + esc(x.date) + '\')">Delete</button></td></tr>';
+  }).reverse().join('');
+  el.innerHTML = '<table class="mf-table"><thead><tr><th>Date</th><th>Balance</th><th>Added</th><th>Result</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>'
+    + '<div style="font-size:0.78em;color:var(--muted2);margin-top:8px">Invested $' + Math.round(ms.invested).toLocaleString() + ' · now $' + Math.round(ms.value).toLocaleString() + ' · ' + (ms.ret>=0?'+':'') + ms.ret + '%</div>';
+}
+function postManual(payload, okText){
+  var c = currentModalClient(); if (!c) return;
+  payload.userId = c.id;
+  return authFetch('/.netlify/functions/update-client', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+    .then(function(r){ return r.json().then(function(j){ if(!r.ok || j.error) throw new Error(j.error || ('HTTP '+r.status)); return j; }); })
+    .then(function(j){
+      c.initial_capital = j.initial_capital != null ? j.initial_capital : c.initial_capital;
+      c.start_date = j.start_date || c.start_date;
+      c.manual_snapshots = j.manual_snapshots || [];
+      c.data_mode = 'manual';
+      var idx = _clients.indexOf(c);
+      fetchClientData(c, idx).then(function(){ openModal(idx); mfMsg(okText, true); });
+    })
+    .catch(function(e){ mfMsg('⚠ ' + e.message, false); });
+}
+function saveManualBase(){
+  var base = parseFloat(document.getElementById('mf-base').value), start = document.getElementById('mf-start').value;
+  if (!(base > 0) || !start) { mfMsg('Enter the starting amount and start date.', false); return; }
+  postManual({ action:'set_manual_base', initial_capital: base, start_date: start }, 'Start saved.');
+}
+function addSnapshot(){
+  var date = document.getElementById('mf-date').value, bal = parseFloat(document.getElementById('mf-balance').value);
+  var dep = parseFloat(document.getElementById('mf-deposit').value || '0');
+  if (!date || !(bal > 0)) { mfMsg('Enter the date and the balance on that date.', false); return; }
+  var c = currentModalClient();
+  if (!(parseFloat(c.initial_capital) > 0) || !c.start_date) { mfMsg('Save the starting amount and start date first.', false); return; }
+  postManual({ action:'add_snapshot', date: date, balance: bal, deposit: isFinite(dep) ? dep : 0 }, 'Update added. The client sees it next time they open their dashboard.');
+}
+function deleteSnapshot(date){
+  if (!confirm('Delete the ' + date + ' update?')) return;
+  postManual({ action:'delete_snapshot', date: date }, 'Update deleted.');
+}
+
+function closeModal() {
+  document.getElementById('client-modal').classList.remove('open');
+}
+
+document.getElementById('client-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function getRiskLabel(val) {
+  return val <= 25 ? 'Conservative' : val <= 50 ? 'Moderate' : val <= 75 ? 'Aggressive' : 'Maximum';
+}
+
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── KEYBOARD ─────────────────────────────────────────────────────────────────
+document.getElementById('login-email').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('login-pw').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('totp-code').addEventListener('keydown', function(e){ if(e.key==='Enter') doTotp(); });
+document.getElementById('totp-code').addEventListener('input', function(){ this.value=this.value.replace(/\D/g,''); });
+</script>
+</body>
+</html>
