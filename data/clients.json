@@ -1,0 +1,106 @@
+{
+  "as_of": "2026-10-20",
+  "as_of_label": "Oct 2026",
+  "as_of_long": "October 20, 2026",
+  "clients": [
+    {
+      "id": "kevin",
+      "name": "Kevin Harsh",
+      "short": "Kevin",
+      "ex": "Bybit and Hyperliquid",
+      "since": "Nov 2023",
+      "months": 35,
+      "start": 60000,
+      "end": 269200,
+      "quote": "I was skeptical at first. Watching it trade while I'm at work, sleeping, traveling — 291% later I can't imagine trading any other way.",
+      "shot": null
+    },
+    {
+      "id": "manuel",
+      "name": "Manuel Avila",
+      "short": "Manuel",
+      "ex": "Hyperliquid",
+      "since": "Apr 2023",
+      "months": 42,
+      "start": 100000,
+      "end": 314024,
+      "quote": "",
+      "shot": null,
+      "founder": true,
+      "note": "Our founder runs his own money with AutoBot. Started with $50,000 in Apr 2023 and added $50,000 after 12 months; the gain is measured on the full $100,000 invested."
+    },
+    {
+      "id": "abhi",
+      "name": "Abhi Jacknoshi",
+      "short": "Abhi",
+      "ex": "Bybit",
+      "since": "Aug 2023",
+      "months": 38,
+      "start": 100000,
+      "end": 375090,
+      "quote": "Bot hitting TON, MORPHO and a few others in the past few days… holy shit. It is so good.",
+      "shot": "img/results-abhi.jpg"
+    },
+    {
+      "id": "daniel",
+      "name": "Daniel Gonzalez",
+      "short": "Daniel",
+      "ex": "Bybit",
+      "since": "Jun 2023",
+      "months": 40,
+      "start": 30000,
+      "end": 115031,
+      "quote": "",
+      "shot": null
+    },
+    {
+      "id": "camilo",
+      "name": "Camilo Perez",
+      "short": "Camilo",
+      "ex": "Binance",
+      "since": "Jan 2024",
+      "months": 33,
+      "start": 18000,
+      "end": 82630,
+      "quote": "I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.",
+      "shot": "img/results-camilo.jpg"
+    },
+    {
+      "id": "aero",
+      "name": "Aero",
+      "short": "Aero",
+      "ex": "Bybit",
+      "since": "Nov 2023",
+      "months": 35,
+      "start": 345000,
+      "end": 1145567,
+      "quote": "",
+      "shot": null,
+      "note": "High-capital account."
+    },
+    {
+      "id": "nick",
+      "name": "Nick",
+      "short": "Nick",
+      "ex": "Hyperliquid",
+      "since": "Jan 2024",
+      "months": 33,
+      "start": 25000,
+      "end": 67000,
+      "quote": "",
+      "shot": null
+    },
+    {
+      "id": "pvffy",
+      "name": "pvffy",
+      "short": "pvffy",
+      "ex": "Hyperliquid",
+      "since": "Mar 2025",
+      "months": 19,
+      "start": 65000,
+      "end": 134000,
+      "quote": "",
+      "shot": null
+    }
+  ]
+}

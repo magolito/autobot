@@ -456,14 +456,14 @@ nav.pd-nav{position:static!important;width:auto!important;background:none!import
       <div class="pd-value" id="s-value">—</div>
       <p class="pd-gain" id="s-profit"></p>
       <div class="pd-stats">
-        <div><p class="pd-label" id="lbl-capital">Invested</p><p class="pd-stat" id="s-capital">—</p><p class="pd-sub" id="sub-capital">Account baseline</p></div>
-        <div><p class="pd-label">Total return</p><p class="pd-stat" id="s-return">—</p><p class="pd-sub" id="sub-return">vs money invested</p></div>
+        <div><p class="pd-label" id="lbl-capital">Invested</p><p class="pd-stat" id="s-capital">—</p><p class="pd-sub" id="sub-capital"></p></div>
+        <div><p class="pd-label">Total return</p><p class="pd-stat" id="s-return">—</p><p class="pd-sub" id="sub-return"></p></div>
         <div><p class="pd-label" id="lbl-winrate">Win rate</p><p class="pd-stat" id="s-winrate">—</p><p class="pd-sub" id="s-winrate-sub">—</p></div>
       </div>
 
       <div class="pd-chart">
         <div class="pd-chart-top">
-          <p class="pd-h">Account value over time</p>
+          <span></span>
           <div class="time-pills"><button class="time-pill" onclick="setPeriod(30,this)">1M</button><button class="time-pill" onclick="setPeriod(90,this)">3M</button><button class="time-pill" onclick="setPeriod(365,this)">1Y</button><button class="time-pill active" onclick="setPeriod(9999,this)">All</button></div>
         </div>
         <svg class="pd-chart-svg" id="equity-svg" viewBox="0 0 800 220" preserveAspectRatio="none"></svg>
@@ -474,7 +474,7 @@ nav.pd-nav{position:static!important;width:auto!important;background:none!import
 
     <section id="tab-analytics" class="pd-sec">
       <div class="pd-sec-head"><h2 class="pd-h2">Monthly results</h2><span class="pd-total" id="monthly-total"></span></div>
-      <p class="pd-note" id="monthly-note">Profit or loss each month.</p>
+      <p class="pd-note" id="monthly-note" hidden></p>
       <div id="monthly-bars-svg-wrap" class="pd-bars"></div>
       <div class="pd-two">
         <div id="activity-col">
@@ -504,7 +504,7 @@ nav.pd-nav{position:static!important;width:auto!important;background:none!import
     </section>
 
     <section id="tab-statements" class="pd-sec">
-      <div class="pd-sec-head"><h2 class="pd-h2">Statements</h2><span class="pd-note">Monthly summaries for your records</span></div>
+      <div class="pd-sec-head"><h2 class="pd-h2">Statements</h2></div>
       <div class="statements-list pd-list" id="statements-list"></div>
       <div class="pd-stmt-total"><span>Total result <b id="stmt-total-pnl">—</b></span><span>Invested <b id="stmt-initial-capital">—</b></span></div>
     </section>
@@ -1366,7 +1366,7 @@ function renderManualAccount(m){
   document.getElementById('dashboard-screen').classList.add('pd-manual');
   var setT=function(id,t){var e=document.getElementById(id);if(e)e.textContent=t;};
   setT('lbl-capital','Invested');
-  setT('sub-capital',added?('Includes '+(added>0?'+':'-')+'$'+Math.abs(Math.round(added)).toLocaleString()+' added'):'Account baseline');
+  setT('sub-capital',added?('Includes '+(added>0?'+':'-')+'$'+Math.abs(Math.round(added)).toLocaleString()+' added'):'');
   setT('lbl-winrate','Positive months');
   setT('s-winrate-sub',monthlyData.length?(upMonths+' of '+monthlyData.length+' months'):'No updates yet');
   setT('monthly-note','Change in balance each month, not counting money added or withdrawn.');

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<title>Client Results — AutoBot</title>
+<meta name="description" content="Real, verified AutoBot client results — live account screenshots and returns from real Bybit, Hyperliquid, and Binance accounts. See what fully automated crypto trading actually delivers.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AutoBot">
+<meta property="og:title" content="Client Results — AutoBot">
+<meta property="og:description" content="Real, verified client results from real exchange accounts. See what fully automated crypto trading actually delivers.">
+<meta property="og:url" content="https://autobot.trading/results.html">
+<meta property="og:image" content="https://autobot.trading/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Client Results — AutoBot">
+<meta name="twitter:description" content="Real, verified client results from real exchange accounts.">
+<meta name="twitter:image" content="https://autobot.trading/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --black: #0e0e0c; --white: #f2f1ed; --gray: #8c8c89; --gray-mid: #4e4e4b; --border: rgba(14,14,12,0.08); }
+html { scroll-behavior: smooth; }
+body { background: var(--white); color: var(--black); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 22px 64px; background: rgba(242,241,237,0.93); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+.nav-logo { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 16px; letter-spacing: -0.01em; color: var(--black); text-decoration: none; }
+.nav-right { display: flex; align-items: center; gap: 36px; }
+.nav-link { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+.nav-link:hover, .nav-link.active { color: var(--black); }
+.nav-cta { background: var(--black); color: var(--white); border: none; padding: 12px 26px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; text-decoration: none; display: inline-block; }
+.nav-cta:hover { opacity: 0.75; }
+
+/* PAGE HEADER */
+.page-header { padding: 148px 64px 52px; }
+.page-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); margin-bottom: 20px; }
+.page-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 4.3vw, 60px); font-weight: 400; line-height: 1.07; letter-spacing: -0.025em; color: var(--black); }
+.page-consent { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.04em; color: var(--gray); line-height: 1.7; max-width: 520px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+/* STORY GRID */
+.stories { padding: 32px 64px 40px; }
+.stories-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+/* STORY CARD — Tempo style */
+.story-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 2px rgba(14,14,12,0.04), 0 0 0 1px rgba(14,14,12,0.06);
+  transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), box-shadow 0.28s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+.story-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(14,14,12,0.1), 0 0 0 1px rgba(14,14,12,0.06); }
+
+/* Dark visual top */
+.story-visual { background: #0b0b09; height: 180px; position: relative; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.story-badge{position:absolute;top:10px;right:10px;z-index:3;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.02em;color:#4ade80;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.32);padding:4px 9px;border-radius:20px;}
+.story-visual canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+/* Branding overlay — AutoBot | ClientName like Tempo | Partner */
+.story-brand { position: relative; z-index: 2; display: flex; align-items: center; gap: 18px; }
+.brand-autobot { font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.9); font-style: italic; }
+.brand-sep { width: 1px; height: 26px; background: rgba(255,255,255,0.22); }
+.brand-client { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 16px; color: rgba(255,255,255,0.82); letter-spacing: -0.01em; }
+
+/* White card body */
+.story-body { padding: 12px 14px 12px; display: flex; flex-direction: column; flex: 1; }
+.story-tag { display:block; font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.05em; text-transform:uppercase; color:var(--gray); margin-bottom:5px; }
+.story-title { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 400; line-height: 1.3; letter-spacing: -0.015em; color: var(--black); margin-bottom: 0; }
+.story-excerpt { display: none; }
+.story-read { display: flex; align-items: center; gap: 5px; margin-top: 8px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 400; color: var(--black); transition: gap 0.2s; }
+.story-card:hover .story-read { gap: 10px; }
+
+/* DISCLAIMER */
+.disclaimer { padding: 0 64px 48px; }
+.disclaimer p { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 0.04em; line-height: 1.85; max-width: 860px; }
+
+/* CTA BAND */
+.cta-band { margin: 0 64px 80px; background: var(--black); border-radius: 14px; padding: 60px 64px; display: flex; align-items: center; justify-content: space-between; gap: 48px; }
+.cta-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.5vw, 46px); font-weight: 400; letter-spacing: -0.025em; line-height: 1.1; color: #fff; }
+.cta-text h2 em { font-style: italic; color: rgba(255,255,255,0.42); }
+.cta-text p { font-size: 15px; color: rgba(255,255,255,0.38); margin-top: 12px; font-weight: 300; max-width: 380px; line-height: 1.6; }
+.cta-actions { display: flex; flex-direction: column; gap: 11px; min-width: 200px; }
+.btn-w { background: var(--white); color: var(--black); border: none; padding: 15px 34px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; text-decoration: none; display: block; text-align: center; border-radius: 6px; }
+.btn-w:hover { opacity: 0.85; }
+.btn-o { background: transparent; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.16); padding: 14px 34px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 400; cursor: pointer; transition: all 0.2s; text-decoration: none; display: block; text-align: center; border-radius: 6px; }
+.btn-o:hover { border-color: rgba(255,255,255,0.45); color: rgba(255,255,255,0.85); }
+
+footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex; align-items: center; justify-content: space-between; }
+.footer-logo { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px; color: var(--gray-mid); }
+.footer-copy { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.07em; color: var(--gray); }
+
+
+
+
+/* ── KEVIN HARSH CARD — custom mini dashboard ── */
+/* Dark gradient vignette */
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.5s cubic-bezier(0.22,1,0.36,1);
+  background:rgba(7,7,6,0.97);
+  backdrop-filter:blur(40px) saturate(1.3);
+  -webkit-backdrop-filter:blur(40px) saturate(1.3);
+  padding:48px;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+
+.modal-box{
+  position:relative;
+  width:100%;max-width:1060px;
+  max-height:84vh;
+  display:grid;
+  grid-template-columns:1fr 300px;
+  overflow:hidden;
+  transform:translateY(40px) scale(0.98);
+  transition:transform 0.6s cubic-bezier(0.22,1,0.36,1),opacity 0.6s;
+  opacity:0;
+  background:#0a0a08;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  /* Outer edge — very subtle warm glow */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 40px 80px rgba(0,0,0,0.6),
+    0 0 120px rgba(74,222,128,0.03);
+}
+.modal-overlay.open .modal-box{
+  transform:translateY(0) scale(1);
+  opacity:1;
+}
+
+/* No screenshot — single column centered */
+.modal-box.no-image { grid-template-columns: 1fr; max-width: 500px; }
+.modal-box.no-image .modal-body { border-left: none; padding: 48px 44px; }
+
+
+/* ── IMAGE PANEL ── */
+.modal-img-wrap{
+  position:relative;overflow:hidden;
+  background:#060605;
+  min-height:480px;
+}
+.modal-canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:none;}
+.modal-img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:left top;
+  display:block;
+  filter:brightness(0.85) saturate(0.8) contrast(1.1);
+  transform:scale(1.04);
+  transition:transform 10s cubic-bezier(0.22,1,0.36,1),filter 0.6s;
+}
+.modal-overlay.open .modal-img{
+  transform:scale(1.0);
+  filter:brightness(0.88) saturate(0.82) contrast(1.08);
+}
+/* Right edge dissolves into info panel — no hard seam */
+.modal-img-wrap::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:
+    linear-gradient(to right, transparent 50%, rgba(10,10,8,0.7) 78%, #0a0a08 100%),
+    linear-gradient(to bottom, rgba(6,6,5,0.55) 0%, transparent 14%),
+    linear-gradient(to top, rgba(6,6,5,0.65) 0%, transparent 22%),
+    linear-gradient(to right, rgba(6,6,5,0.2) 0%, transparent 6%);
+}
+
+/* Floating label — slides up on open */
+.modal-img-label{
+  position:absolute;bottom:28px;left:28px;z-index:3;
+  display:flex;align-items:center;gap:12px;
+  transform:translateY(6px);opacity:0;
+  transition:transform 0.6s 0.3s cubic-bezier(0.22,1,0.36,1),opacity 0.6s 0.3s;
+}
+.modal-overlay.open .modal-img-label{transform:translateY(0);opacity:1;}
+.modal-img-autobot{
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:rgba(255,255,255,0.45);font-style:italic;
+}
+.modal-img-sep{width:1px;height:14px;background:rgba(255,255,255,0.18);}
+.modal-img-name{
+  font-family:'DM Sans',sans-serif;font-weight:400;font-size:13px;
+  color:rgba(255,255,255,0.45);letter-spacing:-0.01em;
+}
+
+/* ── INFO PANEL ── */
+.modal-body{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:44px 32px 44px 28px;
+  background:#0a0a08;
+  position:relative;overflow-y:auto;scrollbar-width:none;
+  border-left:1px solid rgba(255,255,255,0.055);
+}
+.modal-body::-webkit-scrollbar{display:none;}
+/* Gold hairline — fades in from center */
+.modal-body::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(180,155,100,0.28),transparent);
+}
+/* Green ambient glow — very faint, behind the number */
+.modal-body::after{
+  content:'';position:absolute;
+  top:25%;right:-60px;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(74,222,128,0.04) 0%,transparent 65%);
+  pointer-events:none;z-index:0;
+}
+/* All info panel children stack above the glow */
+.modal-body>*{position:relative;z-index:1;}
+
+/* Close */
+.modal-close{
+  position:absolute;top:18px;right:18px;z-index:10;
+  width:30px;height:30px;
+  border:1px solid rgba(255,255,255,0.07);
+  background:transparent;color:rgba(255,255,255,0.25);
+  font-size:12px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;font-family:'DM Mono',monospace;
+}
+.modal-close:hover{
+  border-color:rgba(255,255,255,0.22);
+  color:rgba(255,255,255,0.75);
+  background:rgba(255,255,255,0.03);
+}
+
+/* Eyebrow — slides in with delay */
+.modal-eyebrow{
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.2em;
+  text-transform:uppercase;color:rgba(255,255,255,0.2);
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.5s 0.15s cubic-bezier(0.22,1,0.36,1),opacity 0.5s 0.15s;
+}
+.modal-overlay.open .modal-eyebrow{transform:translateY(0);opacity:1;}
+.modal-eyebrow::before{content:'';width:14px;height:1px;background:rgba(255,255,255,0.15);}
+
+/* Name */
+.modal-name{
+  font-family:'Playfair Display',serif;font-size:28px;font-weight:400;
+  letter-spacing:-0.03em;line-height:1.05;
+  color:rgba(255,255,255,0.88);margin-bottom:22px;
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.5s 0.2s cubic-bezier(0.22,1,0.36,1),opacity 0.5s 0.2s;
+}
+.modal-overlay.open .modal-name{transform:translateY(0);opacity:1;}
+
+/* Return — the hero number, staggered entrance */
+.modal-return{
+  font-family:'Playfair Display',serif;font-size:56px;font-weight:400;
+  letter-spacing:-0.05em;line-height:1;
+  color:#4ade80;margin-bottom:4px;
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.5s 0.25s cubic-bezier(0.22,1,0.36,1),opacity 0.5s 0.25s;
+}
+.modal-overlay.open .modal-return{transform:translateY(0);opacity:1;}
+.modal-return-sub{
+  font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.1em;
+  color:rgba(255,255,255,0.2);margin-bottom:24px;
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.5s 0.28s cubic-bezier(0.22,1,0.36,1),opacity 0.5s 0.28s;
+}
+.modal-overlay.open .modal-return-sub{transform:translateY(0);opacity:1;}
+
+/* Verified trust line */
+.modal-verified{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.04em;
+  color:rgba(74,222,128,0.6);margin-bottom:20px;
+  display:flex;align-items:center;gap:6px;
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.5s 0.3s cubic-bezier(0.22,1,0.36,1),opacity 0.5s 0.3s;
+}
+.modal-overlay.open .modal-verified{transform:translateY(0);opacity:1;}
+.modal-verified::before{content:'\2713';font-size:10px;}
+
+/* Stats */
+.modal-stats{
+  display:flex;flex-direction:column;gap:0;margin-bottom:24px;
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.5s 0.32s cubic-bezier(0.22,1,0.36,1),opacity 0.5s 0.32s;
+}
+.modal-overlay.open .modal-stats{transform:translateY(0);opacity:1;}
+.modal-stat-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.modal-stat-item:first-child{border-top:1px solid rgba(255,255,255,0.04);}
+.modal-stat-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.2);}
+.modal-stat-val{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:0.02em;}
+.modal-stat-val.green{color:rgba(74,222,128,0.75);}
+
+/* Quote — last to appear, gold border */
+.modal-quote{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:14px;font-weight:400;letter-spacing:0em;
+  color:rgba(255,255,255,0.32);line-height:1.75;
+  padding-left:14px;
+  border-left:1px solid rgba(180,155,100,0.25);
+  transform:translateY(8px);opacity:0;
+  transition:transform 0.5s 0.38s cubic-bezier(0.22,1,0.36,1),opacity 0.5s 0.38s;
+}
+.modal-overlay.open .modal-quote{transform:translateY(0);opacity:1;}
+.modal-cta{display:none;}
+
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  .nav-right { gap: 14px; }
+  .nav-link { display: none; }
+  .nav-cta { padding: 10px 16px; font-size: 12px; }
+
+  .page-header { padding: 100px 24px 40px; }
+  .page-header h1 { font-size: clamp(32px, 8.4vw, 44px); }
+  .page-consent { font-size: 9px; margin-top: 16px; padding-top: 16px; }
+
+  .stories { padding: 24px 16px 40px; }
+  .stories-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .story-visual { height: 120px; }
+  .brand-autobot { font-size: 13px; }
+  .brand-client { font-size: 12px; }
+  .story-body { padding: 10px 12px 12px; }
+  .story-title { font-size: 12px; }
+  .story-read { font-size: 11px; margin-top: 6px; }
+
+  .disclaimer { padding: 0 16px 32px; }
+  .cta-band { margin: 0 16px 48px; padding: 40px 28px; flex-direction: column; gap: 28px; }
+  .cta-text h2 { font-size: clamp(24px, 6vw, 36px); }
+  .cta-actions { width: 100%; }
+  .btn-w, .btn-o { padding: 14px 24px; font-size: 14px; }
+
+  footer { padding: 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* Modal — full screen stacked on mobile */
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal-box,
+  .modal-box.no-image {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 38vh 1fr;
+    max-height: 96vh;
+    height: 96vh;
+    width: 100vw;
+    max-width: 100vw !important;
+    border-radius: 16px 16px 0 0;
+    transform: translateY(40px);
+  }
+  .modal-overlay.open .modal-box { transform: translateY(0); }
+
+  /* Force image wrap visible on mobile — JS may have hidden it */
+  .modal-img-wrap {
+    display: block !important;
+    min-height: unset;
+    height: 100%;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+  }
+    min-height: unset;
+    height: 100%;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+  }
+  .modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+  }
+  /* Right-edge fade not needed on mobile — fade bottom instead */
+  .modal-img-wrap::after {
+    background:
+      linear-gradient(to bottom, transparent 60%, rgba(10,10,8,0.85) 88%, #0a0a08 100%),
+      linear-gradient(to bottom, rgba(6,6,5,0.2) 0%, transparent 8%);
+  }
+  .modal-img-label { bottom: 14px; left: 18px; }
+  /* Info panel scrolls below image */
+  .modal-body {
+    padding: 20px 24px 32px;
+    justify-content: flex-start;
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    overflow-y: auto;
+  }
+  .modal-return { font-size: 42px; }
+  .modal-name { font-size: 22px; margin-bottom: 14px; }
+  .modal-return-sub { font-size: 8px; margin-bottom: 16px; }
+  .modal-stats { margin-bottom: 18px; }
+  .modal-close { top: 10px; right: 10px; width: 28px; height: 28px; font-size: 11px; }
+  .modal-eyebrow { margin-bottom: 8px; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .stories { padding: 32px 32px 48px; }
+  .stories-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .page-header { padding: 120px 40px 48px; }
+  .cta-band { margin: 0 32px 64px; padding: 48px 48px; }
+  footer { padding: 24px 40px; }
+}
+
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:1px solid rgba(14,14,12,0.12);cursor:pointer;padding:8px;}
+.nav-hamburger span{display:block;width:100%;height:1px;background:var(--black, #0e0e0c);transition:all 0.25s cubic-bezier(0.22,1,0.36,1);}
+.nav-hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(245,244,240,0.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(14,14,12,0.08);flex-direction:column;z-index:99;padding:8px 0 16px;transform:translateY(-8px);opacity:0;transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),opacity 0.3s;pointer-events:none;}
+.mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:all;}
+.mobile-link{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#4e4e4b;text-decoration:none;padding:14px 24px;border-bottom:1px solid rgba(14,14,12,0.08);display:block;transition:color 0.15s;}
+.mobile-link:last-child{border-bottom:none;}
+.mobile-link:hover{color:#0e0e0c;}
+.mobile-link.cta{color:#0e0e0c;font-weight:500;margin:8px 24px 0;border:1px solid #0e0e0c;text-align:center;padding:12px 24px;}
+@media(max-width:768px){
+  nav{padding:0 20px;height:58px;}
+  .nav-right{display:none!important;}
+  .nav-hamburger{display:flex;}
+  .mobile-menu{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">AutoBot</a>
+  <div class="nav-right">
+    <a href="results.html" class="nav-link">Client results</a>
+    <a href="plans.html" class="nav-link">Plans</a>
+    <a href="login.html" class="nav-link">Client login</a>
+    <a href="index.html#contact" class="nav-cta">Start Investing</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="results.html" class="mobile-link">Client results</a>
+  <a href="plans.html" class="mobile-link">Plans</a>
+  <a href="login.html" class="mobile-link">Client login</a>
+  <a href="index.html#contact" class="mobile-link cta" onclick="closeMobileMenu()">Start Investing →</a>
+</div>
+
+<div class="page-header fade-up">
+  <div class="page-eyebrow">Customer stories</div>
+  <h1>See how traders are<br>growing with AutoBot.</h1>
+  <p class="page-consent">We only share results from clients who have given explicit permission to display their data. All figures are sourced directly from verified exchange accounts.</p>
+</div>
+
+<section class="stories">
+  <div class="stories-grid">
+
+    <div class="story-card fade-up" data-modal="kevin" onclick="openModal('kevin')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-strong" data-hue="152"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">Kevin Harsh</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">Private Trader · Nov 2023 – May 2026 · Bybit + Hyperliquid</div>
+        <h2 class="story-title">Kevin Harsh turned $60K into $235K in 30 months — fully automated.</h2>
+        <p class="story-excerpt">"I was skeptical at first. Watching it trade while I'm at work, sleeping, traveling — 291% later I can't imagine trading any other way."</p>
+        <span class="story-read">View results &nbsp;→</span>
+      </div>
+    </div>
+
+    <div class="story-card fade-up" data-modal="camilo" onclick="openModal('camilo')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-steady" data-hue="152"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">Camilo Perez</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">Private Trader · Jan 2024 – May 2026 · Binance</div>
+        <h2 class="story-title">Camilo Perez grew $18K to $44K on Binance in 28 months.</h2>
+        <p class="story-excerpt">"I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me."</p>
+        <span class="story-read">See results &nbsp;→</span>
+      </div>
+    </div>
+
+    <div class="story-card fade-up" data-modal="abhi" onclick="openModal('abhi')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-strong" data-hue="200"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">Abhi Jacknoshi</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">Private Trader · Aug 2023 – May 2026 · Bybit</div>
+        <h2 class="story-title">Abhi Jacknoshi turned $100K into $320K on Bybit in 33 months.</h2>
+        <p class="story-excerpt">"Bot hitting TON, MORPHO and a few others in the past few days… holy shit. It is so good."</p>
+        <span class="story-read">See results &nbsp;→</span>
+      </div>
+    </div>
+
+    <div class="story-card fade-up" data-modal="pvffy" onclick="openModal('pvffy')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-steady" data-hue="140"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">pvffy</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">Private Trader · Mar 2025 – May 2026 · Hyperliquid</div>
+        <h2 class="story-title">pvffy grew $65K to $89K on Hyperliquid in 14 months.</h2>
+        <p class="story-excerpt">$65,000 in March 2025. $89,000 today. +36.9% consistent return on Hyperliquid perpetuals.</p>
+        <span class="story-read">See results &nbsp;→</span>
+      </div>
+    </div>
+
+    <div class="story-card fade-up" data-modal="manuel" onclick="openModal('manuel')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-strong" data-hue="258"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">Manuel Avila</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">Private Trader · Apr 2023 – May 2026 · Hyperliquid</div>
+        <h2 class="story-title">Manuel Avila turned $50K into $185K on Hyperliquid in 37 months.</h2>
+        <p class="story-excerpt">$50,000 in April 2023. $185,000 today. +270% over 37 months — one of our longest-running active accounts.</p>
+        <span class="story-read">See results &nbsp;→</span>
+      </div>
+    </div>
+
+    <div class="story-card fade-up" data-modal="nick" onclick="openModal('nick')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-steady" data-hue="32"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">Nick</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">Private Trader · Jan 2024 – May 2026 · Hyperliquid</div>
+        <h2 class="story-title">Nick doubled his capital from $25K to $52K on Hyperliquid.</h2>
+        <p class="story-excerpt">$25,000 in January 2024. $52,000 today. +108% in 28 months — AutoBot running 24/7 on Hyperliquid.</p>
+        <span class="story-read">See results &nbsp;→</span>
+      </div>
+    </div>
+
+    <div class="story-card fade-up" data-modal="daniel" onclick="openModal('daniel')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-volatile" data-hue="178"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">Daniel Gonzalez</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">Private Trader · Jun 2023 – May 2026 · Bybit</div>
+        <h2 class="story-title">Daniel Gonzalez grew $30K to $92K on Bybit over 35 months.</h2>
+        <p class="story-excerpt">$30,000 in June 2023. $92,000 today. +206% return — BTC and ETH perpetuals on Bybit.</p>
+        <span class="story-read">See results &nbsp;→</span>
+      </div>
+    </div>
+
+    <div class="story-card fade-up" data-modal="aero" onclick="openModal('aero')" style="cursor:pointer;">
+      <div class="story-visual">
+        <canvas data-trend="up-strong" data-hue="215"></canvas>
+        <div class="story-badge" data-badge></div>
+        <div class="story-brand"><span class="brand-autobot">AutoBot</span><span class="brand-sep"></span><span class="brand-client">Aero</span></div>
+      </div>
+      <div class="story-body">
+        <div class="story-tag">High-Capital Trader · Nov 2023 – May 2026 · Bybit</div>
+        <h2 class="story-title">Aero scaled $345K to $840K on Bybit in 30 months.</h2>
+        <p class="story-excerpt">$345,000 deployed in November 2023. $840,000 today. +143% on a large capital account with strict risk controls.</p>
+        <span class="story-read">See results &nbsp;→</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="disclaimer fade-up">
+  <p>Past performance does not guarantee future results. All results shown are from real AutoBot users sourced from verified client dashboards. Individual outcomes vary based on strategy, market conditions, capital deployed, and risk parameters set by the user. AutoBot does not provide investment advice. Trading crypto assets involves significant risk of loss.</p>
+</div>
+
+<div class="cta-band fade-up">
+  <div class="cta-text">
+    <h2>Ready to see<br><em>your own results?</em></h2>
+  </div>
+  <div class="cta-actions">
+    <a href="index.html#contact" class="btn-w">Start Investing</a>
+    <a href="plans.html" class="btn-o">See plans</a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">AutoBot</span>
+  <span class="footer-copy">© 2026 AutoBot · autobot.trading</span>
+</footer>
+
+<script>
+
+
+
+/* Draw layered line art — like Tempo's orbital sweep lines. Reusable for card + modal canvases. */
+function drawSweepChart(c, trend, hue, opts) {
+  opts = opts || {};
+  const parent = c.parentElement;
+  const W = opts.width  || parent.offsetWidth  || 420;
+  const H = opts.height || parent.offsetHeight || 218;
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  trend = trend || 'up-steady';
+  hue   = parseInt(hue) || 160;
+
+  if (opts.bg) { ctx.fillStyle = opts.bg; ctx.fillRect(0, 0, W, H); }
+
+  /* Generate smooth price path */
+  const pts = 100;
+  const data = [];
+  let p = 22, v = 0;
+  for (let i = 0; i < pts; i++) {
+    const bias  = trend === 'up-strong' ? 0.575 : trend === 'up-volatile' ? 0.548 : 0.527;
+    const noise = trend === 'up-volatile' ? 4.8 : 2.6;
+    v += (Math.random() - (1 - bias)) * noise;
+    v *= 0.77;
+    p += v;
+    p = Math.max(5, Math.min(95, p));
+    data.push(p);
+  }
+  const lo = Math.min(...data), hi = Math.max(...data);
+  const toX = i => (i / (pts - 1)) * W;
+  const toY = v => H - 12 - ((v - lo) / (hi - lo)) * (H - 28);
+
+  /* Multiple stacked offset lines — creates the Tempo sweep ribbon effect */
+  const layers = 8;
+  for (let l = 0; l < layers; l++) {
+    const spread  = (l - layers / 2) * (opts.spreadScale || 9);
+    const alpha   = (0.032 + (l / layers) * 0.09) * (opts.alphaScale || 1);
+    const lw      = 0.5 + (l / layers) * 0.7;
+    const warp    = (l % 2 === 0 ? 1 : -1) * l * 0.8;
+
+    ctx.beginPath();
+    data.forEach((v, i) => {
+      const x = toX(i);
+      const y = toY(v) + spread + Math.sin(i * 0.12 + l * 1.1) * (2 + l * 0.4) + warp;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = `hsla(${hue}, 55%, 68%, ${alpha})`;
+    ctx.lineWidth   = lw;
+    ctx.lineJoin    = 'round';
+    ctx.stroke();
+  }
+
+  /* Bright leading line on top */
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = toX(i), y = toY(v);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = `hsla(${hue}, 65%, 75%, ${opts.leadAlpha || 0.6})`;
+  ctx.lineWidth   = opts.leadWidth || 1.3;
+  ctx.lineJoin    = 'round';
+  ctx.stroke();
+}
+
+document.querySelectorAll('.story-visual canvas').forEach(c => {
+  drawSweepChart(c, c.dataset.trend, c.dataset.hue);
+});
+
+/* Fade-in */
+const observer = new IntersectionObserver(
+  entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+  }),
+  { threshold: 0.05, rootMargin: '0px 0px -16px 0px' }
+);
+document.querySelectorAll('.fade-up').forEach((el, i) => {
+  el.style.transitionDelay = ((i % 3) * 0.08) + 's';
+  observer.observe(el);
+});
+</script>
+
+<!-- ── MODALS ── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-img-wrap" id="modal-img-wrap">
+      <img class="modal-img" id="modal-img" src="" alt="">
+      <canvas class="modal-canvas" id="modal-canvas"></canvas>
+      <div class="modal-img-label">
+        <span class="modal-img-autobot">AutoBot</span>
+        <span class="modal-img-sep"></span>
+        <span class="modal-img-name" id="modal-img-name"></span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-eyebrow" id="modal-eyebrow"></div>
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-return" id="modal-return"></div>
+      <div class="modal-return-sub" id="modal-return-sub"></div>
+      <div class="modal-verified" id="modal-verified"></div>
+      <div class="modal-stats" id="modal-stats"></div>
+      <div class="modal-quote" id="modal-quote"></div>
+    </div>
+  </div>
+</div>
+<script>
+const MODAL_DATA = {
+  kevin: { name:"Kevin Harsh", tag:"Private Trader · Bybit + Hyperliquid", initial:"$60,000", current:"$235,000", pct:"+291.7%", duration:"30 months", quote:"I was skeptical at first. Watching it trade while I'm at work, sleeping, traveling — 291% later I can't imagine trading any other way.", href:"kevin-dashboard.html", hasImg:false , trend:"up-strong", hue:152 },
+  camilo: { name:"Camilo Perez", tag:"Private Trader · Binance", initial:"$18,000", current:"$44,000", pct:"+144.4%", duration:"28 months", quote:"I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.", href:"dashboard-camilo.html", hasImg:true , trend:"up-steady", hue:152 },
+  abhi: { name:"Abhi Jacknoshi", tag:"Private Trader · Bybit", initial:"$100,000", current:"$320,000", pct:"+220.0%", duration:"33 months", quote:"Bot hitting TON, MORPHO and a few others in the past few days… holy shit. It is so good.", href:"dashboard-abhi.html", hasImg:true , trend:"up-strong", hue:200 },
+  pvffy: { name:"pvffy", tag:"Private Trader · Hyperliquid", initial:"$65,000", current:"$89,000", pct:"+36.9%", duration:"14 months", quote:"", href:"dashboard-pvffy.html", hasImg:false , trend:"up-steady", hue:140 },
+  manuel: { name:"Manuel Avila", tag:"Private Trader · Hyperliquid", initial:"$50,000", current:"$185,000", pct:"+270.0%", duration:"37 months", quote:"", href:"dashboard-manuel.html", hasImg:false , trend:"up-strong", hue:258 },
+  nick: { name:"Nick", tag:"Private Trader · Hyperliquid", initial:"$25,000", current:"$52,000", pct:"+108.0%", duration:"28 months", quote:"", href:"dashboard-nick.html", hasImg:false , trend:"up-steady", hue:32 },
+  daniel: { name:"Daniel Gonzalez", tag:"Private Trader · Bybit", initial:"$30,000", current:"$92,000", pct:"+206.7%", duration:"35 months", quote:"", href:"dashboard-daniel.html", hasImg:false , trend:"up-volatile", hue:178 },
+  aero: { name:"Aero", tag:"High-Capital Trader · Bybit", initial:"$345,000", current:"$840,000", pct:"+143.5%", duration:"30 months", quote:"", href:"dashboard-aero.html", hasImg:false , trend:"up-strong", hue:215 },
+};
+
+const MODAL_IMG_DATA = {};
+/* Kevin: no screenshot on file (the previous one was Camilo's account by mistake) */
+MODAL_IMG_DATA["camilo"] = "img/results-camilo.jpg";
+MODAL_IMG_DATA["abhi"] = "img/results-abhi.jpg";
+
+
+function openModal(id) {
+  const d = MODAL_DATA[id];
+  if (!d) return;
+  const img = document.getElementById('modal-img');
+  const canvas = document.getElementById('modal-canvas');
+  const imgWrap = document.getElementById('modal-img-wrap');
+  const box = document.getElementById('modal-box');
+  imgWrap.style.display = '';
+  box.classList.remove('no-image');
+  if (MODAL_IMG_DATA[id]) {
+    img.src = MODAL_IMG_DATA[id];
+    img.style.display = '';
+    canvas.style.display = 'none';
+  } else {
+    /* No screenshot on file — render the same equity-curve visual as the card, larger, so every
+       client feels equally verified and premium instead of falling back to a bare layout. */
+    img.style.display = 'none';
+    canvas.style.display = 'block';
+    requestAnimationFrame(() => {
+      drawSweepChart(canvas, d.trend, d.hue, { bg: '#060605', alphaScale: 1.6, leadAlpha: 0.85, leadWidth: 1.8, spreadScale: 13 });
+    });
+  }
+  document.getElementById('modal-eyebrow').textContent = d.tag;
+  document.getElementById('modal-name').textContent = d.name;
+  document.getElementById('modal-img-name').textContent = d.name;
+  document.getElementById('modal-return').textContent = d.pct;
+  document.getElementById('modal-return-sub').textContent = d.initial + ' → ' + d.current + ' · ' + d.duration;
+  const exchange = d.tag.split('·').pop().trim();
+  document.getElementById('modal-verified').textContent = 'Verified — sourced from a live ' + exchange + ' account';
+  document.getElementById('modal-stats').innerHTML = `
+    <div class="modal-stat-item"><span class="modal-stat-label">Started with</span><span class="modal-stat-val">${d.initial}</span></div>
+    <div class="modal-stat-item"><span class="modal-stat-label">Now worth</span><span class="modal-stat-val green">${d.current}</span></div>
+    <div class="modal-stat-item"><span class="modal-stat-label">Duration</span><span class="modal-stat-val">${d.duration}</span></div>
+  `;
+  const qEl = document.getElementById('modal-quote');
+  if (d.quote) {
+    qEl.textContent = '"' + d.quote + '"';
+    qEl.style.display = 'block';
+  } else {
+    qEl.style.display = 'none';
+  }
+    const cta = document.getElementById('modal-cta');
+  if (cta) { cta.href = d.href; cta.style.display = 'none'; }
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+/* Fill in the return-% badge on each card face from MODAL_DATA (single source of truth) */
+document.querySelectorAll('.story-card[data-modal]').forEach(card => {
+  const d = MODAL_DATA[card.dataset.modal];
+  if (!d) return;
+  const badge = card.querySelector('[data-badge]');
+  if (badge) badge.textContent = d.pct;
+});
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+});
+</script>
+<script>
+function toggleMenu(){const b=document.getElementById('nav-hamburger'),m=document.getElementById('mobile-menu'),o=m.classList.toggle('open');b.classList.toggle('open',o);document.body.style.overflow=o?'hidden':'';}
+function closeMobileMenu(){document.getElementById('nav-hamburger').classList.remove('open');document.getElementById('mobile-menu').classList.remove('open');document.body.style.overflow='';}
+document.querySelectorAll('.mobile-link:not(.cta)').forEach(l=>l.addEventListener('click',closeMobileMenu));
+</script>
+</body>
+</html>
