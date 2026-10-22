@@ -323,6 +323,95 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
 @media(max-width:1024px) and (min-width:769px){.notes{margin-left:40px;margin-right:40px;}}
 @media(max-width:768px){.notes{margin:56px 16px 40px;}.pull-mark{display:none;}.row summary{margin:0;padding-left:0;padding-right:0;}.pe-date{border-left:none;padding-left:0;}}
 
+/* ══ Motion & features (v2) ══ */
+.rx-hero { position: relative; overflow: hidden; }
+.rx-field { position: absolute; inset: 0; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent 18%, #000 62%); mask-image: linear-gradient(90deg, transparent 18%, #000 62%); }
+.rx-title { position: relative; }
+.rx-title .ln { display: block; overflow: hidden; padding-bottom: .06em; }
+.rx-title .ln > span { display: inline-block; }
+.rx-js .rx-title .ln > span { transform: translateY(105%); transition: transform 1.1s cubic-bezier(0.19,1,0.22,1); }
+.rx-js .rx-title .ln:nth-child(2) > span { transition-delay: .12s; }
+.rx-js .rx-title.in .ln > span { transform: none; }
+
+.rx-stats { margin: 0 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--black); }
+.rx-stat { padding: 22px 24px 30px 0; position: relative; }
+.rx-stat + .rx-stat { padding-left: 24px; }
+.rx-stat + .rx-stat::before { content: ''; position: absolute; left: 0; top: 22px; bottom: 30px; width: 1px; background: var(--border); transform-origin: top; }
+.rx-k { display: block; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); min-height: 1.2em; }
+.rx-v { display: block; margin-top: 14px; font-family: 'Playfair Display', serif; font-weight: 400; font-size: clamp(28px, 3.1vw, 46px); letter-spacing: -.02em; line-height: 1; color: var(--black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rx-v.up { color: #1f6f4a; }
+.rx-js .rx-stat { opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .9s cubic-bezier(0.19,1,0.22,1); }
+.rx-js .rx-stat:nth-child(2) { transition-delay: .08s; } .rx-js .rx-stat:nth-child(3) { transition-delay: .16s; } .rx-js .rx-stat:nth-child(4) { transition-delay: .24s; }
+.rx-js .rx-stat.in { opacity: 1; transform: none; }
+.rx-stats + .slope { border-top: none; margin-top: 40px; }
+
+/* growth meter under each ledger row */
+.row summary { position: relative; }
+.meter { position: absolute; left: 12px; right: 12px; bottom: -1px; height: 1px; pointer-events: none; }
+.meter span { display: block; height: 100%; width: calc(var(--m) * 100%); background: var(--black); transform: scaleX(0); transform-origin: left; transition: transform 1.4s cubic-bezier(0.19,1,0.22,1) .1s; }
+.row.in .meter span, html:not(.rx-js) .meter span { transform: scaleX(1); }
+.row summary:hover .meter span, .row.is-on .meter span { height: 2px; margin-top: -1px; }
+.row { transition: opacity .35s ease; }
+.row.is-out { display: none; }
+
+/* exchange filter */
+.ledger-top { row-gap: 14px; }
+.ledger-top h2 { margin-right: auto; }
+.rx-filter { display: flex; gap: 4px; flex-wrap: wrap; font-size: 13px; }
+.rx-filter button { font: inherit; color: var(--gray-mid); background: none; border: 1px solid var(--border); padding: 6px 12px 6px 13px; cursor: pointer; border-radius: 999px; transition: background .2s, color .2s, border-color .2s; }
+.rx-filter button i { font-style: normal; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray); margin-left: 4px; }
+.rx-filter button:hover { color: var(--black); border-color: rgba(14,14,12,.35); }
+.rx-filter button[aria-pressed="true"] { background: var(--black); border-color: var(--black); color: var(--white); }
+.rx-filter button[aria-pressed="true"] i { color: rgba(242,241,237,.6); }
+.rx-filter button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
+.is-filtered .slope-client { opacity: .12; }
+.is-filtered .slope-client.is-kept { opacity: 1; }
+.is-filtered.is-focusing .slope-client:not(.is-on) { opacity: .12; }
+
+/* quote carousel */
+.rx-quotes { position: relative; }
+.rx-qstage { position: relative; grid-column: 2; height: var(--qh, auto); transition: height .5s cubic-bezier(0.19,1,0.22,1); }
+.rx-q { position: absolute; inset: 0 0 auto 0; opacity: 0; filter: blur(6px); transform: translateY(10px); transition: opacity .7s ease, filter .7s ease, transform .9s cubic-bezier(0.19,1,0.22,1); pointer-events: none; }
+.rx-q.is-on { opacity: 1; filter: none; transform: none; pointer-events: auto; }
+.rx-q figcaption { margin-top: 18px; font-size: 13px; color: var(--gray); display: flex; gap: 12px; align-items: baseline; }
+.rx-q figcaption b { font-weight: 500; color: var(--black); }
+.rx-q figcaption span { font-family: 'DM Mono', monospace; font-size: 12px; color: #1f6f4a; }
+.rx-qnav { grid-column: 2; display: flex; gap: 8px; margin-top: 26px; }
+.rx-qnav button { width: 44px; height: 18px; padding: 0; background: none; border: none; cursor: pointer; display: flex; align-items: center; }
+.rx-qnav button span { display: block; width: 100%; height: 1px; background: rgba(14,14,12,.2); position: relative; overflow: hidden; }
+.rx-qnav button span::after { content: ''; position: absolute; inset: 0; background: var(--black); transform: scaleX(0); transform-origin: left; }
+.rx-qnav button[aria-current] span::after { transform: scaleX(1); }
+.rx-quotes.run .rx-qnav button[aria-current] span::after { transform: scaleX(0); animation: rx-prog 7s linear forwards; }
+.rx-quotes.paused .rx-qnav button[aria-current] span::after { animation-play-state: paused; }
+.rx-qnav button:focus-visible { outline: 2px solid var(--black); outline-offset: 2px; }
+@keyframes rx-prog { to { transform: scaleX(1); } }
+.pull.rx-quotes .pull-mark { grid-row: 1 / span 2; }
+
+/* dashboard window: bars grow on open */
+@media (prefers-reduced-motion: no-preference) {
+  .dash[open] .dash-card > * { animation: rx-rise .6s cubic-bezier(0.19,1,0.22,1) both; }
+  .dash[open] .dash-card > *:nth-child(2) { animation-delay: .04s; } .dash[open] .dash-card > *:nth-child(3) { animation-delay: .08s; }
+  .dash[open] .dash-card > *:nth-child(4) { animation-delay: .12s; } .dash[open] .dash-card > *:nth-child(5) { animation-delay: .16s; }
+  .dash[open] .dash-card > *:nth-child(n+6) { animation-delay: .2s; }
+}
+@keyframes rx-rise { from { opacity: 0; transform: translateY(10px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rx-js .rx-title .ln > span, .rx-js .rx-stat, .meter span, .rx-q { transition: none !important; }
+}
+@media (max-width: 1024px) and (min-width: 769px) { .rx-stats { margin-left: 40px; margin-right: 40px; } }
+@media (max-width: 768px) {
+  .rx-stats { margin: 0 24px; grid-template-columns: 1fr 1fr; }
+  .rx-stat, .rx-stat + .rx-stat { padding: 18px 12px 22px 0; }
+  .rx-stat:nth-child(even) { padding-left: 16px; }
+  .rx-stat:nth-child(3)::before { display: none; }
+  .rx-stat:nth-child(n+3) { border-top: 1px solid var(--border); }
+  .rx-v { font-size: clamp(24px, 7.4vw, 32px); }
+  .rx-field { -webkit-mask-image: linear-gradient(180deg, transparent 10%, #000 70%); mask-image: linear-gradient(180deg, transparent 10%, #000 70%); opacity: .7; }
+  .rx-qstage, .rx-qnav { grid-column: 1; }
+  .rx-filter { order: 3; width: 100%; }
+}
+
 </style>
 </head>
 <body>
@@ -344,9 +433,17 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   <a href="index.html#contact" class="mobile-link cta" onclick="closeMobileMenu()">Start Investing →</a>
 </div>
 
-<header class="page-header">
-  <h1>See how traders are<br>growing with AutoBot.</h1>
+<header class="page-header rx-hero">
+  <canvas class="rx-field" id="rx-field" aria-hidden="true"></canvas>
+  <h1 class="rx-title"><span class="ln"><span>See how traders are</span></span><span class="ln"><span>growing with AutoBot.</span></span></h1>
 </header>
+
+<section class="rx-stats" aria-label="All accounts combined">
+  <div class="rx-stat"><span class="rx-k" data-scramble>Invested</span><b class="rx-v" data-count="743000" data-fmt="usd">$743,000</b></div>
+  <div class="rx-stat"><span class="rx-k" data-scramble>Value Oct 2026</span><b class="rx-v" data-count="2502542" data-fmt="usd">$2,502,542</b></div>
+  <div class="rx-stat"><span class="rx-k" data-scramble>Combined gain</span><b class="rx-v up" data-count="236.8" data-fmt="pct">+236.8%</b></div>
+  <div class="rx-stat"><span class="rx-k" data-scramble>Average time</span><b class="rx-v" data-count="34" data-fmt="mo">34 months</b></div>
+</section>
 
 <figure class="slope" id="slope">
   <svg class="slope-svg" id="slope-svg" role="img" aria-labelledby="slope-title slope-desc">
@@ -355,15 +452,25 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   </svg>
 </figure>
 
-<figure class="pull">
+<figure class="pull rx-quotes" id="rx-quotes" aria-roledescription="carousel">
   <span class="pull-mark" aria-hidden="true">“</span>
-  <blockquote>“I was skeptical at first. Watching it trade while I&#x27;m at work, sleeping, traveling — 291% later I can&#x27;t imagine trading any other way.”</blockquote>
-  <figcaption><b>Kevin Harsh</b></figcaption>
+  <div class="rx-qstage" aria-live="polite">
+    <div class="rx-q is-on" data-i="0"><blockquote>“I was skeptical at first. Watching it trade while I&#x27;m at work, sleeping, traveling — 291% later I can&#x27;t imagine trading any other way.”</blockquote><figcaption><b>Kevin Harsh</b><span>+348.7%</span></figcaption></div>
+    <div class="rx-q" data-i="1"><blockquote>“Bot hitting TON, MORPHO and a few others in the past few days… holy shit. It is so good.”</blockquote><figcaption><b>Abhi Jacknoshi</b><span>+275.1%</span></figcaption></div>
+    <div class="rx-q" data-i="2"><blockquote>“I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.”</blockquote><figcaption><b>Camilo Perez</b><span>+359.1%</span></figcaption></div>
+  </div>
+  <div class="rx-qnav"><button type="button" aria-label="Quote 1: Kevin Harsh" aria-current="true" data-q="0"><span></span></button><button type="button" aria-label="Quote 2: Abhi Jacknoshi" data-q="1"><span></span></button><button type="button" aria-label="Quote 3: Camilo Perez" data-q="2"><span></span></button></div>
 </figure>
 
 <section class="ledger" aria-labelledby="ledger-title">
   <div class="ledger-top">
     <h2 id="ledger-title">Every account</h2>
+    <div class="rx-filter" role="group" aria-label="Filter by exchange">
+      <button type="button" data-ex="all" aria-pressed="true">All <i>8</i></button>
+      <button type="button" data-ex="bybit" aria-pressed="false">Bybit <i>4</i></button>
+      <button type="button" data-ex="hyperliquid" aria-pressed="false">Hyperliquid <i>4</i></button>
+      <button type="button" data-ex="binance" aria-pressed="false">Binance <i>1</i></button>
+    </div>
     <div class="sorter" role="group" aria-label="Sort accounts">
       <button type="button" data-sort="gain" aria-pressed="true">Gain</button>
       <button type="button" data-sort="size" aria-pressed="false">Account size</button>
@@ -372,7 +479,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   </div>
   <div class="cols" aria-hidden="true"><span>Client</span><span>Invested</span><span>Oct 2026</span><span>Gain</span><span>Growth</span><span></span></div>
   <div id="rows">
-    <details class="row" id="client-camilo" data-id="camilo" data-gain="359.1" data-size="82630" data-months="33">
+    <details class="row" id="client-camilo" data-id="camilo" data-gain="359.1" data-size="82630" data-months="33" data-ex="binance" style="--m:1.0">
       <summary>
         <span><span class="row-name">Camilo Perez</span></span>
         <span class="num n-start">$18,000</span>
@@ -380,13 +487,14 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+359.1%</span>
         <span class="num n-mult">4.6×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>33 months on Binance, running since Jan 2024.</p>
         <div><blockquote>“I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.”</blockquote><button type="button" class="shot-btn" data-dash="camilo">View dashboard</button></div>
       </div>
     </details>
-    <details class="row" id="client-kevin" data-id="kevin" data-gain="348.7" data-size="269200" data-months="35">
+    <details class="row" id="client-kevin" data-id="kevin" data-gain="348.7" data-size="269200" data-months="35" data-ex="bybit hyperliquid" style="--m:0.9783">
       <summary>
         <span><span class="row-name">Kevin Harsh</span></span>
         <span class="num n-start">$60,000</span>
@@ -394,13 +502,14 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+348.7%</span>
         <span class="num n-mult">4.5×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>35 months on Bybit and Hyperliquid, running since Nov 2023.</p>
         <div><blockquote>“I was skeptical at first. Watching it trade while I&#x27;m at work, sleeping, traveling — 291% later I can&#x27;t imagine trading any other way.”</blockquote><button type="button" class="shot-btn" data-dash="kevin">View dashboard</button></div>
       </div>
     </details>
-    <details class="row" id="client-daniel" data-id="daniel" data-gain="283.4" data-size="115031" data-months="40">
+    <details class="row" id="client-daniel" data-id="daniel" data-gain="283.4" data-size="115031" data-months="40" data-ex="bybit" style="--m:0.8261">
       <summary>
         <span><span class="row-name">Daniel Gonzalez</span></span>
         <span class="num n-start">$30,000</span>
@@ -408,13 +517,14 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+283.4%</span>
         <span class="num n-mult">3.8×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>40 months on Bybit, running since Jun 2023.</p>
         <div><button type="button" class="shot-btn" data-dash="daniel">View dashboard</button></div>
       </div>
     </details>
-    <details class="row" id="client-abhi" data-id="abhi" data-gain="275.1" data-size="375090" data-months="38">
+    <details class="row" id="client-abhi" data-id="abhi" data-gain="275.1" data-size="375090" data-months="38" data-ex="bybit" style="--m:0.8261">
       <summary>
         <span><span class="row-name">Abhi Jacknoshi</span></span>
         <span class="num n-start">$100,000</span>
@@ -422,13 +532,14 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+275.1%</span>
         <span class="num n-mult">3.8×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>38 months on Bybit, running since Aug 2023.</p>
         <div><blockquote>“Bot hitting TON, MORPHO and a few others in the past few days… holy shit. It is so good.”</blockquote><button type="button" class="shot-btn" data-dash="abhi">View dashboard</button></div>
       </div>
     </details>
-    <details class="row" id="client-aero" data-id="aero" data-gain="232.0" data-size="1145567" data-months="35">
+    <details class="row" id="client-aero" data-id="aero" data-gain="232.0" data-size="1145567" data-months="35" data-ex="bybit" style="--m:0.7174">
       <summary>
         <span><span class="row-name">Aero</span></span>
         <span class="num n-start">$345,000</span>
@@ -436,13 +547,14 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+232.0%</span>
         <span class="num n-mult">3.3×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>35 months on Bybit, running since Nov 2023. High-capital account.</p>
         <div><button type="button" class="shot-btn" data-dash="aero">View dashboard</button></div>
       </div>
     </details>
-    <details class="row" id="client-manuel" data-id="manuel" data-gain="214.0" data-size="314024" data-months="42">
+    <details class="row" id="client-manuel" data-id="manuel" data-gain="214.0" data-size="314024" data-months="42" data-ex="hyperliquid" style="--m:0.6739">
       <summary>
         <span><span class="row-name">Manuel Avila</span><span class="row-meta"><span class="founder">Owner’s account</span></span></span>
         <span class="num n-start">$100,000</span>
@@ -450,13 +562,14 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+214.0%</span>
         <span class="num n-mult">3.1×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>42 months on Hyperliquid, running since Apr 2023. Our founder runs his own money with AutoBot. Started with $50,000 in Apr 2023 and added $50,000 after 12 months; the gain is measured on the full $100,000 invested.</p>
         <div><button type="button" class="shot-btn" data-dash="manuel">View dashboard</button></div>
       </div>
     </details>
-    <details class="row" id="client-nick" data-id="nick" data-gain="168.0" data-size="67000" data-months="33">
+    <details class="row" id="client-nick" data-id="nick" data-gain="168.0" data-size="67000" data-months="33" data-ex="hyperliquid" style="--m:0.587">
       <summary>
         <span><span class="row-name">Nick</span></span>
         <span class="num n-start">$25,000</span>
@@ -464,13 +577,14 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+168.0%</span>
         <span class="num n-mult">2.7×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>33 months on Hyperliquid, running since Jan 2024.</p>
         <div><button type="button" class="shot-btn" data-dash="nick">View dashboard</button></div>
       </div>
     </details>
-    <details class="row" id="client-pvffy" data-id="pvffy" data-gain="106.2" data-size="134000" data-months="19">
+    <details class="row" id="client-pvffy" data-id="pvffy" data-gain="106.2" data-size="134000" data-months="19" data-ex="hyperliquid" style="--m:0.4565">
       <summary>
         <span><span class="row-name">pvffy</span></span>
         <span class="num n-start">$65,000</span>
@@ -478,6 +592,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
         <span class="num gain">+106.2%</span>
         <span class="num n-mult">2.1×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         <p>19 months on Hyperliquid, running since Mar 2025.</p>
@@ -486,7 +601,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
     </details>
   </div>
   <div class="ledger-total">
-    <span class="row-name">All eight accounts</span>
+    <span class="row-name" id="total-label">All eight accounts</span>
     <span class="num n-start">$743,000</span>
     <span class="num n-end" data-from="$743K">$2,502,542</span>
     <span class="num gain">+236.8%</span>
@@ -524,7 +639,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   <div class="dash-card" id="dash-card"></div>
 </dialog>
 <script>
-const CLIENTS = [{"id": "kevin", "name": "Kevin Harsh", "short": "Kevin", "start": 60000, "end": 269200, "gain": 348.7, "mult": 4.5, "ex": "Bybit and Hyperliquid", "since": "Nov 2023", "months": 35, "quote": "I was skeptical at first. Watching it trade while I'm at work, sleeping, traveling \u2014 291% later I can't imagine trading any other way.", "shot": null, "founder": false}, {"id": "manuel", "name": "Manuel Avila", "short": "Manuel", "start": 100000, "end": 314024, "gain": 214.0, "mult": 3.1, "ex": "Hyperliquid", "since": "Apr 2023", "months": 42, "quote": "", "shot": null, "founder": true}, {"id": "abhi", "name": "Abhi Jacknoshi", "short": "Abhi", "start": 100000, "end": 375090, "gain": 275.1, "mult": 3.8, "ex": "Bybit", "since": "Aug 2023", "months": 38, "quote": "Bot hitting TON, MORPHO and a few others in the past few days\u2026 holy shit. It is so good.", "shot": "img/results-abhi.jpg", "founder": false}, {"id": "daniel", "name": "Daniel Gonzalez", "short": "Daniel", "start": 30000, "end": 115031, "gain": 283.4, "mult": 3.8, "ex": "Bybit", "since": "Jun 2023", "months": 40, "quote": "", "shot": null, "founder": false}, {"id": "camilo", "name": "Camilo Perez", "short": "Camilo", "start": 18000, "end": 82630, "gain": 359.1, "mult": 4.6, "ex": "Binance", "since": "Jan 2024", "months": 33, "quote": "I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.", "shot": "img/results-camilo.jpg", "founder": false}, {"id": "aero", "name": "Aero", "short": "Aero", "start": 345000, "end": 1145567, "gain": 232.0, "mult": 3.3, "ex": "Bybit", "since": "Nov 2023", "months": 35, "quote": "", "shot": null, "founder": false}, {"id": "nick", "name": "Nick", "short": "Nick", "start": 25000, "end": 67000, "gain": 168.0, "mult": 2.7, "ex": "Hyperliquid", "since": "Jan 2024", "months": 33, "quote": "", "shot": null, "founder": false}, {"id": "pvffy", "name": "pvffy", "short": "pvffy", "start": 65000, "end": 134000, "gain": 106.2, "mult": 2.1, "ex": "Hyperliquid", "since": "Mar 2025", "months": 19, "quote": "", "shot": null, "founder": false}];
+const CLIENTS = [{"id": "kevin", "name": "Kevin Harsh", "short": "Kevin", "start": 60000, "end": 269200, "gain": 348.7, "mult": 4.5, "ex": "Bybit and Hyperliquid", "exs": ["Bybit", "Hyperliquid"], "since": "Nov 2023", "months": 35, "quote": "I was skeptical at first. Watching it trade while I'm at work, sleeping, traveling \u2014 291% later I can't imagine trading any other way.", "shot": null, "founder": false}, {"id": "manuel", "name": "Manuel Avila", "short": "Manuel", "start": 100000, "end": 314024, "gain": 214.0, "mult": 3.1, "ex": "Hyperliquid", "exs": ["Hyperliquid"], "since": "Apr 2023", "months": 42, "quote": "", "shot": null, "founder": true}, {"id": "abhi", "name": "Abhi Jacknoshi", "short": "Abhi", "start": 100000, "end": 375090, "gain": 275.1, "mult": 3.8, "ex": "Bybit", "exs": ["Bybit"], "since": "Aug 2023", "months": 38, "quote": "Bot hitting TON, MORPHO and a few others in the past few days\u2026 holy shit. It is so good.", "shot": "img/results-abhi.jpg", "founder": false}, {"id": "daniel", "name": "Daniel Gonzalez", "short": "Daniel", "start": 30000, "end": 115031, "gain": 283.4, "mult": 3.8, "ex": "Bybit", "exs": ["Bybit"], "since": "Jun 2023", "months": 40, "quote": "", "shot": null, "founder": false}, {"id": "camilo", "name": "Camilo Perez", "short": "Camilo", "start": 18000, "end": 82630, "gain": 359.1, "mult": 4.6, "ex": "Binance", "exs": ["Binance"], "since": "Jan 2024", "months": 33, "quote": "I love this product. I got in at a great time and as a long-term investor with no futures trading knowledge, this was the best option for me.", "shot": "img/results-camilo.jpg", "founder": false}, {"id": "aero", "name": "Aero", "short": "Aero", "start": 345000, "end": 1145567, "gain": 232.0, "mult": 3.3, "ex": "Bybit", "exs": ["Bybit"], "since": "Nov 2023", "months": 35, "quote": "", "shot": null, "founder": false}, {"id": "nick", "name": "Nick", "short": "Nick", "start": 25000, "end": 67000, "gain": 168.0, "mult": 2.7, "ex": "Hyperliquid", "exs": ["Hyperliquid"], "since": "Jan 2024", "months": 33, "quote": "", "shot": null, "founder": false}, {"id": "pvffy", "name": "pvffy", "short": "pvffy", "start": 65000, "end": 134000, "gain": 106.2, "mult": 2.1, "ex": "Hyperliquid", "exs": ["Hyperliquid"], "since": "Mar 2025", "months": 19, "quote": "", "shot": null, "founder": false}];
 
 /* ── Slope chart: start → Oct 2026, log scale ── */
 (function(){
@@ -644,10 +759,111 @@ document.querySelectorAll('.sorter button').forEach(b => b.addEventListener('cli
     });
   }
   document.querySelectorAll('[data-dash]').forEach(b => b.addEventListener('click', () => {
-    render(CLIENTS.find(c => c.id === b.dataset.dash)); dlg.showModal(); dlg.scrollTop = 0;
+    const c = CLIENTS.find(c => c.id === b.dataset.dash);
+    render(c); dlg.showModal(); dlg.scrollTop = 0;
+    if (typeof countUp === 'function'){ countUp(card.querySelector('.dash-gain'), c.gain, v => '+' + v.toFixed(1) + '%', 1100); }
     card.querySelector('[data-close]').focus();
   }));
   dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.close(); });
+})();
+
+/* ── Motion helpers ── */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = { usd: v => '$' + Math.round(v).toLocaleString('en-US'), pct: v => '+' + v.toFixed(1) + '%', mo: v => Math.round(v) + ' months',
+              x: v => v.toFixed(1) + '×' };
+function countUp(el, to, f, dur){
+  if (REDUCED){ el.textContent = f(to); return; }
+  const t0 = performance.now(); dur = dur || 1600;
+  (function tick(t){ const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 4);
+    el.textContent = f(to * e); if (p < 1) requestAnimationFrame(tick); else el.textContent = f(to); })(t0);
+}
+function scramble(el){
+  if (REDUCED) return;
+  const final = el.textContent, chars = '0123456789$%+×#/';
+  let f = 0; const total = 18;
+  (function step(){ el.textContent = final.split('').map((ch, i) => ch === ' ' ? ' ' : (i < f / total * final.length ? ch : chars[Math.random() * chars.length | 0])).join('');
+    if (++f <= total) setTimeout(step, 34); else el.textContent = final; })();
+}
+function onView(els, fn, thr){
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ fn(e.target); io.unobserve(e.target); } }), {threshold: thr || 0.3});
+  els.forEach(el => io.observe(el));
+}
+
+/* ── Hero: headline reveal + dot field ── */
+document.documentElement.classList.add('rx-js');
+requestAnimationFrame(() => document.querySelector('.rx-title').classList.add('in'));
+(function(){
+  const cv = document.getElementById('rx-field'), hero = cv.parentElement, ctx = cv.getContext('2d');
+  let W, H, dpr, mx = -999, my = -999, tx = -999, ty = -999, raf = null, t0 = performance.now(), visible = true;
+  const GAP = 22;
+  function size(){ dpr = Math.min(2, devicePixelRatio || 1); W = hero.clientWidth; H = hero.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; ctx.setTransform(dpr,0,0,dpr,0,0); draw(performance.now()); }
+  function draw(now){
+    const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
+    mx += (tx - mx) * .12; my += (ty - my) * .12;
+    for (let y = GAP; y < H; y += GAP) for (let x = GAP; x < W; x += GAP){
+      const d = Math.hypot(x - mx, y - my), near = Math.max(0, 1 - d / 150);
+      const wave = REDUCED ? 0 : (Math.sin(x * .018 + t * .9) + Math.cos(y * .022 - t * .7)) * .25 + .5;
+      const r = .7 + near * 1.9 + wave * .35, a = .1 + near * .55 + wave * .08;
+      ctx.fillStyle = 'rgba(14,14,12,' + a.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
+    }
+  }
+  function loop(now){ draw(now); raf = (visible && !REDUCED) ? requestAnimationFrame(loop) : null; }
+  hero.addEventListener('pointermove', e => { const b = hero.getBoundingClientRect(); tx = e.clientX - b.left; ty = e.clientY - b.top; if (mx < -900){ mx = tx; my = ty; } if (REDUCED) draw(performance.now()); });
+  hero.addEventListener('pointerleave', () => { tx = ty = -999; });
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf && !REDUCED) raf = requestAnimationFrame(loop); }).observe(hero);
+  addEventListener('resize', size); size();
+})();
+
+/* ── Key figures: roll up + label decode ── */
+onView(document.querySelectorAll('.rx-stat'), s => {
+  const v = s.querySelector('.rx-v'); countUp(v, parseFloat(v.dataset.count), fmt[v.dataset.fmt]);
+  scramble(s.querySelector('.rx-k')); s.classList.add('in');
+}, 0.4);
+
+/* ── Ledger: meters draw, gains count as rows appear ── */
+onView(document.querySelectorAll('.row'), r => {
+  r.classList.add('in'); const g = r.querySelector('.gain'); countUp(g, parseFloat(r.dataset.gain), fmt.pct, 1300);
+}, 0.4);
+
+/* ── Exchange filter ── */
+(function(){
+  const btns = document.querySelectorAll('.rx-filter button'), rows = [...document.querySelectorAll('.row')];
+  const fig = document.getElementById('slope'), total = document.querySelector('.ledger-total');
+  const words = ['','one','two','three','four','five','six','seven','eight'];
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.setAttribute('aria-pressed', x === b)); const ex = b.dataset.ex;
+    const pick = rows.filter(r => ex === 'all' || r.dataset.ex.split(' ').includes(ex));
+    rows.forEach(r => r.classList.toggle('is-out', !pick.includes(r)));
+    const ids = pick.map(r => r.dataset.id);
+    fig.classList.toggle('is-filtered', ex !== 'all');
+    document.querySelectorAll('.slope-client').forEach(g => g.classList.toggle('is-kept', ids.includes(g.dataset.id)));
+    const sel = CLIENTS.filter(c => ids.includes(c.id)), s = sel.reduce((a,c) => a + c.start, 0), e = sel.reduce((a,c) => a + c.end, 0);
+    const lbl = document.getElementById('total-label');
+    lbl.textContent = ex === 'all' ? 'All eight accounts' : (sel.length === 1 ? 'One account' : 'These ' + words[sel.length] + ' accounts');
+    total.querySelector('.n-start').textContent = fmt.usd(s);
+    total.querySelector('.n-end').textContent = fmt.usd(e);
+    countUp(total.querySelector('.gain'), (e / s - 1) * 100, fmt.pct, 700);
+    total.querySelector('.n-mult').textContent = fmt.x(e / s);
+  }));
+})();
+
+/* ── Quote carousel ── */
+(function(){
+  const box = document.getElementById('rx-quotes'), qs = box.querySelectorAll('.rx-q'), dots = box.querySelectorAll('.rx-qnav button');
+  if (qs.length < 2) return;
+  let i = 0, timer = null;
+  function go(n){ qs[i].classList.remove('is-on'); dots[i].removeAttribute('aria-current');
+    i = (n + qs.length) % qs.length; qs[i].classList.add('is-on'); dots[i].setAttribute('aria-current', 'true');
+    box.style.setProperty('--qh', qs[i].offsetHeight + 'px'); restart(); }
+  function restart(){ clearTimeout(timer); box.classList.remove('run'); void box.offsetWidth; if (!REDUCED){ box.classList.add('run'); timer = setTimeout(() => go(i + 1), 7000); } }
+  dots.forEach((d, n) => d.addEventListener('click', () => go(n)));
+  box.addEventListener('mouseenter', () => { clearTimeout(timer); box.classList.add('paused'); });
+  box.addEventListener('mouseleave', () => { box.classList.remove('paused'); restart(); });
+  box.style.setProperty('--qh', qs[0].offsetHeight + 'px');
+  onView([box], restart, 0.5);
+  addEventListener('resize', () => box.style.setProperty('--qh', qs[i].offsetHeight + 'px'));
 })();
 
 /* Fade-in for the closing sections */

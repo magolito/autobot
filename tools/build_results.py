@@ -28,6 +28,11 @@ def k(v): return ('$%gM' % round(v/1e6,2)) if v>=1e6 else ('$%gK' % round(v/1e3)
 for c in C:
     c['gain']=round((c['end']/c['start']-1)*100,1); c['mult']=round(c['end']/c['start'],1)
 tot_s=sum(c['start'] for c in C); tot_e=sum(c['end'] for c in C); tot_g=round((tot_e/tot_s-1)*100,1)
+avg_m=round(sum(c['months'] for c in C)/len(C))
+max_mult=max(c['mult'] for c in C)
+EXCH=['Bybit','Hyperliquid','Binance']
+for c in C: c['exs']=[x for x in EXCH if x in c['ex']]
+quoted=[c for c in C if c['quote']]
 e=html.escape
 rows=[]
 for c in sorted(C,key=lambda c:-c['gain']):
@@ -35,7 +40,7 @@ for c in sorted(C,key=lambda c:-c['gain']):
     right=[]
     if c['quote']: right.append(f'<blockquote>“{e(c["quote"])}”</blockquote>')
     right.append(f'<button type="button" class="shot-btn" data-dash="{c["id"]}">View dashboard</button>')
-    rows.append(f'''    <details class="row" id="client-{c["id"]}" data-id="{c["id"]}" data-gain="{c["gain"]}" data-size="{c["end"]}" data-months="{c["months"]}">
+    rows.append(f'''    <details class="row" id="client-{c["id"]}" data-id="{c["id"]}" data-gain="{c["gain"]}" data-size="{c["end"]}" data-months="{c["months"]}" data-ex="{' '.join(x.lower() for x in c['exs'])}" style="--m:{round(c['mult']/max_mult,4)}">
       <summary>
         <span><span class="row-name">{e(c["name"])}</span>{"<span class=\"row-meta\"><span class=\"founder\">Owner’s account</span></span>" if c.get("founder") else ""}</span>
         <span class="num n-start">{money(c["start"])}</span>
@@ -43,6 +48,7 @@ for c in sorted(C,key=lambda c:-c['gain']):
         <span class="num gain">+{c["gain"]}%</span>
         <span class="num n-mult">{c["mult"]}×</span>
         <span class="chev" aria-hidden="true"></span>
+        <span class="meter" aria-hidden="true"><span></span></span>
       </summary>
       <div class="row-body">
         {''.join(body)}
@@ -51,9 +57,17 @@ for c in sorted(C,key=lambda c:-c['gain']):
     </details>''')
 
 kev=C[0]
-main=f'''<header class="page-header">
-  <h1>See how traders are<br>growing with AutoBot.</h1>
+main=f'''<header class="page-header rx-hero">
+  <canvas class="rx-field" id="rx-field" aria-hidden="true"></canvas>
+  <h1 class="rx-title"><span class="ln"><span>See how traders are</span></span><span class="ln"><span>growing with AutoBot.</span></span></h1>
 </header>
+
+<section class="rx-stats" aria-label="All accounts combined">
+  <div class="rx-stat"><span class="rx-k" data-scramble>Invested</span><b class="rx-v" data-count="{tot_s}" data-fmt="usd">{money(tot_s)}</b></div>
+  <div class="rx-stat"><span class="rx-k" data-scramble>Value @@ASOF@@</span><b class="rx-v" data-count="{tot_e}" data-fmt="usd">{money(tot_e)}</b></div>
+  <div class="rx-stat"><span class="rx-k" data-scramble>Combined gain</span><b class="rx-v up" data-count="{tot_g}" data-fmt="pct">+{tot_g}%</b></div>
+  <div class="rx-stat"><span class="rx-k" data-scramble>Average time</span><b class="rx-v" data-count="{avg_m}" data-fmt="mo">{avg_m} months</b></div>
+</section>
 
 <figure class="slope" id="slope">
   <svg class="slope-svg" id="slope-svg" role="img" aria-labelledby="slope-title slope-desc">
@@ -62,15 +76,21 @@ main=f'''<header class="page-header">
   </svg>
 </figure>
 
-<figure class="pull">
+<figure class="pull rx-quotes" id="rx-quotes" aria-roledescription="carousel">
   <span class="pull-mark" aria-hidden="true">“</span>
-  <blockquote>“{e(kev["quote"])}”</blockquote>
-  <figcaption><b>{e(kev["name"])}</b></figcaption>
+  <div class="rx-qstage" aria-live="polite">
+{chr(10).join(f'    <div class="rx-q{" is-on" if i==0 else ""}" data-i="{i}"><blockquote>“{e(c["quote"])}”</blockquote><figcaption><b>{e(c["name"])}</b><span>+{c["gain"]}%</span></figcaption></div>' for i,c in enumerate(quoted))}
+  </div>
+  <div class="rx-qnav">{''.join(f'<button type="button" aria-label="Quote {i+1}: {e(c["name"])}"{" aria-current=\"true\"" if i==0 else ""} data-q="{i}"><span></span></button>' for i,c in enumerate(quoted))}</div>
 </figure>
 
 <section class="ledger" aria-labelledby="ledger-title">
   <div class="ledger-top">
     <h2 id="ledger-title">Every account</h2>
+    <div class="rx-filter" role="group" aria-label="Filter by exchange">
+      <button type="button" data-ex="all" aria-pressed="true">All <i>{len(C)}</i></button>
+{chr(10).join(f'      <button type="button" data-ex="{x.lower()}" aria-pressed="false">{x} <i>{sum(1 for c in C if x in c["exs"])}</i></button>' for x in EXCH)}
+    </div>
     <div class="sorter" role="group" aria-label="Sort accounts">
       <button type="button" data-sort="gain" aria-pressed="true">Gain</button>
       <button type="button" data-sort="size" aria-pressed="false">Account size</button>
@@ -82,7 +102,7 @@ main=f'''<header class="page-header">
 {chr(10).join(rows)}
   </div>
   <div class="ledger-total">
-    <span class="row-name">All eight accounts</span>
+    <span class="row-name" id="total-label">All eight accounts</span>
     <span class="num n-start">{money(tot_s)}</span>
     <span class="num n-end" data-from="{k(tot_s)}">{money(tot_e)}</span>
     <span class="num gain">+{tot_g}%</span>
@@ -96,7 +116,7 @@ dialog='''<dialog class="dash" id="dash" aria-labelledby="dash-name">
   <div class="dash-card" id="dash-card"></div>
 </dialog>
 '''
-chart_data=json.dumps([dict({k2:c[k2] for k2 in ('id','name','short','start','end','gain','mult','ex','since','months','quote','shot')}, founder=bool(c.get('founder'))) for c in C])
+chart_data=json.dumps([dict({k2:c[k2] for k2 in ('id','name','short','start','end','gain','mult','ex','exs','since','months','quote','shot')}, founder=bool(c.get('founder'))) for c in C])
 js='''<script>
 const CLIENTS = %s;
 
@@ -218,10 +238,111 @@ document.querySelectorAll('.sorter button').forEach(b => b.addEventListener('cli
     });
   }
   document.querySelectorAll('[data-dash]').forEach(b => b.addEventListener('click', () => {
-    render(CLIENTS.find(c => c.id === b.dataset.dash)); dlg.showModal(); dlg.scrollTop = 0;
+    const c = CLIENTS.find(c => c.id === b.dataset.dash);
+    render(c); dlg.showModal(); dlg.scrollTop = 0;
+    if (typeof countUp === 'function'){ countUp(card.querySelector('.dash-gain'), c.gain, v => '+' + v.toFixed(1) + '%%', 1100); }
     card.querySelector('[data-close]').focus();
   }));
   dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.close(); });
+})();
+
+/* ── Motion helpers ── */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = { usd: v => '$' + Math.round(v).toLocaleString('en-US'), pct: v => '+' + v.toFixed(1) + '%%', mo: v => Math.round(v) + ' months',
+              x: v => v.toFixed(1) + '×' };
+function countUp(el, to, f, dur){
+  if (REDUCED){ el.textContent = f(to); return; }
+  const t0 = performance.now(); dur = dur || 1600;
+  (function tick(t){ const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 4);
+    el.textContent = f(to * e); if (p < 1) requestAnimationFrame(tick); else el.textContent = f(to); })(t0);
+}
+function scramble(el){
+  if (REDUCED) return;
+  const final = el.textContent, chars = '0123456789$%%+×#/';
+  let f = 0; const total = 18;
+  (function step(){ el.textContent = final.split('').map((ch, i) => ch === ' ' ? ' ' : (i < f / total * final.length ? ch : chars[Math.random() * chars.length | 0])).join('');
+    if (++f <= total) setTimeout(step, 34); else el.textContent = final; })();
+}
+function onView(els, fn, thr){
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ fn(e.target); io.unobserve(e.target); } }), {threshold: thr || 0.3});
+  els.forEach(el => io.observe(el));
+}
+
+/* ── Hero: headline reveal + dot field ── */
+document.documentElement.classList.add('rx-js');
+requestAnimationFrame(() => document.querySelector('.rx-title').classList.add('in'));
+(function(){
+  const cv = document.getElementById('rx-field'), hero = cv.parentElement, ctx = cv.getContext('2d');
+  let W, H, dpr, mx = -999, my = -999, tx = -999, ty = -999, raf = null, t0 = performance.now(), visible = true;
+  const GAP = 22;
+  function size(){ dpr = Math.min(2, devicePixelRatio || 1); W = hero.clientWidth; H = hero.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; ctx.setTransform(dpr,0,0,dpr,0,0); draw(performance.now()); }
+  function draw(now){
+    const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
+    mx += (tx - mx) * .12; my += (ty - my) * .12;
+    for (let y = GAP; y < H; y += GAP) for (let x = GAP; x < W; x += GAP){
+      const d = Math.hypot(x - mx, y - my), near = Math.max(0, 1 - d / 150);
+      const wave = REDUCED ? 0 : (Math.sin(x * .018 + t * .9) + Math.cos(y * .022 - t * .7)) * .25 + .5;
+      const r = .7 + near * 1.9 + wave * .35, a = .1 + near * .55 + wave * .08;
+      ctx.fillStyle = 'rgba(14,14,12,' + a.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
+    }
+  }
+  function loop(now){ draw(now); raf = (visible && !REDUCED) ? requestAnimationFrame(loop) : null; }
+  hero.addEventListener('pointermove', e => { const b = hero.getBoundingClientRect(); tx = e.clientX - b.left; ty = e.clientY - b.top; if (mx < -900){ mx = tx; my = ty; } if (REDUCED) draw(performance.now()); });
+  hero.addEventListener('pointerleave', () => { tx = ty = -999; });
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf && !REDUCED) raf = requestAnimationFrame(loop); }).observe(hero);
+  addEventListener('resize', size); size();
+})();
+
+/* ── Key figures: roll up + label decode ── */
+onView(document.querySelectorAll('.rx-stat'), s => {
+  const v = s.querySelector('.rx-v'); countUp(v, parseFloat(v.dataset.count), fmt[v.dataset.fmt]);
+  scramble(s.querySelector('.rx-k')); s.classList.add('in');
+}, 0.4);
+
+/* ── Ledger: meters draw, gains count as rows appear ── */
+onView(document.querySelectorAll('.row'), r => {
+  r.classList.add('in'); const g = r.querySelector('.gain'); countUp(g, parseFloat(r.dataset.gain), fmt.pct, 1300);
+}, 0.4);
+
+/* ── Exchange filter ── */
+(function(){
+  const btns = document.querySelectorAll('.rx-filter button'), rows = [...document.querySelectorAll('.row')];
+  const fig = document.getElementById('slope'), total = document.querySelector('.ledger-total');
+  const words = ['','one','two','three','four','five','six','seven','eight'];
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.setAttribute('aria-pressed', x === b)); const ex = b.dataset.ex;
+    const pick = rows.filter(r => ex === 'all' || r.dataset.ex.split(' ').includes(ex));
+    rows.forEach(r => r.classList.toggle('is-out', !pick.includes(r)));
+    const ids = pick.map(r => r.dataset.id);
+    fig.classList.toggle('is-filtered', ex !== 'all');
+    document.querySelectorAll('.slope-client').forEach(g => g.classList.toggle('is-kept', ids.includes(g.dataset.id)));
+    const sel = CLIENTS.filter(c => ids.includes(c.id)), s = sel.reduce((a,c) => a + c.start, 0), e = sel.reduce((a,c) => a + c.end, 0);
+    const lbl = document.getElementById('total-label');
+    lbl.textContent = ex === 'all' ? 'All eight accounts' : (sel.length === 1 ? 'One account' : 'These ' + words[sel.length] + ' accounts');
+    total.querySelector('.n-start').textContent = fmt.usd(s);
+    total.querySelector('.n-end').textContent = fmt.usd(e);
+    countUp(total.querySelector('.gain'), (e / s - 1) * 100, fmt.pct, 700);
+    total.querySelector('.n-mult').textContent = fmt.x(e / s);
+  }));
+})();
+
+/* ── Quote carousel ── */
+(function(){
+  const box = document.getElementById('rx-quotes'), qs = box.querySelectorAll('.rx-q'), dots = box.querySelectorAll('.rx-qnav button');
+  if (qs.length < 2) return;
+  let i = 0, timer = null;
+  function go(n){ qs[i].classList.remove('is-on'); dots[i].removeAttribute('aria-current');
+    i = (n + qs.length) %% qs.length; qs[i].classList.add('is-on'); dots[i].setAttribute('aria-current', 'true');
+    box.style.setProperty('--qh', qs[i].offsetHeight + 'px'); restart(); }
+  function restart(){ clearTimeout(timer); box.classList.remove('run'); void box.offsetWidth; if (!REDUCED){ box.classList.add('run'); timer = setTimeout(() => go(i + 1), 7000); } }
+  dots.forEach((d, n) => d.addEventListener('click', () => go(n)));
+  box.addEventListener('mouseenter', () => { clearTimeout(timer); box.classList.add('paused'); });
+  box.addEventListener('mouseleave', () => { box.classList.remove('paused'); restart(); });
+  box.style.setProperty('--qh', qs[0].offsetHeight + 'px');
+  onView([box], restart, 0.5);
+  addEventListener('resize', () => box.style.setProperty('--qh', qs[i].offsetHeight + 'px'));
 })();
 
 /* Fade-in for the closing sections */
