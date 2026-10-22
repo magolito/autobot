@@ -30,6 +30,19 @@ Never hand-edit `results.html` or `plans.html`; the next rebuild overwrites them
   - `manual_snapshots: [{date, balance, deposit}]` — one per month; `deposit` is money added (negative = withdrawn).
   - Invested = `initial_capital` + all deposits. Gain is measured against invested, so deposits never count as profit.
 
+## Adding a client
+
+1. Clerk dashboard → Users → Create user (name, email, password).
+2. Edit the user's **public metadata**:
+   - Hyperliquid: `hl_address`, `initial_capital`, `risk_level`.
+   - Monthly (e.g. Bybit): `exchange: "bybit"`, `risk_level`; then set the start amount, start date and monthly updates from the admin panel.
+3. Admin panel → Refresh.
+
+## Pinned versions
+
+- Clerk script: `6.40.0` on login/admin, `4.73.14` on the dashboard. Change only on purpose, then test sign-in.
+- Node `22` for functions (`netlify.toml`, `.nvmrc`).
+
 ## Server functions (`netlify/functions`)
 
 All verify the caller's Clerk session on the server (`netlify/lib/auth.js`). Admin-only: `get-clients`, `update-client`.
