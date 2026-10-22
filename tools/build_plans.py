@@ -35,7 +35,7 @@ def card(cls, name, price, items, cta, canvas=False):
 
 SAME=[('Where it trades','Your Bybit or Hyperliquid account',''),('Who holds your money','You. Funds never leave your exchange',fn(3)),
       ('Hours','24/7',''),('Order speed','Under 50ms',fn(4)),('Your risk level','You choose, 50% to 100%','')]
-DIFF=[('What it watches','Price and trend','Price and trend, social sentiment, news, on-chain flows'),
+DIFF=[('Built-in AI','Not included','Analyzes the market and adjusts continuously'),('What it watches','Price and trend','Price and trend, social sentiment, news, on-chain flows'),
       ('Position size','The same on every trade','Larger when signals agree, smaller when they don’t'),
       ('How it adapts','Our team reviews it periodically','Adjusts automatically as signals change'),
       ('Support','Standard','Priority'),('Price','$5,000 per year','$10,000 per year')]
@@ -59,7 +59,18 @@ MAIN=f'''<header class="pl-head">
 <div class="pl-wrap">
   <section class="pc-grid" aria-label="Plans and prices">
 {card('pc-std','AutoBot',5000,[('Trades 24/7 in your own exchange account',0),('Follows price and trend signals',0),('Same position size on every trade',0),('Built-in risk controls'+fn(1),0),('Client dashboard and monthly statements',0),('Standard support',0)],'Start with AutoBot')}
-{card('pc-pro','AutoBot Pro',10000,[('Everything in AutoBot',0),('Also reads social sentiment, news and on-chain flows'+fn(2),1),('Sizes up when signals agree, down when they don’t',1),('Adjusts as conditions change, not on a review cycle',1),('Priority support',1)],'Start with AutoBot Pro',canvas=True)}
+{card('pc-pro','AutoBot Pro',10000,[('Everything in AutoBot',0),('Built-in AI that analyzes the market around the clock'+fn(5),1),('Also reads social sentiment, news and on-chain flows'+fn(2),1),('Sizes up when signals agree, down when they don’t',1),('Adjusts as conditions change, not on a review cycle',1),('Priority support',1)],'Start with AutoBot Pro',canvas=True)}
+  </section>
+
+  <section class="ai" aria-labelledby="ai-h">
+    <canvas class="ai-field" aria-hidden="true"></canvas>
+    <div class="ai-head"><span class="ai-k">AutoBot Pro</span><h2 id="ai-h">Built-in AI that never<br>stops adjusting.</h2></div>
+    <ol class="ai-loop">
+      <li><b>01</b><h3>Read</h3><p>Price, trend, sentiment, news and on-chain flows.</p></li>
+      <li><b>02</b><h3>Analyze</h3><p>The AI weighs every signal against current conditions.</p></li>
+      <li><b>03</b><h3>Adjust</h3><p>Position size and timing shift as the market shifts.</p></li>
+      <li><b>04</b><h3>Trade</h3><p>Orders go out in your own account, then the loop starts again.</p></li>
+    </ol>
   </section>
 
   <section class="pl-sec" aria-labelledby="diff">
@@ -79,6 +90,7 @@ MAIN=f'''<header class="pl-head">
     <li id="fn2">Additional signals inform position size and timing. Using more signals does not guarantee better or faster returns.</li>
     <li id="fn3">AutoBot connects with an exchange API key that can place trades but cannot withdraw or transfer funds. You can revoke it at any time from your exchange.</li>
     <li id="fn4">Typical time from a signal to the order being sent to the exchange. Fill times depend on the exchange and market conditions.</li>
+    <li id="fn5">The AI informs analysis, position size and timing within the risk limits you set. It does not guarantee returns and can be wrong.</li>
     <li>Prices are per year and exclude exchange fees. Trading crypto involves substantial risk of loss. Past performance, including client results on this site, does not guarantee future results. AutoBot is not investment advice.</li>
   </ol>
 </section>
@@ -100,6 +112,13 @@ JS="<script>\n"+(ROOT / 'tools' / 'templates' / 'motion.js').read_text(encoding=
 document.querySelectorAll('.pc-field').forEach(cv => dotField(cv, cv.parentElement, '242,241,237', {base: .14}));
 onView(document.querySelectorAll('.pc'), c => { c.classList.add('in'); const b = c.querySelector('[data-count]'); countUp(b, +b.dataset.count, v => Math.round(v).toLocaleString('en-US'), 1500); }, 0.25);
 onView(document.querySelectorAll('.sx-row, .sg'), el => el.classList.add('in'), 0.2);
+(function(){
+  const sec = document.querySelector('.ai'); if (!sec) return;
+  dotField(sec.querySelector('.ai-field'), sec, '242,241,237', {base: .08});
+  const steps = sec.querySelectorAll('.ai-loop li'); let i = 0, timer = null;
+  function step(){ steps.forEach((s, n) => s.classList.toggle('on', n === i)); sec.style.setProperty('--step', i); i = (i + 1) % steps.length; }
+  onView([sec], () => { sec.classList.add('in'); step(); if (!REDUCED) timer = setInterval(step, 1600); }, 0.3);
+})();
 </script>
 """
 out=head+css+CSS+'\n</style>\n</head>\n<body>\n\n'+nav+MAIN+foot+JS+menu_js

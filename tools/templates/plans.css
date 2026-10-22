@@ -132,3 +132,29 @@ sup.fn a { color: inherit; text-decoration: none; opacity: .6; }
 }
 
 .pc-cur { font-feature-settings: 'lnum' 1; }
+
+/* ── Built-in AI loop (Pro) ── */
+.ai { position: relative; overflow: hidden; margin-top: 120px; background: var(--black); color: var(--white); border-radius: 3px; padding: 64px 48px 56px; }
+.ai-field { position: absolute; inset: 0; pointer-events: none; -webkit-mask-image: radial-gradient(90% 120% at 100% 0%, #000 0%, transparent 70%); mask-image: radial-gradient(90% 120% at 100% 0%, #000 0%, transparent 70%); }
+.ai > *:not(.ai-field) { position: relative; }
+.ai-k { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: rgba(242,241,237,.55); }
+.ai-head h2 { margin-top: 18px; font-family: 'Playfair Display', serif; font-weight: 400; font-size: clamp(32px, 3.6vw, 52px); line-height: 1.05; letter-spacing: -.025em; }
+.ai-loop { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; counter-reset: none; }
+.ai-loop li { padding: 22px 24px 0 0; border-top: 1px solid rgba(242,241,237,.16); transition: border-color .5s; }
+.ai-loop li + li { padding-left: 24px; }
+.ai-loop b { font-family: 'DM Mono', monospace; font-weight: 400; font-size: 11px; letter-spacing: .1em; color: rgba(242,241,237,.4); transition: color .5s; }
+.ai-loop h3 { margin-top: 14px; font-family: 'Playfair Display', serif; font-weight: 400; font-size: 26px; letter-spacing: -.015em; color: rgba(242,241,237,.55); transition: color .5s; }
+.ai-loop p { margin-top: 10px; font-size: 14px; line-height: 1.6; color: rgba(242,241,237,.45); max-width: 22em; transition: color .5s; }
+.ai-loop li.on b { color: #4ade80; }
+.ai-loop li.on h3 { color: var(--white); }
+.ai-loop li.on p { color: rgba(242,241,237,.8); }
+.ai-loop { position: relative; }
+.ai-loop::before { content: ''; position: absolute; top: -1px; left: 0; height: 2px; width: 25%; background: #4ade80; transform: translateX(calc(var(--step, 0) * 100%)); transition: transform .9s var(--ease); box-shadow: 0 0 12px rgba(74,222,128,.6); }
+@media (prefers-reduced-motion: reduce) { .ai-loop::before { transition: none; } }
+@media (max-width: 768px) {
+  .ai { margin: 80px -16px 0; border-radius: 0; padding: 48px 20px 40px; }
+  .ai-loop { grid-template-columns: 1fr 1fr; row-gap: 28px; margin-top: 40px; }
+  .ai-loop li, .ai-loop li + li { padding: 18px 14px 0 0; }
+  .ai-loop li.on { border-top-color: #4ade80; }
+  .ai-loop::before { display: none; }
+}
