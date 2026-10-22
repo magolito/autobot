@@ -19,137 +19,59 @@ nav=nav.replace('class="nav-link active">Client results','class="nav-link">Clien
 foot=base[I('<footer>'):I('<script>')]
 menu_js=base[base.rindex('<script>'):]
 
-CSS='''
-/* ── Plans ── */
-.pl-head{padding:148px 64px 0;max-width:1312px;margin:0 auto;}
-.pl-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:20px;}
-.pl-head h1{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(36px,4.3vw,60px);line-height:1.07;letter-spacing:-.025em;}
-.pl-head p{font-size:17px;line-height:1.65;color:var(--gray-mid);max-width:34em;margin-top:22px;}
-.pl-wrap{max-width:1312px;margin:0 auto;padding:0 64px;}
-.pl-cards{display:grid;grid-template-columns:1fr 1fr;margin-top:64px;border-top:1px solid var(--black);}
-.pl-card{padding:40px 40px 44px 0;display:flex;flex-direction:column;}
-.pl-card+.pl-card{padding-left:40px;padding-right:40px;background:var(--black);color:var(--white);}
-.pl-name{font-family:'Playfair Display',serif;font-size:30px;letter-spacing:-.015em;}
-.pl-tag{font-size:13px;color:var(--gray);margin-top:6px;}
-.pl-card+.pl-card .pl-tag{color:rgba(242,241,237,.55);}
-.pl-price{font-family:'Playfair Display',serif;font-size:clamp(56px,6vw,80px);line-height:1;letter-spacing:-.03em;margin-top:34px;}
-.pl-price small{font-family:'DM Sans',sans-serif;font-size:15px;letter-spacing:0;color:var(--gray);margin-left:8px;}
-.pl-card+.pl-card .pl-price small{color:rgba(242,241,237,.55);}
-.pl-list{list-style:none;margin:30px 0 34px;padding:0;border-top:1px solid var(--border);}
-.pl-card+.pl-card .pl-list{border-color:rgba(242,241,237,.14);}
-.pl-list li{padding:12px 0 12px 17px;border-bottom:1px solid var(--border);font-size:15px;position:relative;}
-.pl-card+.pl-card .pl-list li{border-color:rgba(242,241,237,.14);}
-.pl-list li::before{content:'';position:absolute;left:0;top:21px;width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6;}
-.pl-list li.plus{font-weight:500;}
-.pl-btn{margin-top:auto;align-self:flex-start;font:500 15px 'DM Sans',sans-serif;text-decoration:none;padding:15px 30px;background:var(--black);color:var(--white);}
-.pl-card+.pl-card .pl-btn{background:var(--white);color:var(--black);}
-.pl-btn:hover{opacity:.85;}
-sup.fn{font-family:'DM Mono',monospace;font-size:.62em;margin-left:2px;}
-sup.fn a{color:inherit;text-decoration:none;opacity:.6;}
-.pl-sec{margin-top:110px;}
-.pl-sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--black);}
-.pl-sec-head h2{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(28px,2.6vw,36px);letter-spacing:-.02em;}
-.pl-sec-head p{font-size:14px;color:var(--gray);}
-.pl-table{width:100%;border-collapse:collapse;font-size:15px;}
-.pl-table th{font-weight:400;text-align:left;font-size:12px;color:var(--gray);padding:14px 16px 12px 0;border-bottom:1px solid var(--border);}
-.pl-table td{padding:18px 16px 18px 0;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
-.pl-table td:first-child{color:var(--gray-mid);width:30%;}
-.pl-table td:nth-child(2){width:32%;}
-.pl-table td.pro{font-weight:500;}
-.pl-signals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));}
-.pl-sig{padding:28px 24px 30px 0;border-bottom:1px solid var(--border);}
-.pl-sig+.pl-sig{padding-left:24px;border-left:1px solid var(--border);}
-.pl-sig h3{font-family:'Playfair Display',serif;font-weight:400;font-size:22px;letter-spacing:-.01em;}
-.pl-sig p{font-size:14px;line-height:1.6;color:var(--gray-mid);margin-top:8px;}
-.pl-who{display:inline-block;margin-top:16px;font-size:12px;border:1px solid var(--border);border-radius:999px;padding:3px 10px;color:var(--gray-mid);}
-.pl-who.pro{background:var(--black);color:var(--white);border-color:var(--black);}
-.pl-notes{margin:110px auto 56px;max-width:1312px;padding:0 64px;}
-.pl-notes ol{margin:14px 0 0;padding-left:18px;max-width:880px;}
-.pl-notes li{font-size:12.5px;line-height:1.7;color:var(--gray);margin-bottom:6px;}
-.pl-notes p{font-size:12px;color:var(--gray);text-transform:uppercase;font-family:'DM Mono',monospace;letter-spacing:.08em;}
-@media(max-width:1024px) and (min-width:769px){.pl-head{padding:120px 40px 0;}.pl-wrap,.pl-notes{padding:0 40px;}}
-@media(max-width:768px){
- .pl-head{padding:100px 24px 0;}.pl-wrap,.pl-notes{padding:0 16px;}
- .pl-cards{grid-template-columns:1fr;}
- .pl-card{padding:32px 0 36px;}
- .pl-card+.pl-card{margin:0 -16px;padding:32px 16px 36px;}
- .pl-signals{grid-template-columns:1fr 1fr;}
- .pl-sig,.pl-sig+.pl-sig{padding:22px 12px 24px 0;border-left:none;}
- .pl-sig:nth-child(even){padding-left:12px;border-left:1px solid var(--border);}
- .pl-table td:first-child{width:auto;}
- .pl-table thead{display:none;}
- .pl-table tr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);padding:14px 0;}
- .pl-table td,.pl-table td:first-child,.pl-table td:nth-child(2){border:none;padding:0 10px 0 0;width:auto;}
- .pl-table td:first-child{grid-column:1/-1;font-size:13px;margin-bottom:6px;}
- .pl-table td:nth-child(2)::before{content:'AutoBot';display:block;font-size:11px;color:var(--gray);}
- .pl-table td:nth-child(3)::before{content:'AutoBot Pro';display:block;font-size:11px;color:var(--gray);}
- .pl-sec{margin-top:80px;}
-}
-'''
+CSS=(ROOT / 'tools' / 'templates' / 'plans.css').read_text(encoding='utf-8')
 fn=lambda n:'<sup class="fn"><a href="#fn%d" aria-label="Note %d">%d</a></sup>'%(n,n,n)
+CHECK='<svg class="ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>'
+
+def card(cls, name, price, items, cta, canvas=False):
+    lis=''.join(f'<li{" class=\"plus\"" if plus else ""}>{CHECK}<span>{t}</span></li>' for t,plus in items)
+    return f"""    <article class="pc {cls}">
+      {'<canvas class="pc-field" aria-hidden="true"></canvas>' if canvas else ''}
+      <h2 class="pc-name">{name}</h2>
+      <div class="pc-price"><span class="pc-cur">$</span><b data-count="{price}">{price:,}</b><small>/ year</small></div>
+      <ul class="pc-list">{lis}</ul>
+      <a class="pc-btn" href="index.html#contact"><span>{cta}</span><i aria-hidden="true">→</i></a>
+    </article>"""
+
+SAME=[('Where it trades','Your Bybit or Hyperliquid account',''),('Who holds your money','You. Funds never leave your exchange',fn(3)),
+      ('Hours','24/7',''),('Order speed','Under 50ms',fn(4)),('Your risk level','You choose, 50% to 100%','')]
+DIFF=[('What it watches','Price and trend','Price and trend, social sentiment, news, on-chain flows'),
+      ('Position size','The same on every trade','Larger when signals agree, smaller when they don’t'),
+      ('How it adapts','Our team reviews it periodically','Adjusts automatically as signals change'),
+      ('Support','Standard','Priority'),('Price','$5,000 per year','$10,000 per year')]
+rows=''.join(f'<div class="sx-row is-diff"><span class="sx-k">{k}</span><span class="sx-a">{a}</span><span class="sx-b">{b_}</span></div>' for k,a,b_ in DIFF)
+rows+=''.join(f'<div class="sx-row is-same"><span class="sx-k">{k}</span><span class="sx-both"><span>{v}{n}</span></span></div>' for k,v,n in SAME)
+
+SIG=[('trend','Price and trend','Chart patterns and momentum across every pair.',False,
+      '<svg viewBox="0 0 120 48"><path class="sg-line" d="M2 40 L18 34 L30 37 L44 24 L56 28 L70 16 L84 20 L98 8 L118 12"/></svg>'),
+     ('social','Social sentiment','What traders and crypto voices are saying, as it happens.',True,
+      '<svg viewBox="0 0 120 48">'+''.join(f'<rect class="sg-bar" x="{8+i*16}" y="8" width="8" height="36" style="--i:{i}"/>' for i in range(7))+'</svg>'),
+     ('news','News and macro','Headlines and events that can move the market quickly.',True,
+      '<svg viewBox="0 0 120 48"><g class="sg-feed">'+''.join(f'<rect x="4" y="{4+i*12}" width="{[96,70,104,58,88,76,100,64][i]}" height="3" rx="1.5"/>' for i in range(8))+'</g></svg>'),
+     ('chain','On-chain flows','Where large wallets are moving money on the blockchain.',True,
+      '<svg viewBox="0 0 120 48"><path class="sg-link" id="sgp" d="M10 24 C34 2, 50 46, 60 24 S 92 4, 110 24"/><circle cx="10" cy="24" r="3.5"/><circle cx="60" cy="24" r="3.5"/><circle cx="110" cy="24" r="3.5"/><circle class="sg-pulse" r="2.6"><animateMotion dur="2.8s" repeatCount="indefinite" path="M10 24 C34 2, 50 46, 60 24 S 92 4, 110 24"/></circle></svg>')]
+sig=''.join(f'<div class="sg sg-{k}{" sg-chain" if k=="chain" else ""}"><div class="sg-vis" aria-hidden="true">{svg}</div><div class="sg-top"><h3>{t}</h3><span class="sg-who{" pro" if pro else ""}">{"Pro" if pro else "Both plans"}</span></div><p>{d}</p></div>' for k,t,d,pro,svg in SIG)
+
 MAIN=f'''<header class="pl-head">
-  <h1>Two plans.<br>One engine.</h1>
+  <h1 class="rx-title"><span class="ln"><span>Two plans.</span></span><span class="ln"><span>One engine.</span></span></h1>
 </header>
 
 <div class="pl-wrap">
-  <section class="pl-cards" aria-label="Plans and prices">
-    <div class="pl-card">
-      <div class="pl-name">AutoBot</div>
-      <div class="pl-price">$5,000<small>per year</small></div>
-      <ul class="pl-list">
-        <li>Trades 24/7 in your own exchange account</li>
-        <li>Follows price and trend signals</li>
-        <li>Same position size on every trade</li>
-        <li>Built-in risk controls{fn(1)}</li>
-        <li>Client dashboard and monthly statements</li>
-        <li>Standard support</li>
-      </ul>
-      <a class="pl-btn" href="index.html#contact">Start with AutoBot</a>
-    </div>
-    <div class="pl-card">
-      <div class="pl-name">AutoBot Pro</div>
-      <div class="pl-price">$10,000<small>per year</small></div>
-      <ul class="pl-list">
-        <li>Everything in AutoBot</li>
-        <li class="plus">Also reads social sentiment, news and on-chain flows{fn(2)}</li>
-        <li class="plus">Sizes up when signals agree, down when they don't</li>
-        <li class="plus">Adjusts as conditions change, not on a review cycle</li>
-        <li class="plus">Priority support</li>
-      </ul>
-      <a class="pl-btn" href="index.html#contact">Start with AutoBot Pro</a>
-    </div>
+  <section class="pc-grid" aria-label="Plans and prices">
+{card('pc-std','AutoBot',5000,[('Trades 24/7 in your own exchange account',0),('Follows price and trend signals',0),('Same position size on every trade',0),('Built-in risk controls'+fn(1),0),('Client dashboard and monthly statements',0),('Standard support',0)],'Start with AutoBot')}
+{card('pc-pro','AutoBot Pro',10000,[('Everything in AutoBot',0),('Also reads social sentiment, news and on-chain flows'+fn(2),1),('Sizes up when signals agree, down when they don’t',1),('Adjusts as conditions change, not on a review cycle',1),('Priority support',1)],'Start with AutoBot Pro',canvas=True)}
   </section>
 
   <section class="pl-sec" aria-labelledby="diff">
-    <div class="pl-sec-head"><h2 id="diff">Side by side</h2></div>
-    <table class="pl-table">
-      <thead><tr><th></th><th>AutoBot</th><th>AutoBot Pro</th></tr></thead>
-      <tbody>
-        <tr><td>Where it trades</td><td>Your Bybit or Hyperliquid account</td><td>Your Bybit or Hyperliquid account</td></tr>
-        <tr><td>Who holds your money</td><td>You. Funds never leave your exchange{fn(3)}</td><td>You. Funds never leave your exchange{fn(3)}</td></tr>
-        <tr><td>Hours</td><td>24/7</td><td>24/7</td></tr>
-        <tr><td>Order speed</td><td>Under 50ms{fn(4)}</td><td>Under 50ms{fn(4)}</td></tr>
-        <tr><td>What it watches</td><td>Price and trend</td><td class="pro">Price and trend, social sentiment, news, on-chain flows</td></tr>
-        <tr><td>Position size</td><td>The same on every trade</td><td class="pro">Larger when signals agree, smaller when they don't</td></tr>
-        <tr><td>How it adapts</td><td>Our team reviews it periodically</td><td class="pro">Adjusts automatically as signals change</td></tr>
-        <tr><td>Your risk level</td><td>You choose, 50% to 100%</td><td>You choose, 50% to 100%</td></tr>
-        <tr><td>Support</td><td>Standard</td><td class="pro">Priority</td></tr>
-        <tr><td>Price</td><td>$5,000 per year</td><td class="pro">$10,000 per year</td></tr>
-      </tbody>
-    </table>
+    <div class="sx-head"><h2 id="diff">Side by side</h2><span>AutoBot</span><span class="sx-pro">AutoBot Pro</span></div>
+    <div class="sx">{rows}</div>
   </section>
 
   <section class="pl-sec" aria-labelledby="sig">
     <div class="pl-sec-head"><h2 id="sig">What each plan watches</h2></div>
-    <div class="pl-signals">
-      <div class="pl-sig"><h3>Price and trend</h3><p>Chart patterns and momentum across every pair.</p><span class="pl-who">Both plans</span></div>
-      <div class="pl-sig"><h3>Social sentiment</h3><p>What traders and crypto voices are saying, as it happens.</p><span class="pl-who pro">Pro</span></div>
-      <div class="pl-sig"><h3>News and macro</h3><p>Headlines and events that can move the market quickly.</p><span class="pl-who pro">Pro</span></div>
-      <div class="pl-sig"><h3>On-chain flows</h3><p>Where large wallets are moving money on the blockchain.</p><span class="pl-who pro">Pro</span></div>
-    </div>
+    <div class="sgs">{sig}</div>
   </section>
 </div>
-
 <section class="pl-notes" aria-labelledby="notes">
   <p id="notes">Notes</p>
   <ol>
@@ -172,5 +94,13 @@ MAIN=f'''<header class="pl-head">
 </div>
 
 '''
-out=head+css+CSS+'\n</style>\n</head>\n<body>\n\n'+nav+MAIN+foot+menu_js
+
+JS="<script>\n"+(ROOT / 'tools' / 'templates' / 'motion.js').read_text(encoding='utf-8')+"""
+/* Plans: Pro card field, price roll-up, reveals */
+document.querySelectorAll('.pc-field').forEach(cv => dotField(cv, cv.parentElement, '242,241,237', {base: .14}));
+onView(document.querySelectorAll('.pc'), c => { c.classList.add('in'); const b = c.querySelector('[data-count]'); countUp(b, +b.dataset.count, v => Math.round(v).toLocaleString('en-US'), 1500); }, 0.25);
+onView(document.querySelectorAll('.sx-row, .sg'), el => el.classList.add('in'), 0.2);
+</script>
+"""
+out=head+css+CSS+'\n</style>\n</head>\n<body>\n\n'+nav+MAIN+foot+JS+menu_js
 (ROOT / 'plans.html').write_text(out, encoding='utf-8'); print('plans.html written', len(out))

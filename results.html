@@ -338,7 +338,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
 .rx-stat + .rx-stat { padding-left: 24px; }
 .rx-stat + .rx-stat::before { content: ''; position: absolute; left: 0; top: 22px; bottom: 30px; width: 1px; background: var(--border); transform-origin: top; }
 .rx-k { display: block; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); min-height: 1.2em; }
-.rx-v { display: block; margin-top: 14px; font-family: 'Playfair Display', serif; font-weight: 400; font-size: clamp(28px, 3.1vw, 46px); letter-spacing: -.02em; line-height: 1; color: var(--black); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rx-v { font-feature-settings: 'lnum' 1, 'tnum' 1; display: block; margin-top: 14px; font-family: 'Playfair Display', serif; font-weight: 400; font-size: clamp(28px, 3.1vw, 46px); letter-spacing: -.02em; line-height: 1; color: var(--black); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rx-v.up { color: #1f6f4a; }
 .rx-js .rx-stat { opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .9s cubic-bezier(0.19,1,0.22,1); }
 .rx-js .rx-stat:nth-child(2) { transition-delay: .08s; } .rx-js .rx-stat:nth-child(3) { transition-delay: .16s; } .rx-js .rx-stat:nth-child(4) { transition-delay: .24s; }
@@ -767,8 +767,9 @@ document.querySelectorAll('.sorter button').forEach(b => b.addEventListener('cli
   dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.close(); });
 })();
 
-/* ── Motion helpers ── */
+/* ── Shared motion helpers (inlined by tools/build_*.py) ── */
 const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.documentElement.classList.add('rx-js');
 const fmt = { usd: v => '$' + Math.round(v).toLocaleString('en-US'), pct: v => '+' + v.toFixed(1) + '%', mo: v => Math.round(v) + ' months',
               x: v => v.toFixed(1) + '×' };
 function countUp(el, to, f, dur){
@@ -788,15 +789,12 @@ function onView(els, fn, thr){
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ fn(e.target); io.unobserve(e.target); } }), {threshold: thr || 0.3});
   els.forEach(el => io.observe(el));
 }
-
-/* ── Hero: headline reveal + dot field ── */
-document.documentElement.classList.add('rx-js');
-requestAnimationFrame(() => document.querySelector('.rx-title').classList.add('in'));
-(function(){
-  const cv = document.getElementById('rx-field'), hero = cv.parentElement, ctx = cv.getContext('2d');
-  let W, H, dpr, mx = -999, my = -999, tx = -999, ty = -999, raf = null, t0 = performance.now(), visible = true;
-  const GAP = 22;
-  function size(){ dpr = Math.min(2, devicePixelRatio || 1); W = hero.clientWidth; H = hero.clientHeight;
+/* Cursor-reactive dot field. host: element that receives the pointer; ink: 'r,g,b' */
+function dotField(cv, host, ink, opts){
+  opts = opts || {};
+  const ctx = cv.getContext('2d'), GAP = opts.gap || 22, base = opts.base || .1;
+  let W, H, mx = -999, my = -999, tx = -999, ty = -999, raf = null, t0 = performance.now(), visible = true;
+  function size(){ const dpr = Math.min(2, devicePixelRatio || 1); W = host.clientWidth; H = host.clientHeight;
     cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; ctx.setTransform(dpr,0,0,dpr,0,0); draw(performance.now()); }
   function draw(now){
     const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
@@ -804,17 +802,23 @@ requestAnimationFrame(() => document.querySelector('.rx-title').classList.add('i
     for (let y = GAP; y < H; y += GAP) for (let x = GAP; x < W; x += GAP){
       const d = Math.hypot(x - mx, y - my), near = Math.max(0, 1 - d / 150);
       const wave = REDUCED ? 0 : (Math.sin(x * .018 + t * .9) + Math.cos(y * .022 - t * .7)) * .25 + .5;
-      const r = .7 + near * 1.9 + wave * .35, a = .1 + near * .55 + wave * .08;
-      ctx.fillStyle = 'rgba(14,14,12,' + a.toFixed(3) + ')';
+      const r = .7 + near * 1.9 + wave * .35, a = base + near * .55 + wave * .08;
+      ctx.fillStyle = 'rgba(' + ink + ',' + a.toFixed(3) + ')';
       ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
     }
   }
   function loop(now){ draw(now); raf = (visible && !REDUCED) ? requestAnimationFrame(loop) : null; }
-  hero.addEventListener('pointermove', e => { const b = hero.getBoundingClientRect(); tx = e.clientX - b.left; ty = e.clientY - b.top; if (mx < -900){ mx = tx; my = ty; } if (REDUCED) draw(performance.now()); });
-  hero.addEventListener('pointerleave', () => { tx = ty = -999; });
-  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf && !REDUCED) raf = requestAnimationFrame(loop); }).observe(hero);
+  host.addEventListener('pointermove', e => { const b = host.getBoundingClientRect(); tx = e.clientX - b.left; ty = e.clientY - b.top; if (mx < -900){ mx = tx; my = ty; } if (REDUCED) draw(performance.now()); });
+  host.addEventListener('pointerleave', () => { tx = ty = -999; });
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf && !REDUCED) raf = requestAnimationFrame(loop); }).observe(host);
   addEventListener('resize', size); size();
-})();
+}
+/* Line-by-line headline reveal */
+requestAnimationFrame(() => document.querySelectorAll('.rx-title').forEach(t => t.classList.add('in')));
+
+
+/* ── Hero dot field ── */
+(function(){ const cv = document.getElementById('rx-field'); dotField(cv, cv.parentElement, '14,14,12'); })();
 
 /* ── Key figures: roll up + label decode ── */
 onView(document.querySelectorAll('.rx-stat'), s => {

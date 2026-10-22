@@ -20,7 +20,7 @@ Static site on Netlify, deployed automatically from `main`. No build step on Net
 2. Run `python3 tools/build_pages.py` (Python 3, standard library only).
 3. Commit `data/clients.json` and `results.html` together.
 
-Never hand-edit `results.html` or `plans.html`; the next rebuild overwrites them. Shared nav, CTA band and footer for both live in `tools/templates/base.html`.
+Never hand-edit `results.html` or `plans.html`; the next rebuild overwrites them. Shared nav, CTA band and footer for both live in `tools/templates/base.html`; page styles in `tools/templates/results.css` and `plans.css`; shared animation helpers (count-up, dot field, reveals) in `tools/templates/motion.js`. Every animation has a reduced-motion fallback.
 
 ## Client dashboard data
 
