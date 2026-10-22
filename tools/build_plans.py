@@ -7,7 +7,7 @@ base=(ROOT / 'tools' / 'templates' / 'base.html').read_text(encoding='utf-8')
 I=base.index
 head=base[:I('<style>')+len('<style>')]
 head=head.replace('<title>Client Results — AutoBot</title>','<title>Plans — AutoBot</title>')
-head=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="AutoBot and AutoBot Pro: two plans, one engine. Both trade 24/7 inside your own Bybit or Hyperliquid account. Compare what each plan watches, how it sizes trades, and what it costs.">',head)
+head=re.sub(r'<meta name="description" content="[^"]*">','<meta name="description" content="AutoBot and AutoBot Pro: two plans, one engine. Both trade 24/7 inside your own exchange account; Pro adds Binance, built-in AI and faster orders. Compare what each plan watches, how it sizes trades, and what it costs.">',head)
 head=re.sub(r'(property="og:title" content=")[^"]*','\\1Plans — AutoBot',head); head=re.sub(r'(name="twitter:title" content=")[^"]*','\\1Plans — AutoBot',head)
 head=re.sub(r'(property="og:url" content=")[^"]*','\\1https://autobot.trading/plans',head)
 head=re.sub(r'(property="og:description" content=")[^"]*','\\1Two plans, one engine. Compare AutoBot and AutoBot Pro.',head)
@@ -33,9 +33,9 @@ def card(cls, name, price, items, cta, canvas=False):
       <a class="pc-btn" href="index.html#contact"><span>{cta}</span><i aria-hidden="true">→</i></a>
     </article>"""
 
-SAME=[('Where it trades','Your Bybit or Hyperliquid account',''),('Who holds your money','You. Funds never leave your exchange',fn(3)),
-      ('Hours','24/7',''),('Order speed','Under 50ms',fn(4)),('Your risk level','You choose, 50% to 100%','')]
-DIFF=[('Built-in AI','Not included','Analyzes the market and adjusts continuously'),('What it watches','Price and trend','Price and trend, social sentiment, news, on-chain flows'),
+SAME=[('Who holds your money','You. Funds never leave your exchange',fn(3)),
+      ('Hours','24/7',''),('Your risk level','You choose, 50% to 100%','')]
+DIFF=[('Built-in AI','Not included','Analyzes the market and adjusts continuously'),('Where it trades','Your Bybit or Hyperliquid account','Your Bybit, Hyperliquid or Binance account'),('Order speed','Under 50ms'+fn(4),'Under 10ms'+fn(4)),('What it watches','Price and trend','Price and trend, social sentiment, news, on-chain flows'),
       ('Position size','The same on every trade','Larger when signals agree, smaller when they don’t'),
       ('How it adapts','Our team reviews it periodically','Adjusts automatically as signals change'),
       ('Support','Standard','Priority'),('Price','$5,000 per year','$10,000 per year')]
@@ -71,7 +71,7 @@ MAIN=f'''<header class="pl-head">
       <div class="ai-stats">
         <div><b>24/7</b><span>Always analyzing</span></div>
         <div><b>4</b><span>Signal types</span></div>
-        <div><b>&lt;50ms</b><span>Signal to order{fn(4)}</span></div>
+        <div><b>&lt;10ms</b><span>Signal to order{fn(4)}</span></div>
       </div>
     </div>
     <div class="ai-art">{AI_ART}</div>
@@ -90,7 +90,7 @@ MAIN=f'''<header class="pl-head">
   <section class="pl-sec" aria-labelledby="pick"><div class="pl-sec-head"><h2 id="pick">Choose your plan</h2></div>
   <div class="pc-grid">
 {card('pc-std','AutoBot',5000,[('Trades 24/7 in your own exchange account',0),('Follows price and trend signals',0),('Same position size on every trade',0),('Built-in risk controls'+fn(1),0),('Client dashboard and monthly statements',0),('Standard support',0)],'Start with AutoBot')}
-{card('pc-pro','AutoBot Pro',10000,[('Everything in AutoBot',0),('Built-in AI that analyzes the market around the clock'+fn(5),1),('Also reads social sentiment, news and on-chain flows'+fn(2),1),('Sizes up when signals agree, down when they don’t',1),('Adjusts as conditions change, not on a review cycle',1),('Priority support',1)],'Start with AutoBot Pro',canvas=True)}
+{card('pc-pro','AutoBot Pro',10000,[('Everything in AutoBot',0),('Built-in AI that analyzes the market around the clock'+fn(5),1),('Also trades on Binance',1),('Faster orders, under 10ms'+fn(4),1),('Also reads social sentiment, news and on-chain flows'+fn(2),1),('Sizes up when signals agree, down when they don’t',1),('Adjusts as conditions change, not on a review cycle',1),('Priority support',1)],'Start with AutoBot Pro',canvas=True)}
   </div></section>
 </div>
 <section class="pl-notes" aria-labelledby="notes">
