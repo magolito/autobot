@@ -246,54 +246,10 @@ document.querySelectorAll('.sorter button').forEach(b => b.addEventListener('cli
   dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.close(); });
 })();
 
-/* ── Motion helpers ── */
-const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fmt = { usd: v => '$' + Math.round(v).toLocaleString('en-US'), pct: v => '+' + v.toFixed(1) + '%%', mo: v => Math.round(v) + ' months',
-              x: v => v.toFixed(1) + '×' };
-function countUp(el, to, f, dur){
-  if (REDUCED){ el.textContent = f(to); return; }
-  const t0 = performance.now(); dur = dur || 1600;
-  (function tick(t){ const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 4);
-    el.textContent = f(to * e); if (p < 1) requestAnimationFrame(tick); else el.textContent = f(to); })(t0);
-}
-function scramble(el){
-  if (REDUCED) return;
-  const final = el.textContent, chars = '0123456789$%%+×#/';
-  let f = 0; const total = 18;
-  (function step(){ el.textContent = final.split('').map((ch, i) => ch === ' ' ? ' ' : (i < f / total * final.length ? ch : chars[Math.random() * chars.length | 0])).join('');
-    if (++f <= total) setTimeout(step, 34); else el.textContent = final; })();
-}
-function onView(els, fn, thr){
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ fn(e.target); io.unobserve(e.target); } }), {threshold: thr || 0.3});
-  els.forEach(el => io.observe(el));
-}
+@@MOTION@@
 
-/* ── Hero: headline reveal + dot field ── */
-document.documentElement.classList.add('rx-js');
-requestAnimationFrame(() => document.querySelector('.rx-title').classList.add('in'));
-(function(){
-  const cv = document.getElementById('rx-field'), hero = cv.parentElement, ctx = cv.getContext('2d');
-  let W, H, dpr, mx = -999, my = -999, tx = -999, ty = -999, raf = null, t0 = performance.now(), visible = true;
-  const GAP = 22;
-  function size(){ dpr = Math.min(2, devicePixelRatio || 1); W = hero.clientWidth; H = hero.clientHeight;
-    cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; ctx.setTransform(dpr,0,0,dpr,0,0); draw(performance.now()); }
-  function draw(now){
-    const t = (now - t0) / 1000; ctx.clearRect(0, 0, W, H);
-    mx += (tx - mx) * .12; my += (ty - my) * .12;
-    for (let y = GAP; y < H; y += GAP) for (let x = GAP; x < W; x += GAP){
-      const d = Math.hypot(x - mx, y - my), near = Math.max(0, 1 - d / 150);
-      const wave = REDUCED ? 0 : (Math.sin(x * .018 + t * .9) + Math.cos(y * .022 - t * .7)) * .25 + .5;
-      const r = .7 + near * 1.9 + wave * .35, a = .1 + near * .55 + wave * .08;
-      ctx.fillStyle = 'rgba(14,14,12,' + a.toFixed(3) + ')';
-      ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
-    }
-  }
-  function loop(now){ draw(now); raf = (visible && !REDUCED) ? requestAnimationFrame(loop) : null; }
-  hero.addEventListener('pointermove', e => { const b = hero.getBoundingClientRect(); tx = e.clientX - b.left; ty = e.clientY - b.top; if (mx < -900){ mx = tx; my = ty; } if (REDUCED) draw(performance.now()); });
-  hero.addEventListener('pointerleave', () => { tx = ty = -999; });
-  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf && !REDUCED) raf = requestAnimationFrame(loop); }).observe(hero);
-  addEventListener('resize', size); size();
-})();
+/* ── Hero dot field ── */
+(function(){ const cv = document.getElementById('rx-field'); dotField(cv, cv.parentElement, '14,14,12'); })();
 
 /* ── Key figures: roll up + label decode ── */
 onView(document.querySelectorAll('.rx-stat'), s => {
@@ -366,6 +322,7 @@ tail = _re.sub(r'<div class="disclaimer[^"]*">.*?</div>\s*', '''<section class="
 
 ''', tail, count=1, flags=_re.S)
 out = head + css + '\n</style>\n</head>\n<body>\n\n' + nav + main + tail + dialog + js + menu_js
+out = out.replace('@@MOTION@@', (TPL / 'motion.js').read_text(encoding='utf-8'))
 out = out.replace('@@ASOF@@', ASOF).replace('@@ASOFLONG@@', ASOF_LONG)
 (ROOT / 'results.html').write_text(out, encoding='utf-8')
 print('written', len(out), 'bytes; totals', tot_s, tot_e, tot_g)
