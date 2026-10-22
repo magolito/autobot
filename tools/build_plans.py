@@ -57,14 +57,10 @@ MAIN=f'''<header class="pl-head">
 </header>
 
 <div class="pl-wrap">
-  <section class="pc-grid" aria-label="Plans and prices">
-{card('pc-std','AutoBot',5000,[('Trades 24/7 in your own exchange account',0),('Follows price and trend signals',0),('Same position size on every trade',0),('Built-in risk controls'+fn(1),0),('Client dashboard and monthly statements',0),('Standard support',0)],'Start with AutoBot')}
-{card('pc-pro','AutoBot Pro',10000,[('Everything in AutoBot',0),('Built-in AI that analyzes the market around the clock'+fn(5),1),('Also reads social sentiment, news and on-chain flows'+fn(2),1),('Sizes up when signals agree, down when they don’t',1),('Adjusts as conditions change, not on a review cycle',1),('Priority support',1)],'Start with AutoBot Pro',canvas=True)}
-  </section>
 
-  <section class="ai" aria-labelledby="ai-h">
-    <canvas class="ai-field" aria-hidden="true"></canvas>
-    <div class="ai-head"><span class="ai-k">AutoBot Pro</span><h2 id="ai-h">Built-in AI that never<br>stops adjusting.</h2></div>
+
+  <section class="pl-sec ai" aria-labelledby="ai-h">
+    <div class="pl-sec-head"><h2 id="ai-h">Built-in AI in Pro</h2></div>
     <ol class="ai-loop">
       <li><b>01</b><h3>Read</h3><p>Price, trend, sentiment, news and on-chain flows.</p></li>
       <li><b>02</b><h3>Analyze</h3><p>The AI weighs every signal against current conditions.</p></li>
@@ -82,6 +78,12 @@ MAIN=f'''<header class="pl-head">
     <div class="pl-sec-head"><h2 id="sig">What each plan watches</h2></div>
     <div class="sgs">{sig}</div>
   </section>
+
+  <section class="pl-sec" aria-labelledby="pick"><div class="pl-sec-head"><h2 id="pick">Choose your plan</h2></div>
+  <div class="pc-grid">
+{card('pc-std','AutoBot',5000,[('Trades 24/7 in your own exchange account',0),('Follows price and trend signals',0),('Same position size on every trade',0),('Built-in risk controls'+fn(1),0),('Client dashboard and monthly statements',0),('Standard support',0)],'Start with AutoBot')}
+{card('pc-pro','AutoBot Pro',10000,[('Everything in AutoBot',0),('Built-in AI that analyzes the market around the clock'+fn(5),1),('Also reads social sentiment, news and on-chain flows'+fn(2),1),('Sizes up when signals agree, down when they don’t',1),('Adjusts as conditions change, not on a review cycle',1),('Priority support',1)],'Start with AutoBot Pro',canvas=True)}
+  </div></section>
 </div>
 <section class="pl-notes" aria-labelledby="notes">
   <p id="notes">Notes</p>
@@ -114,7 +116,6 @@ onView(document.querySelectorAll('.pc'), c => { c.classList.add('in'); const b =
 onView(document.querySelectorAll('.sx-row, .sg'), el => el.classList.add('in'), 0.2);
 (function(){
   const sec = document.querySelector('.ai'); if (!sec) return;
-  dotField(sec.querySelector('.ai-field'), sec, '242,241,237', {base: .08});
   const steps = sec.querySelectorAll('.ai-loop li'); let i = 0, timer = null;
   function step(){ steps.forEach((s, n) => s.classList.toggle('on', n === i)); sec.style.setProperty('--step', i); i = (i + 1) % steps.length; }
   onView([sec], () => { sec.classList.add('in'); step(); if (!REDUCED) timer = setInterval(step, 1600); }, 0.3);
