@@ -39,8 +39,11 @@ DIFF=[('Built-in AI','Not included','Analyzes the market and adjusts continuousl
       ('Position size','The same on every trade','Larger when signals agree, smaller when they don’t'),
       ('How it adapts','Our team reviews it periodically','Adjusts automatically as signals change'),
       ('Support','Standard','Priority'),('Price','$5,000 per year','$10,000 per year')]
+TICK='<svg class="sx-ck" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"/></svg>'
+PRICE=DIFF.pop()  # price row goes last
 rows=''.join(f'<div class="sx-row is-diff"><span class="sx-k">{k}</span><span class="sx-a">{a}</span><span class="sx-b">{b_}</span></div>' for k,a,b_ in DIFF)
-rows+=''.join(f'<div class="sx-row is-same"><span class="sx-k">{k}</span><span class="sx-both"><span>{v}{n}</span></span></div>' for k,v,n in SAME)
+rows+=''.join(f'<div class="sx-row is-same"><span class="sx-k">{k}</span><span class="sx-a">{TICK}<span>{v}{n}</span></span><span class="sx-b">{TICK}<span>{v}{n}</span></span></div>' for k,v,n in SAME)
+rows+=f'<div class="sx-row is-price"><span class="sx-k">{PRICE[0]}</span><span class="sx-a">{PRICE[1]}</span><span class="sx-b">{PRICE[2]}</span></div>'
 
 SIG=[('trend','Price and trend','Chart patterns and momentum across every pair.',False,
       '<svg viewBox="0 0 120 48"><path class="sg-line" d="M2 40 L18 34 L30 37 L44 24 L56 28 L70 16 L84 20 L98 8 L118 12"/></svg>'),

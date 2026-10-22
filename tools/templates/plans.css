@@ -190,3 +190,11 @@ sup.fn a { color: inherit; text-decoration: none; opacity: .6; }
   .ai-stats { padding-top: 26px; }
   .ai-stats > div { padding: 0 14px; }
 }
+
+/* side by side: shared rows shown in both columns */
+.sx-row.is-same .sx-b { font-weight: 400; }
+.sx-row.is-same .sx-a, .sx-row.is-same .sx-b { display: flex; gap: 10px; align-items: baseline; }
+.sx-ck { flex: 0 0 13px; width: 13px; height: 13px; transform: translateY(2px); fill: none; stroke: var(--up); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sx-row.is-price { border-top: 1px solid var(--black); }
+.sx-row.is-price > span { font-family: 'DM Sans', sans-serif; font-size: 17px; font-weight: 500; color: var(--black); }
+.sx-row.is-price .sx-k { font-weight: 400; color: var(--gray-mid); font-size: 15px; }
