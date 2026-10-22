@@ -52,6 +52,8 @@ SIG=[('trend','Price and trend','Chart patterns and momentum across every pair.'
       '<svg viewBox="0 0 120 48"><path class="sg-link" id="sgp" d="M10 24 C34 2, 50 46, 60 24 S 92 4, 110 24"/><circle cx="10" cy="24" r="3.5"/><circle cx="60" cy="24" r="3.5"/><circle cx="110" cy="24" r="3.5"/><circle class="sg-pulse" r="2.6"><animateMotion dur="2.8s" repeatCount="indefinite" path="M10 24 C34 2, 50 46, 60 24 S 92 4, 110 24"/></circle></svg>')]
 sig=''.join(f'<div class="sg sg-{k}{" sg-chain" if k=="chain" else ""}"><div class="sg-vis" aria-hidden="true">{svg}</div><div class="sg-top"><h3>{t}</h3><span class="sg-who{" pro" if pro else ""}">{"Pro" if pro else "Both plans"}</span></div><p>{d}</p></div>' for k,t,d,pro,svg in SIG)
 
+import runpy
+AI_ART=runpy.run_path(str(ROOT / 'tools' / 'art' / 'ai_chip.py'))['SVG']
 MAIN=f'''<header class="pl-head">
   <h1 class="rx-title"><span class="ln"><span>Two plans.</span></span><span class="ln"><span>One engine.</span></span></h1>
 </header>
@@ -62,14 +64,14 @@ MAIN=f'''<header class="pl-head">
   <section class="ai" aria-labelledby="ai-h">
     <div class="ai-copy">
       <span class="ai-k"><i></i>AutoBot Pro</span>
-      <h2 id="ai-h">Built-in AI that adjusts to the market, all the time.</h2>
+      <h2 id="ai-h">Built-in AI that adjusts<br>to the market, all the time</h2>
+      <div class="ai-stats">
+        <div><b>24/7</b><span>Always analyzing</span></div>
+        <div><b>4</b><span>Signal types</span></div>
+        <div><b>&lt;50ms</b><span>Signal to order{fn(4)}</span></div>
+      </div>
     </div>
-    <ol class="ai-loop">
-      <li><b>01</b><h3>Read</h3><p>Price, sentiment, news, on-chain</p></li>
-      <li><b>02</b><h3>Analyze</h3><p>Weighs every signal</p></li>
-      <li><b>03</b><h3>Adjust</h3><p>Size and timing</p></li>
-      <li><b>04</b><h3>Trade</h3><p>In your account, nonstop</p></li>
-    </ol>
+    <div class="ai-art">{AI_ART}</div>
   </section>
 
   <section class="pl-sec" aria-labelledby="diff">
@@ -117,12 +119,6 @@ JS="<script>\n"+(ROOT / 'tools' / 'templates' / 'motion.js').read_text(encoding=
 document.querySelectorAll('.pc-field').forEach(cv => dotField(cv, cv.parentElement, '242,241,237', {base: .14}));
 onView(document.querySelectorAll('.pc'), c => { c.classList.add('in'); const b = c.querySelector('[data-count]'); countUp(b, +b.dataset.count, v => Math.round(v).toLocaleString('en-US'), 1500); }, 0.25);
 onView(document.querySelectorAll('.sx-row, .sg'), el => el.classList.add('in'), 0.2);
-(function(){
-  const sec = document.querySelector('.ai'); if (!sec) return;
-  const steps = sec.querySelectorAll('.ai-loop li'); let i = 0, timer = null;
-  function step(){ steps.forEach((s, n) => s.classList.toggle('on', n === i)); i = (i + 1) % steps.length; }
-  onView([sec], () => { step(); if (!REDUCED) timer = setInterval(step, 1800); }, 0.3);
-})();
 </script>
 """
 out=head+css+CSS+'\n</style>\n</head>\n<body>\n\n'+nav+MAIN+foot+JS+menu_js

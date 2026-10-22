@@ -301,29 +301,46 @@ sup.fn a { color: inherit; text-decoration: none; opacity: .6; }
 .pl-sec .pc-name { font-family: 'DM Mono', monospace; font-weight: 400; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray); }
 .pl-sec .pc-pro .pc-name { color: rgba(242,241,237,.6); }
 
-/* ── Built-in AI band (compact) ── */
-.ai { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 48px; align-items: end; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--black); }
-.ai-k { display: inline-flex; align-items: center; gap: 9px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-mid); }
-.ai-k i { width: 6px; height: 6px; border-radius: 50%; background: var(--up); animation: ai-live 2s ease-out infinite; }
-@keyframes ai-live { 0% { box-shadow: 0 0 0 0 rgba(31,111,74,.45); } 100% { box-shadow: 0 0 0 8px rgba(31,111,74,0); } }
-.ai h2 { margin-top: 14px; font-family: 'Playfair Display', serif; font-weight: 400; font-size: clamp(24px, 2.2vw, 32px); line-height: 1.15; letter-spacing: -.02em; max-width: 14em; }
-.ai-loop { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: 3px; background: var(--paper); }
-.ai-loop li { position: relative; padding: 16px 16px 18px; }
-.ai-loop li + li { border-left: 1px solid var(--border); }
-.ai-loop li::before { content: ''; position: absolute; left: -1px; right: -1px; top: -1px; height: 2px; background: var(--black); transform: scaleX(0); transform-origin: left; transition: none; }
-.ai-loop li.on::before { transform: scaleX(1); transition: transform 1.8s linear; }
-.ai-loop b { font-family: 'DM Mono', monospace; font-weight: 400; font-size: 10.5px; letter-spacing: .1em; color: var(--gray); transition: color .3s; }
-.ai-loop h3 { margin-top: 10px; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px; color: var(--gray-mid); transition: color .3s; }
-.ai-loop p { margin-top: 3px; font-size: 12.5px; line-height: 1.45; color: var(--gray); }
-.ai-loop li.on b { color: var(--up); }
-.ai-loop li.on h3 { color: var(--black); }
-@media (prefers-reduced-motion: reduce) { .ai-k i { animation: none; } .ai-loop li.on::before { transition: none; } }
-@media (max-width: 1024px) and (min-width: 769px) { .ai { grid-template-columns: 1fr; gap: 20px; } }
+/* ── Built-in AI: Plasma-style panel ── */
+.ai { margin-top: 56px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 24px; background: #e8e7e2; border-radius: 8px; padding: 12px; }
+.ai-copy { display: flex; flex-direction: column; padding: 32px 28px 28px; min-height: 380px; }
+.ai-k { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--gray-mid); }
+.ai-k i { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; animation: ai-live 2s ease-out infinite; }
+@keyframes ai-live { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.5); } 100% { box-shadow: 0 0 0 8px rgba(34,197,94,0); } }
+.ai h2 { margin-top: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: clamp(22px, 2vw, 28px); line-height: 1.2; letter-spacing: -.02em; color: var(--black); }
+.ai-stats { margin-top: auto; display: flex; gap: 0; padding-top: 32px; }
+.ai-stats > div { padding: 0 22px; border-left: 1px solid rgba(14,14,12,.14); }
+.ai-stats > div:first-child { padding-left: 0; border-left: none; }
+.ai-stats b { display: block; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 20px; letter-spacing: -.02em; color: var(--black); }
+.ai-stats span { display: block; margin-top: 4px; font-size: 11.5px; color: var(--gray); }
+.ai-art { background: #f6f5f2; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 12px; min-height: 380px; }
+.chipart { width: 100%; max-width: 600px; height: auto; overflow: visible; }
+.chipart .iso polygon { stroke: #0e0e0c; stroke-width: .9; stroke-linejoin: round; }
+.chipart .f-t { fill: #ffffff; } .chipart .f-l { fill: #dcdbd6; } .chipart .f-r { fill: #c8c7c1; }
+.chipart .plate .f-t { fill: #efeee9; } .chipart .plate polygon { stroke-width: .8; }
+.chipart .core .f-t { fill: #1b1b19; } .chipart .core .f-l { fill: #2a2a27; } .chipart .core .f-r { fill: #0e0e0c; }
+.chipart .core-die { fill: none; stroke: rgba(242,241,237,.25); stroke-width: .8; }
+.chipart .cell { fill: #22c55e; opacity: .25; }
+.chipart .pin { fill: #22c55e; opacity: .35; }
+.chipart .tr-base { fill: none; stroke: rgba(14,14,12,.55); stroke-width: 1.4; stroke-linecap: round; }
+.chipart .tr-base.thin { stroke: rgba(14,14,12,.22); stroke-width: 1; }
+.chipart .tr-flow { fill: none; stroke: #22c55e; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 10 140; stroke-dashoffset: 150; opacity: 0; }
+.chipart .lb { font-family: 'DM Mono', monospace; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; fill: var(--gray-mid); }
+.chipart .lb-core { fill: var(--black); font-size: 11px; }
+@media (prefers-reduced-motion: no-preference) {
+  .chipart .tr-flow { animation: tr-flow 1.8s linear infinite; animation-delay: var(--d); }
+  .chipart .pin { animation: pin 1.8s ease-in-out infinite; animation-delay: var(--d); }
+  .chipart .cell { animation: cell 2.2s ease-in-out infinite; animation-delay: calc(var(--i) * .3s); }
+}
+@keyframes tr-flow { 0% { stroke-dashoffset: 150; opacity: 1; } 70% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+@keyframes pin { 0%, 100% { opacity: .3; } 15% { opacity: 1; } }
+@keyframes cell { 0%, 100% { opacity: .2; } 50% { opacity: .95; } }
 @media (max-width: 768px) {
-  .ai { grid-template-columns: 1fr; gap: 18px; margin-top: 40px; }
-  .ai-loop { grid-template-columns: 1fr 1fr; }
-  .ai-loop li:nth-child(3) { border-left: none; }
-  .ai-loop li:nth-child(n+3) { border-top: 1px solid var(--border); }
+  .ai { grid-template-columns: 1fr; margin: 40px -8px 0; gap: 8px; padding: 8px; }
+  .ai-copy { min-height: 0; padding: 24px 18px 20px; }
+  .ai-art { min-height: 0; order: -1; }
+  .ai-stats { padding-top: 26px; }
+  .ai-stats > div { padding: 0 14px; }
 }
 
 </style>
@@ -357,14 +374,14 @@ sup.fn a { color: inherit; text-decoration: none; opacity: .6; }
   <section class="ai" aria-labelledby="ai-h">
     <div class="ai-copy">
       <span class="ai-k"><i></i>AutoBot Pro</span>
-      <h2 id="ai-h">Built-in AI that adjusts to the market, all the time.</h2>
+      <h2 id="ai-h">Built-in AI that adjusts<br>to the market, all the time</h2>
+      <div class="ai-stats">
+        <div><b>24/7</b><span>Always analyzing</span></div>
+        <div><b>4</b><span>Signal types</span></div>
+        <div><b>&lt;50ms</b><span>Signal to order<sup class="fn"><a href="#fn4" aria-label="Note 4">4</a></sup></span></div>
+      </div>
     </div>
-    <ol class="ai-loop">
-      <li><b>01</b><h3>Read</h3><p>Price, sentiment, news, on-chain</p></li>
-      <li><b>02</b><h3>Analyze</h3><p>Weighs every signal</p></li>
-      <li><b>03</b><h3>Adjust</h3><p>Size and timing</p></li>
-      <li><b>04</b><h3>Trade</h3><p>In your account, nonstop</p></li>
-    </ol>
+    <div class="ai-art"><svg class="chipart" viewBox="-361 -38 722 404" role="img" aria-label="Price, sentiment, news and on-chain signals flow into the built-in AI in AutoBot Pro."><g class="iso plate"><polygon class="f-l" points="-291.0,159.6 0.0,327.6 0.0,336.0 -291.0,168.0"/><polygon class="f-r" points="291.0,159.6 0.0,327.6 0.0,336.0 291.0,168.0"/><polygon class="f-t" points="0.0,-8.4 291.0,159.6 0.0,327.6 -291.0,159.6"/></g><path class="tr-base thin" d="M75.9 102.6 L30.1 129.0"/><path class="tr-base" d="M87.3 109.2 L41.6 135.6"/><path class="tr-flow" style="--d:0.00s" d="M87.3 109.2 L41.6 135.6"/><path class="tr-base thin" d="M98.7 115.8 L53.0 142.2"/><path class="tr-base thin" d="M98.7 203.4 L53.0 177.0"/><path class="tr-base" d="M87.3 210.0 L41.6 183.6"/><path class="tr-flow" style="--d:0.45s" d="M87.3 210.0 L41.6 183.6"/><path class="tr-base thin" d="M75.9 216.6 L30.1 190.2"/><path class="tr-base thin" d="M-98.7 203.4 L-53.0 177.0"/><path class="tr-base" d="M-87.3 210.0 L-41.6 183.6"/><path class="tr-flow" style="--d:0.90s" d="M-87.3 210.0 L-41.6 183.6"/><path class="tr-base thin" d="M-75.9 216.6 L-30.1 190.2"/><path class="tr-base thin" d="M-75.9 102.6 L-30.1 129.0"/><path class="tr-base" d="M-87.3 109.2 L-41.6 135.6"/><path class="tr-flow" style="--d:1.35s" d="M-87.3 109.2 L-41.6 135.6"/><path class="tr-base thin" d="M-98.7 115.8 L-53.0 142.2"/><g class="iso chip"><polygon class="f-l" points="66.5,80.4 108.1,104.4 108.1,121.2 66.5,97.2"/><polygon class="f-r" points="149.6,80.4 108.1,104.4 108.1,121.2 149.6,97.2"/><polygon class="f-t" points="108.1,56.4 149.6,80.4 108.1,104.4 66.5,80.4"/></g><g class="iso chip"><polygon class="f-l" points="-149.6,80.4 -108.1,104.4 -108.1,121.2 -149.6,97.2"/><polygon class="f-r" points="-66.5,80.4 -108.1,104.4 -108.1,121.2 -66.5,97.2"/><polygon class="f-t" points="-108.1,56.4 -66.5,80.4 -108.1,104.4 -149.6,80.4"/></g><g class="iso core"><polygon class="f-l" points="-83.1,123.6 0.0,171.6 0.0,207.6 -83.1,159.6"/><polygon class="f-r" points="83.1,123.6 0.0,171.6 0.0,207.6 83.1,159.6"/><polygon class="f-t" points="0.0,75.6 83.1,123.6 0.0,171.6 -83.1,123.6"/></g><g class="iso chip"><polygon class="f-l" points="66.5,205.2 108.1,229.2 108.1,246.0 66.5,222.0"/><polygon class="f-r" points="149.6,205.2 108.1,229.2 108.1,246.0 149.6,222.0"/><polygon class="f-t" points="108.1,181.2 149.6,205.2 108.1,229.2 66.5,205.2"/></g><g class="iso chip"><polygon class="f-l" points="-149.6,205.2 -108.1,229.2 -108.1,246.0 -149.6,222.0"/><polygon class="f-r" points="-66.5,205.2 -108.1,229.2 -108.1,246.0 -66.5,222.0"/><polygon class="f-t" points="-108.1,181.2 -66.5,205.2 -108.1,229.2 -149.6,205.2"/></g><polygon class="core-die" points="0.0,97.2 45.7,123.6 0.0,150.0 -45.7,123.6"/><polygon class="cell" style="--i:0" points="0.0,103.2 8.7,108.2 0.0,113.3 -8.7,108.2"/><polygon class="cell" style="--i:1" points="-12.9,110.6 -4.2,115.7 -12.9,120.7 -21.6,115.7"/><polygon class="cell" style="--i:2" points="-25.8,118.1 -17.0,123.1 -25.8,128.2 -34.5,123.1"/><polygon class="cell" style="--i:3" points="12.9,110.6 21.6,115.7 12.9,120.7 4.2,115.7"/><polygon class="cell" style="--i:4" points="0.0,118.1 8.7,123.1 0.0,128.2 -8.7,123.1"/><polygon class="cell" style="--i:0" points="-12.9,125.5 -4.2,130.6 -12.9,135.6 -21.6,130.6"/><polygon class="cell" style="--i:1" points="25.8,118.1 34.5,123.1 25.8,128.2 17.0,123.1"/><polygon class="cell" style="--i:2" points="12.9,125.5 21.6,130.6 12.9,135.6 4.2,130.6"/><polygon class="cell" style="--i:3" points="0.0,133.0 8.7,138.0 0.0,143.0 -8.7,138.0"/><polygon class="pin" style="--d:0.00s" points="108.1,70.8 124.7,80.4 108.1,90.0 91.5,80.4"/><text class="lb" x="171.0" y="60.8" text-anchor="start">Price</text><polygon class="pin" style="--d:0.45s" points="108.1,195.6 124.7,205.2 108.1,214.8 91.5,205.2"/><text class="lb" x="172.6" y="246.5" text-anchor="start">Sentiment</text><polygon class="pin" style="--d:0.90s" points="-108.1,195.6 -91.5,205.2 -108.1,214.8 -124.7,205.2"/><text class="lb" x="-172.6" y="246.5" text-anchor="end">On-chain</text><polygon class="pin" style="--d:1.35s" points="-108.1,70.8 -91.5,80.4 -108.1,90.0 -124.7,80.4"/><text class="lb" x="-171.0" y="60.8" text-anchor="end">News</text></svg></div>
   </section>
 
   <section class="pl-sec" aria-labelledby="diff">
@@ -476,12 +493,6 @@ requestAnimationFrame(() => document.querySelectorAll('.rx-title').forEach(t => 
 document.querySelectorAll('.pc-field').forEach(cv => dotField(cv, cv.parentElement, '242,241,237', {base: .14}));
 onView(document.querySelectorAll('.pc'), c => { c.classList.add('in'); const b = c.querySelector('[data-count]'); countUp(b, +b.dataset.count, v => Math.round(v).toLocaleString('en-US'), 1500); }, 0.25);
 onView(document.querySelectorAll('.sx-row, .sg'), el => el.classList.add('in'), 0.2);
-(function(){
-  const sec = document.querySelector('.ai'); if (!sec) return;
-  const steps = sec.querySelectorAll('.ai-loop li'); let i = 0, timer = null;
-  function step(){ steps.forEach((s, n) => s.classList.toggle('on', n === i)); i = (i + 1) % steps.length; }
-  onView([sec], () => { step(); if (!REDUCED) timer = setInterval(step, 1800); }, 0.3);
-})();
 </script>
 <script>
 function toggleMenu(){const b=document.getElementById('nav-hamburger'),m=document.getElementById('mobile-menu'),o=m.classList.toggle('open');b.classList.toggle('open',o);document.body.style.overflow=o?'hidden':'';}
