@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<title>Plans — AutoBot</title>
+<meta name="description" content="AutoBot and AutoBot Pro: two plans, one engine. Both trade 24/7 inside your own Bybit or Hyperliquid account. Compare what each plan watches, how it sizes trades, and what it costs.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AutoBot">
+<meta property="og:title" content="Plans — AutoBot">
+<meta property="og:description" content="Two plans, one engine. Compare AutoBot and AutoBot Pro.">
+<meta property="og:url" content="https://autobot.trading/plans">
+<meta property="og:image" content="https://autobot.trading/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Plans — AutoBot">
+<meta name="twitter:description" content="Two plans, one engine. Compare AutoBot and AutoBot Pro.">
+<meta name="twitter:image" content="https://autobot.trading/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --black: #0e0e0c; --white: #f2f1ed; --gray: #8c8c89; --gray-mid: #4e4e4b; --border: rgba(14,14,12,0.08); }
+html { scroll-behavior: smooth; }
+body { background: var(--white); color: var(--black); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 22px 64px; background: rgba(242,241,237,0.93); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+.nav-logo { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 16px; letter-spacing: -0.01em; color: var(--black); text-decoration: none; }
+.nav-right { display: flex; align-items: center; gap: 36px; }
+.nav-link { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+.nav-link:hover, .nav-link.active { color: var(--black); }
+.nav-cta { background: var(--black); color: var(--white); border: none; padding: 12px 26px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; text-decoration: none; display: inline-block; }
+.nav-cta:hover { opacity: 0.75; }
+
+/* PAGE HEADER */
+.page-header { padding: 148px 64px 52px; }
+.page-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); margin-bottom: 20px; }
+.page-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(36px, 4.3vw, 60px); font-weight: 400; line-height: 1.07; letter-spacing: -0.025em; color: var(--black); }
+.page-consent { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.04em; color: var(--gray); line-height: 1.7; max-width: 520px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+/* DISCLAIMER */
+.disclaimer { padding: 0 64px 48px; }
+.disclaimer p { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 0.04em; line-height: 1.85; max-width: 860px; }
+
+/* CTA BAND */
+.cta-band { margin: 0 64px 80px; background: var(--black); border-radius: 14px; padding: 60px 64px; display: flex; align-items: center; justify-content: space-between; gap: 48px; }
+.cta-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 3.5vw, 46px); font-weight: 400; letter-spacing: -0.025em; line-height: 1.1; color: #fff; }
+.cta-text h2 em { font-style: italic; color: rgba(255,255,255,0.42); }
+.cta-text p { font-size: 15px; color: rgba(255,255,255,0.38); margin-top: 12px; font-weight: 300; max-width: 380px; line-height: 1.6; }
+.cta-actions { display: flex; flex-direction: column; gap: 11px; min-width: 200px; }
+.btn-w { background: var(--white); color: var(--black); border: none; padding: 15px 34px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; text-decoration: none; display: block; text-align: center; border-radius: 6px; }
+.btn-w:hover { opacity: 0.85; }
+.btn-o { background: transparent; color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.16); padding: 14px 34px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 400; cursor: pointer; transition: all 0.2s; text-decoration: none; display: block; text-align: center; border-radius: 6px; }
+.btn-o:hover { border-color: rgba(255,255,255,0.45); color: rgba(255,255,255,0.85); }
+
+footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex; align-items: center; justify-content: space-between; }
+.footer-logo { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 15px; color: var(--gray-mid); }
+.footer-copy { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.07em; color: var(--gray); }
+
+
+
+
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  nav { padding: 16px 24px; }
+  .nav-right { gap: 14px; }
+  .nav-link { display: none; }
+  .nav-cta { padding: 10px 16px; font-size: 12px; }
+
+  .page-header { padding: 100px 24px 40px; }
+  .page-header h1 { font-size: clamp(32px, 8.4vw, 44px); }
+  .page-consent { font-size: 9px; margin-top: 16px; padding-top: 16px; }
+
+
+
+  .disclaimer { padding: 0 16px 32px; }
+  .cta-band { margin: 0 16px 48px; padding: 40px 28px; flex-direction: column; gap: 28px; }
+  .cta-text h2 { font-size: clamp(24px, 6vw, 36px); }
+  .cta-actions { width: 100%; }
+  .btn-w, .btn-o { padding: 14px 24px; font-size: 14px; }
+
+  footer { padding: 24px; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* Modal — full screen stacked on mobile */
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 38vh 1fr;
+    max-height: 96vh;
+    height: 96vh;
+    width: 100vw;
+    max-width: 100vw !important;
+    border-radius: 16px 16px 0 0;
+    transform: translateY(40px);
+  }
+
+  /* Force image wrap visible on mobile — JS may have hidden it */
+    display: block !important;
+    min-height: unset;
+    height: 100%;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+  }
+    min-height: unset;
+    height: 100%;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+  }
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+  }
+  /* Right-edge fade not needed on mobile — fade bottom instead */
+    background:
+      linear-gradient(to bottom, transparent 60%, rgba(10,10,8,0.85) 88%, #0a0a08 100%),
+      linear-gradient(to bottom, rgba(6,6,5,0.2) 0%, transparent 8%);
+  }
+  /* Info panel scrolls below image */
+    padding: 20px 24px 32px;
+    justify-content: flex-start;
+    border-left: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .page-header { padding: 120px 40px 48px; }
+  .cta-band { margin: 0 32px 64px; padding: 48px 48px; }
+  footer { padding: 24px 40px; }
+}
+
+.nav-hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:1px solid rgba(14,14,12,0.12);cursor:pointer;padding:8px;}
+.nav-hamburger span{display:block;width:100%;height:1px;background:var(--black, #0e0e0c);transition:all 0.25s cubic-bezier(0.22,1,0.36,1);}
+.nav-hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+.nav-hamburger.open span:nth-child(2){opacity:0;}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;top:58px;left:0;right:0;background:rgba(245,244,240,0.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(14,14,12,0.08);flex-direction:column;z-index:99;padding:8px 0 16px;transform:translateY(-8px);opacity:0;transition:transform 0.3s cubic-bezier(0.22,1,0.36,1),opacity 0.3s;pointer-events:none;}
+.mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:all;}
+.mobile-link{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#4e4e4b;text-decoration:none;padding:14px 24px;border-bottom:1px solid rgba(14,14,12,0.08);display:block;transition:color 0.15s;}
+.mobile-link:last-child{border-bottom:none;}
+.mobile-link:hover{color:#0e0e0c;}
+.mobile-link.cta{color:#0e0e0c;font-weight:500;margin:8px 24px 0;border:1px solid #0e0e0c;text-align:center;padding:12px 24px;}
+@media(max-width:768px){
+  nav{padding:0 20px;height:58px;}
+  .nav-right{display:none!important;}
+  .nav-hamburger{display:flex;}
+  .mobile-menu{display:flex;}
+}
+
+/* ── Plans ── */
+.pl-head{padding:148px 64px 0;max-width:1312px;margin:0 auto;}
+.pl-label{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);margin-bottom:20px;}
+.pl-head h1{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(36px,4.3vw,60px);line-height:1.07;letter-spacing:-.025em;}
+.pl-head p{font-size:17px;line-height:1.65;color:var(--gray-mid);max-width:34em;margin-top:22px;}
+.pl-wrap{max-width:1312px;margin:0 auto;padding:0 64px;}
+.pl-cards{display:grid;grid-template-columns:1fr 1fr;margin-top:64px;border-top:1px solid var(--black);}
+.pl-card{padding:40px 40px 44px 0;display:flex;flex-direction:column;}
+.pl-card+.pl-card{padding-left:40px;padding-right:40px;background:var(--black);color:var(--white);}
+.pl-name{font-family:'Playfair Display',serif;font-size:30px;letter-spacing:-.015em;}
+.pl-tag{font-size:13px;color:var(--gray);margin-top:6px;}
+.pl-card+.pl-card .pl-tag{color:rgba(242,241,237,.55);}
+.pl-price{font-family:'Playfair Display',serif;font-size:clamp(56px,6vw,80px);line-height:1;letter-spacing:-.03em;margin-top:34px;}
+.pl-price small{font-family:'DM Sans',sans-serif;font-size:15px;letter-spacing:0;color:var(--gray);margin-left:8px;}
+.pl-card+.pl-card .pl-price small{color:rgba(242,241,237,.55);}
+.pl-list{list-style:none;margin:30px 0 34px;padding:0;border-top:1px solid var(--border);}
+.pl-card+.pl-card .pl-list{border-color:rgba(242,241,237,.14);}
+.pl-list li{padding:12px 0 12px 17px;border-bottom:1px solid var(--border);font-size:15px;position:relative;}
+.pl-card+.pl-card .pl-list li{border-color:rgba(242,241,237,.14);}
+.pl-list li::before{content:'';position:absolute;left:0;top:21px;width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6;}
+.pl-list li.plus{font-weight:500;}
+.pl-btn{margin-top:auto;align-self:flex-start;font:500 15px 'DM Sans',sans-serif;text-decoration:none;padding:15px 30px;background:var(--black);color:var(--white);}
+.pl-card+.pl-card .pl-btn{background:var(--white);color:var(--black);}
+.pl-btn:hover{opacity:.85;}
+sup.fn{font-family:'DM Mono',monospace;font-size:.62em;margin-left:2px;}
+sup.fn a{color:inherit;text-decoration:none;opacity:.6;}
+.pl-sec{margin-top:110px;}
+.pl-sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--black);}
+.pl-sec-head h2{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(28px,2.6vw,36px);letter-spacing:-.02em;}
+.pl-sec-head p{font-size:14px;color:var(--gray);}
+.pl-table{width:100%;border-collapse:collapse;font-size:15px;}
+.pl-table th{font-weight:400;text-align:left;font-size:12px;color:var(--gray);padding:14px 16px 12px 0;border-bottom:1px solid var(--border);}
+.pl-table td{padding:18px 16px 18px 0;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5;}
+.pl-table td:first-child{color:var(--gray-mid);width:30%;}
+.pl-table td:nth-child(2){width:32%;}
+.pl-table td.pro{font-weight:500;}
+.pl-signals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));}
+.pl-sig{padding:28px 24px 30px 0;border-bottom:1px solid var(--border);}
+.pl-sig+.pl-sig{padding-left:24px;border-left:1px solid var(--border);}
+.pl-sig h3{font-family:'Playfair Display',serif;font-weight:400;font-size:22px;letter-spacing:-.01em;}
+.pl-sig p{font-size:14px;line-height:1.6;color:var(--gray-mid);margin-top:8px;}
+.pl-who{display:inline-block;margin-top:16px;font-size:12px;border:1px solid var(--border);border-radius:999px;padding:3px 10px;color:var(--gray-mid);}
+.pl-who.pro{background:var(--black);color:var(--white);border-color:var(--black);}
+.pl-notes{margin:110px auto 56px;max-width:1312px;padding:0 64px;}
+.pl-notes ol{margin:14px 0 0;padding-left:18px;max-width:880px;}
+.pl-notes li{font-size:12.5px;line-height:1.7;color:var(--gray);margin-bottom:6px;}
+.pl-notes p{font-size:12px;color:var(--gray);text-transform:uppercase;font-family:'DM Mono',monospace;letter-spacing:.08em;}
+@media(max-width:1024px) and (min-width:769px){.pl-head{padding:120px 40px 0;}.pl-wrap,.pl-notes{padding:0 40px;}}
+@media(max-width:768px){
+ .pl-head{padding:100px 24px 0;}.pl-wrap,.pl-notes{padding:0 16px;}
+ .pl-cards{grid-template-columns:1fr;}
+ .pl-card{padding:32px 0 36px;}
+ .pl-card+.pl-card{margin:0 -16px;padding:32px 16px 36px;}
+ .pl-signals{grid-template-columns:1fr 1fr;}
+ .pl-sig,.pl-sig+.pl-sig{padding:22px 12px 24px 0;border-left:none;}
+ .pl-sig:nth-child(even){padding-left:12px;border-left:1px solid var(--border);}
+ .pl-table td:first-child{width:auto;}
+ .pl-table thead{display:none;}
+ .pl-table tr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);padding:14px 0;}
+ .pl-table td,.pl-table td:first-child,.pl-table td:nth-child(2){border:none;padding:0 10px 0 0;width:auto;}
+ .pl-table td:first-child{grid-column:1/-1;font-size:13px;margin-bottom:6px;}
+ .pl-table td:nth-child(2)::before{content:'AutoBot';display:block;font-size:11px;color:var(--gray);}
+ .pl-table td:nth-child(3)::before{content:'AutoBot Pro';display:block;font-size:11px;color:var(--gray);}
+ .pl-sec{margin-top:80px;}
+}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">AutoBot</a>
+  <div class="nav-right">
+    <a href="results.html" class="nav-link">Client results</a>
+    <a href="plans.html" class="nav-link active">Plans</a>
+    <a href="login.html" class="nav-link">Client login</a>
+    <a href="index.html#contact" class="nav-cta">Start Investing</a>
+  </div>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="results.html" class="mobile-link">Client results</a>
+  <a href="plans.html" class="mobile-link">Plans</a>
+  <a href="login.html" class="mobile-link">Client login</a>
+  <a href="index.html#contact" class="mobile-link cta" onclick="closeMobileMenu()">Start Investing →</a>
+</div>
+
+<header class="pl-head">
+  <div class="pl-label">Plans</div>
+  <h1>Two plans.<br>One engine.</h1>
+  <p>Both plans trade 24/7 inside your own Bybit or Hyperliquid account, with the same risk controls. AutoBot Pro reads more of the market and sizes each trade by how confident it is.</p>
+</header>
+
+<div class="pl-wrap">
+  <section class="pl-cards" aria-label="Plans and prices">
+    <div class="pl-card">
+      <div class="pl-name">AutoBot</div>
+      <div class="pl-tag">A steady, rules-based strategy</div>
+      <div class="pl-price">$5,000<small>per year</small></div>
+      <ul class="pl-list">
+        <li>Trades 24/7 in your own exchange account</li>
+        <li>Follows price and trend signals</li>
+        <li>Same position size on every trade</li>
+        <li>Built-in risk controls<sup class="fn"><a href="#fn1" aria-label="Note 1">1</a></sup></li>
+        <li>Client dashboard and monthly statements</li>
+        <li>Standard support</li>
+      </ul>
+      <a class="pl-btn" href="index.html#contact">Start with AutoBot</a>
+    </div>
+    <div class="pl-card">
+      <div class="pl-name">AutoBot Pro</div>
+      <div class="pl-tag">Everything in AutoBot, plus market signals</div>
+      <div class="pl-price">$10,000<small>per year</small></div>
+      <ul class="pl-list">
+        <li>Everything in AutoBot</li>
+        <li class="plus">Also reads social sentiment, news and on-chain flows<sup class="fn"><a href="#fn2" aria-label="Note 2">2</a></sup></li>
+        <li class="plus">Sizes up when signals agree, down when they don't</li>
+        <li class="plus">Adjusts as conditions change, not on a review cycle</li>
+        <li class="plus">Priority support</li>
+      </ul>
+      <a class="pl-btn" href="index.html#contact">Start with AutoBot Pro</a>
+    </div>
+  </section>
+
+  <section class="pl-sec" aria-labelledby="diff">
+    <div class="pl-sec-head"><h2 id="diff">Side by side</h2><p>What's the same, and what's different</p></div>
+    <table class="pl-table">
+      <thead><tr><th></th><th>AutoBot</th><th>AutoBot Pro</th></tr></thead>
+      <tbody>
+        <tr><td>Where it trades</td><td>Your Bybit or Hyperliquid account</td><td>Your Bybit or Hyperliquid account</td></tr>
+        <tr><td>Who holds your money</td><td>You. Funds never leave your exchange<sup class="fn"><a href="#fn3" aria-label="Note 3">3</a></sup></td><td>You. Funds never leave your exchange<sup class="fn"><a href="#fn3" aria-label="Note 3">3</a></sup></td></tr>
+        <tr><td>Hours</td><td>24/7</td><td>24/7</td></tr>
+        <tr><td>Order speed</td><td>Under 50ms<sup class="fn"><a href="#fn4" aria-label="Note 4">4</a></sup></td><td>Under 50ms<sup class="fn"><a href="#fn4" aria-label="Note 4">4</a></sup></td></tr>
+        <tr><td>What it watches</td><td>Price and trend</td><td class="pro">Price and trend, social sentiment, news, on-chain flows</td></tr>
+        <tr><td>Position size</td><td>The same on every trade</td><td class="pro">Larger when signals agree, smaller when they don't</td></tr>
+        <tr><td>How it adapts</td><td>Our team reviews it periodically</td><td class="pro">Adjusts automatically as signals change</td></tr>
+        <tr><td>Your risk level</td><td>You choose, 50% to 100%</td><td>You choose, 50% to 100%</td></tr>
+        <tr><td>Support</td><td>Standard</td><td class="pro">Priority</td></tr>
+        <tr><td>Price</td><td>$5,000 per year</td><td class="pro">$10,000 per year</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="pl-sec" aria-labelledby="sig">
+    <div class="pl-sec-head"><h2 id="sig">What each plan watches</h2><p>AutoBot Pro trades bigger only when these agree</p></div>
+    <div class="pl-signals">
+      <div class="pl-sig"><h3>Price and trend</h3><p>Chart patterns and momentum across every pair.</p><span class="pl-who">Both plans</span></div>
+      <div class="pl-sig"><h3>Social sentiment</h3><p>What traders and crypto voices are saying, as it happens.</p><span class="pl-who pro">Pro</span></div>
+      <div class="pl-sig"><h3>News and macro</h3><p>Headlines and events that can move the market quickly.</p><span class="pl-who pro">Pro</span></div>
+      <div class="pl-sig"><h3>On-chain flows</h3><p>Where large wallets are moving money on the blockchain.</p><span class="pl-who pro">Pro</span></div>
+    </div>
+  </section>
+</div>
+
+<section class="pl-notes" aria-labelledby="notes">
+  <p id="notes">Notes</p>
+  <ol>
+    <li id="fn1">Risk controls include stop-losses, position size limits and a drawdown limit, applied automatically on every trade. They reduce risk but cannot prevent losses.</li>
+    <li id="fn2">Additional signals inform position size and timing. Using more signals does not guarantee better or faster returns.</li>
+    <li id="fn3">AutoBot connects with an exchange API key that can place trades but cannot withdraw or transfer funds. You can revoke it at any time from your exchange.</li>
+    <li id="fn4">Typical time from a signal to the order being sent to the exchange. Fill times depend on the exchange and market conditions.</li>
+    <li>Prices are per year and exclude exchange fees. Trading crypto involves substantial risk of loss. Past performance, including client results on this site, does not guarantee future results. AutoBot is not investment advice.</li>
+  </ol>
+</section>
+
+<div class="cta-band">
+  <div class="cta-text">
+    <h2>Not sure which<br><em>fits you?</em></h2>
+    <p>Talk to our team. We'll walk you through both plans and help you choose.</p>
+  </div>
+  <div class="cta-actions">
+    <a href="index.html#contact" class="btn-w">Start Investing</a>
+    <a href="results.html" class="btn-o">See client results</a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">AutoBot</span>
+  <span class="footer-copy">© 2026 AutoBot · autobot.trading</span>
+</footer>
+
+<script>
+function toggleMenu(){const b=document.getElementById('nav-hamburger'),m=document.getElementById('mobile-menu'),o=m.classList.toggle('open');b.classList.toggle('open',o);document.body.style.overflow=o?'hidden':'';}
+function closeMobileMenu(){document.getElementById('nav-hamburger').classList.remove('open');document.getElementById('mobile-menu').classList.remove('open');document.body.style.overflow='';}
+document.querySelectorAll('.mobile-link:not(.cta)').forEach(l=>l.addEventListener('click',closeMobileMenu));
+</script>
+</body>
+</html>

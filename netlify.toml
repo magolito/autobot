@@ -13,3 +13,16 @@
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Headers = "Content-Type, Authorization"
     Access-Control-Allow-Methods = "POST, OPTIONS"
+
+# The old Compare page is now Plans
+[[redirects]]
+  from = "/compare"
+  to = "/plans"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/compare.html"
+  to = "/plans"
+  status = 301
+  force = true

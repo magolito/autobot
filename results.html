@@ -306,6 +306,23 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   .dash-bars { grid-template-columns: 64px minmax(0,1fr) auto; }
 }
 
+/* ── elite touches ── */
+.page-eyebrow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+.pe-date{font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:0;text-transform:none;color:var(--gray);padding-left:14px;border-left:1px solid var(--border);}
+.pull-mark{font-family:'Playfair Display',serif;font-style:italic;font-size:120px;line-height:.8;color:rgba(14,14,12,.14);justify-self:end;margin-top:-6px;}
+.row summary{transition:background .2s;margin:0 -12px;padding-left:12px;padding-right:12px;}
+.row summary:hover,.row.is-on summary{background:rgba(14,14,12,.025);}
+.ledger-total{border-top:3px double var(--black);margin-top:-1px;padding-top:20px;}
+.ledger-total .row-name{color:var(--black);}
+.ledger-total .num{color:var(--black);}
+.num.gain{font-weight:500;}
+.notes{margin:72px 64px 56px;max-width:880px;}
+.notes-h{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gray);}
+.notes ol{margin:12px 0 0;padding-left:18px;}
+.notes li{font-size:12.5px;line-height:1.7;color:var(--gray);margin-bottom:6px;}
+@media(max-width:1024px) and (min-width:769px){.notes{margin-left:40px;margin-right:40px;}}
+@media(max-width:768px){.notes{margin:56px 16px 40px;}.pull-mark{display:none;}.row summary{margin:0;padding-left:0;padding-right:0;}.pe-date{border-left:none;padding-left:0;}}
+
 </style>
 </head>
 <body>
@@ -313,24 +330,22 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
 <nav>
   <a href="index.html" class="nav-logo">AutoBot</a>
   <div class="nav-right">
-    <a href="index.html#how" class="nav-link">How it works</a>
     <a href="results.html" class="nav-link active">Client results</a>
-    <a href="compare.html" class="nav-link">Compare</a>
+    <a href="plans.html" class="nav-link">Plans</a>
     <a href="login.html" class="nav-link">Client login</a>
-    <a href="index.html#contact" class="nav-cta">Get a demo</a>
+    <a href="index.html#contact" class="nav-cta">Start Investing</a>
   </div>
   <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 <div class="mobile-menu" id="mobile-menu">
-  <a href="index.html#how" class="mobile-link">How it works</a>
   <a href="results.html" class="mobile-link">Client results</a>
-  <a href="compare.html" class="mobile-link">Compare</a>
+  <a href="plans.html" class="mobile-link">Plans</a>
   <a href="login.html" class="mobile-link">Client login</a>
-  <a href="index.html#contact" class="mobile-link cta" onclick="closeMobileMenu()">Start Earning →</a>
+  <a href="index.html#contact" class="mobile-link cta" onclick="closeMobileMenu()">Start Investing →</a>
 </div>
 
 <header class="page-header">
-  <div class="page-eyebrow">Customer stories</div>
+  <div class="page-eyebrow">Client results<span class="pe-date">Updated October 20, 2026</span></div>
   <h1>See how traders are<br>growing with AutoBot.</h1>
 </header>
 
@@ -343,7 +358,7 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
 </figure>
 
 <figure class="pull">
-  <span></span>
+  <span class="pull-mark" aria-hidden="true">“</span>
   <blockquote>“I was skeptical at first. Watching it trade while I&#x27;m at work, sleeping, traveling — 291% later I can&#x27;t imagine trading any other way.”</blockquote>
   <figcaption><b>Kevin Harsh</b>, Bybit and Hyperliquid since Nov 2023</figcaption>
 </figure>
@@ -483,9 +498,15 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
   </div>
 </section>
 
-<div class="disclaimer fade-up">
-  <p>Past performance does not guarantee future results. Results are from real AutoBot clients and our founder’s own account. Figures are provided by each client and shown with their consent. Individual outcomes vary based on strategy, market conditions, capital deployed, and risk parameters set by the user. AutoBot does not provide investment advice. Trading crypto assets involves significant risk of loss.</p>
-</div>
+<section class="notes" aria-labelledby="notes-h">
+  <p id="notes-h" class="notes-h">Notes</p>
+  <ol>
+    <li>Figures are as of October 20, 2026, provided by each client and shown with their consent. The founder's account is included and labelled.</li>
+    <li>Gain is the current account value compared with the total amount invested, including any money added later.</li>
+    <li>Results vary with market conditions, capital, plan and the risk level each client chooses. Past performance does not guarantee future results.</li>
+    <li>Trading crypto involves substantial risk of loss. AutoBot is not investment advice.</li>
+  </ol>
+</section>
 
 <div class="cta-band fade-up">
   <div class="cta-text">
@@ -493,8 +514,8 @@ footer { border-top: 1px solid var(--border); padding: 28px 64px; display: flex;
     <p>Talk to our team. We'll walk you through setup and strategy — no commitment required.</p>
   </div>
   <div class="cta-actions">
-    <a href="index.html#contact" class="btn-w">Get a demo →</a>
-    <a href="index.html" class="btn-o">Back to homepage</a>
+    <a href="index.html#contact" class="btn-w">Start Investing</a>
+    <a href="plans.html" class="btn-o">See plans</a>
   </div>
 </div>
 
