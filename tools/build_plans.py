@@ -59,14 +59,30 @@ MAIN=f'''<header class="pl-head">
 <div class="pl-wrap">
 
 
-  <section class="pl-sec ai" aria-labelledby="ai-h">
-    <div class="pl-sec-head"><h2 id="ai-h">Built-in AI in Pro</h2></div>
-    <ol class="ai-loop">
-      <li><b>01</b><h3>Read</h3><p>Price, trend, sentiment, news and on-chain flows.</p></li>
-      <li><b>02</b><h3>Analyze</h3><p>The AI weighs every signal against current conditions.</p></li>
-      <li><b>03</b><h3>Adjust</h3><p>Position size and timing shift as the market shifts.</p></li>
-      <li><b>04</b><h3>Trade</h3><p>Orders go out in your own account, then the loop starts again.</p></li>
-    </ol>
+  <section class="ai" aria-labelledby="ai-h">
+    <div class="ai-copy">
+      <span class="ai-k"><i></i>AutoBot Pro</span>
+      <h2 id="ai-h">Built-in AI that never stops adjusting.</h2>
+      <ol class="ai-loop">
+        <li><b>01</b><div><h3>Read</h3><p>Price, trend, sentiment, news and on-chain flows.</p></div></li>
+        <li><b>02</b><div><h3>Analyze</h3><p>The AI weighs every signal against current conditions.</p></div></li>
+        <li><b>03</b><div><h3>Adjust</h3><p>Position size and timing shift as the market shifts.</p></div></li>
+        <li><b>04</b><div><h3>Trade</h3><p>Orders go out in your own account. Then it starts again.</p></div></li>
+      </ol>
+      <a class="ai-cta" href="#pick"><span>Get AutoBot Pro</span><i aria-hidden="true">→</i></a>
+    </div>
+    <div class="ai-vis">
+      <canvas class="ai-field" aria-hidden="true"></canvas>
+      <svg class="en" viewBox="0 0 420 420" role="img" aria-label="AutoBot Pro reads market signals, its AI analyzes them, adjusts position size and timing, and trades, in a continuous loop.">
+        <path class="en-feed" d="M40 46 L 210 210"/><text class="en-in" x="40" y="34" text-anchor="start">Price</text><circle class="en-bit" r="2.4"><animateMotion dur="2.20s" begin="0.0s" repeatCount="indefinite" path="M40 46 L 210 210" keyPoints="0;0.62" keyTimes="0;1" calcMode="linear"/><animate attributeName="opacity" values="0;1;1;0" dur="2.20s" begin="0.0s" repeatCount="indefinite"/></circle><path class="en-feed" d="M380 46 L 210 210"/><text class="en-in" x="380" y="34" text-anchor="end">Sentiment</text><circle class="en-bit" r="2.4"><animateMotion dur="2.55s" begin="0.4s" repeatCount="indefinite" path="M380 46 L 210 210" keyPoints="0;0.62" keyTimes="0;1" calcMode="linear"/><animate attributeName="opacity" values="0;1;1;0" dur="2.55s" begin="0.4s" repeatCount="indefinite"/></circle><path class="en-feed" d="M40 384 L 210 210"/><text class="en-in" x="40" y="404" text-anchor="start">News</text><circle class="en-bit" r="2.4"><animateMotion dur="2.90s" begin="0.8s" repeatCount="indefinite" path="M40 384 L 210 210" keyPoints="0;0.62" keyTimes="0;1" calcMode="linear"/><animate attributeName="opacity" values="0;1;1;0" dur="2.90s" begin="0.8s" repeatCount="indefinite"/></circle><path class="en-feed" d="M380 384 L 210 210"/><text class="en-in" x="380" y="404" text-anchor="end">On-chain</text><circle class="en-bit" r="2.4"><animateMotion dur="3.25s" begin="1.2s" repeatCount="indefinite" path="M380 384 L 210 210" keyPoints="0;0.62" keyTimes="0;1" calcMode="linear"/><animate attributeName="opacity" values="0;1;1;0" dur="3.25s" begin="1.2s" repeatCount="indefinite"/></circle>
+        <circle class="en-ring" cx="210" cy="210" r="128"/>
+        <circle class="en-arc" cx="210" cy="210" r="128" style="stroke-dasharray:201.1 804.2"/>
+        <circle class="en-halo" cx="210" cy="210" r="54"/>
+        <circle class="en-core" cx="210" cy="210" r="54"/>
+        <text class="en-ai" x="210" y="222" text-anchor="middle">AI</text>
+        <g class="en-node" data-i="0"><circle class="en-dot" cx="210.0" cy="82.0" r="6"/><text x="210.0" y="56.0" text-anchor="middle">Read</text></g><g class="en-node" data-i="1"><circle class="en-dot" cx="338.0" cy="210.0" r="6"/><text x="368.0" y="214.0" text-anchor="start">Analyze</text></g><g class="en-node" data-i="2"><circle class="en-dot" cx="210.0" cy="338.0" r="6"/><text x="210.0" y="372.0" text-anchor="middle">Adjust</text></g><g class="en-node" data-i="3"><circle class="en-dot" cx="82.0" cy="210.0" r="6"/><text x="52.0" y="214.0" text-anchor="end">Trade</text></g>
+      </svg>
+    </div>
   </section>
 
   <section class="pl-sec" aria-labelledby="diff">
@@ -116,9 +132,14 @@ onView(document.querySelectorAll('.pc'), c => { c.classList.add('in'); const b =
 onView(document.querySelectorAll('.sx-row, .sg'), el => el.classList.add('in'), 0.2);
 (function(){
   const sec = document.querySelector('.ai'); if (!sec) return;
-  const steps = sec.querySelectorAll('.ai-loop li'); let i = 0, timer = null;
-  function step(){ steps.forEach((s, n) => s.classList.toggle('on', n === i)); sec.style.setProperty('--step', i); i = (i + 1) % steps.length; }
-  onView([sec], () => { sec.classList.add('in'); step(); if (!REDUCED) timer = setInterval(step, 1600); }, 0.3);
+  dotField(sec.querySelector('.ai-field'), sec.querySelector('.ai-vis'), '14,14,12', {base: .07});
+  const steps = sec.querySelectorAll('.ai-loop li'), nodes = sec.querySelectorAll('.en-node'), arc = sec.querySelector('.en-arc');
+  let i = 0, turn = 0, timer = null;
+  function step(){ steps.forEach((s, n) => s.classList.toggle('on', n === i)); nodes.forEach((s, n) => s.classList.toggle('on', n === i));
+    arc.style.transform = 'rotate(' + (turn * 90 - 135) + 'deg)'; turn++; i = (i + 1) % steps.length; }
+  steps.forEach((s, n) => s.addEventListener('mouseenter', () => { clearInterval(timer); i = n; turn = Math.ceil(turn / 4) * 4 + n; step(); }));
+  sec.querySelector('.ai-loop').addEventListener('mouseleave', () => { if (!REDUCED){ clearInterval(timer); timer = setInterval(step, 1800); } });
+  onView([sec], () => { sec.classList.add('in'); step(); if (!REDUCED) timer = setInterval(step, 1800); }, 0.3);
 })();
 </script>
 """
